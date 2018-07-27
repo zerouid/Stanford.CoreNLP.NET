@@ -2,7 +2,7 @@
 /* JavaCCOptions:KEEP_LINE_COL=null */
 using System;
 using System.Text;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Ling.Tokensregex.Parser
 {

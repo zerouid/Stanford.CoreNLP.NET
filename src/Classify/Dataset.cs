@@ -6,11 +6,6 @@ using Edu.Stanford.Nlp.Objectbank;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Regex;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -483,6 +478,7 @@ namespace Edu.Stanford.Nlp.Classify
 			float[] counts = GetFeatureCounts();
 			// build a new featureIndex
 			IIndex<F> newFeatureIndex = new HashIndex<F>();
+			LOOP_continue:
 			foreach (F f in featureIndex)
 			{
 				foreach (Pair<Pattern, int> threshold in thresholds)
@@ -501,7 +497,7 @@ namespace Edu.Stanford.Nlp.Classify
 				// we only get here if it didn't match anything on the list
 				newFeatureIndex.Add(f);
 			}
-LOOP_break: ;
+			
 			counts = null;
 			int[] featMap = new int[featureIndex.Size()];
 			for (int i = 0; i < featMap.Length; i++)
@@ -533,7 +529,7 @@ LOOP_break: ;
 		/// prints the full feature matrix in tab-delimited form.  These can be BIG
 		/// matrices, so be careful!
 		/// </remarks>
-		public virtual void PrintFullFeatureMatrix(PrintWriter pw)
+		public virtual void PrintFullFeatureMatrix(StreamWriter pw)
 		{
 			string sep = "\t";
 			for (int i = 0; i < featureIndex.Size(); i++)
@@ -577,7 +573,7 @@ LOOP_break: ;
 		/// <inheritDoc/>
 		/// 
 		/// </summary>
-		public override void PrintSparseFeatureMatrix(PrintWriter pw)
+		public override void PrintSparseFeatureMatrix(StreamWriter pw)
 		{
 			string sep = "\t";
 			for (int i = 0; i < size; i++)
@@ -789,7 +785,7 @@ LOOP_break: ;
 		}
 
 		/// <summary>Need to sort the counter by feature keys and dump it</summary>
-		public static void PrintSVMLightFormat(PrintWriter pw, ClassicCounter<int> c, int classNo)
+		public static void PrintSVMLightFormat(StreamWriter pw, ClassicCounter<int> c, int classNo)
 		{
 			int[] features = Sharpen.Collections.ToArray(c.KeySet(), new int[c.KeySet().Count]);
 			Arrays.Sort(features);

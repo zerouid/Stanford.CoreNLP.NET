@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling.Tokensregex.Types;
 using Edu.Stanford.Nlp.Util;
-using Java.Lang;
-using Java.Time;
-using Java.Time.Format;
-using Java.Time.Temporal;
-using Java.Util;
-using Java.Util.Regex;
+
+
+
+
+
+
 using Org.Joda.Time;
 using Org.Joda.Time.Format;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Time
 {
@@ -733,7 +733,7 @@ namespace Edu.Stanford.Nlp.Time
 			public _DurationWithFields_567(IReadablePeriod baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = 1;
+				this.serialVersionUID = serialVersionUID;
 			}
 
 			// Basic time units (durations)
@@ -742,7 +742,7 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.Year(), DateTimeFieldType.YearOfCentury(), DateTimeFieldType.YearOfEra() };
 			}
 
-			private const long serialVersionUID;
+			private const long serialVersionUID =  1;
 		}
 
 		public static readonly SUTime.Duration Year = new _DurationWithFields_567(Period.Years(1));
@@ -760,7 +760,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.DayOfMonth(), DateTimeFieldType.DayOfWeek(), DateTimeFieldType.DayOfYear() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Day = new _DurationWithFields_575(Period.Days(1));
@@ -778,7 +777,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.WeekOfWeekyear() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Week = new _DurationWithFields_583(Period.Weeks(1));
@@ -798,7 +796,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.MonthOfYear() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Month = new _DurationWithFields_593(Period.Months(1));
@@ -818,7 +815,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { JodaTimeUtils.QuarterOfYear };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Quarter = new _DurationWithFields_603(Period.Months(3));
@@ -836,7 +832,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { JodaTimeUtils.HalfYearOfYear };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Halfyear = new _DurationWithFields_611(Period.Months(6));
@@ -854,7 +849,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.MillisOfSecond(), DateTimeFieldType.MillisOfDay() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Millis = new _DurationWithFields_619(Period.Millis(1));
@@ -872,7 +866,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.SecondOfMinute(), DateTimeFieldType.SecondOfDay() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Second = new _DurationWithFields_627(Period.Seconds(1));
@@ -890,7 +883,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.MinuteOfHour(), DateTimeFieldType.MinuteOfDay() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Minute = new _DurationWithFields_635(Period.Minutes(1));
@@ -908,7 +900,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.HourOfDay(), DateTimeFieldType.HourOfHalfday() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Hour = new _DurationWithFields_643(Period.Hours(1));
@@ -930,7 +921,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { JodaTimeUtils.DecadeOfCentury };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Decade = new _DurationWithFields_655(Period.Years(10));
@@ -948,7 +938,6 @@ namespace Edu.Stanford.Nlp.Time
 				return new DateTimeFieldType[] { DateTimeFieldType.CenturyOfEra() };
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Duration Century = new _DurationWithFields_663(Period.Years(100));
@@ -963,7 +952,6 @@ namespace Edu.Stanford.Nlp.Time
 				this.serialVersionUID = 1;
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Time TimeRef = new _RefTime_673("REF");
@@ -1023,7 +1011,6 @@ namespace Edu.Stanford.Nlp.Time
 				return SUTime.Day;
 			}
 
-			private const long serialVersionUID;
 		}
 
 		public static readonly SUTime.Time Weekday = CreateTemporal(SUTime.StandardTemporalType.DaysOfWeek, "WD", new _InexactTime_706(null, SUTime.Day, new SUTime.Range(SUTime.Monday, SUTime.Friday)));

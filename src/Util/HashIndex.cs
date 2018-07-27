@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Edu.Stanford.Nlp.IO;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Concurrent;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Util
 {
@@ -639,7 +639,6 @@ namespace Edu.Stanford.Nlp.Util
 				throw new NotSupportedException("This is an unmodifiable view!");
 			}
 
-			private const long serialVersionUID;
 		}
 
 		/// <summary>This assumes each line is one value and creates index by adding values in the order of the lines in the file</summary>

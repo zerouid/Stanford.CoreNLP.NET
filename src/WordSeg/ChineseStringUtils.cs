@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Trees.International.Pennchinese;
-using Java.Lang;
-using Java.Util.Concurrent;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Wordseg
 {

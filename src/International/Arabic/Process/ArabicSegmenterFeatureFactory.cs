@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.International.Arabic.Process
 {
@@ -14,7 +14,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 	/// <author>Spence Green</author>
 	/// <?/>
 	[System.Serializable]
-	public class ArabicSegmenterFeatureFactory<In> : FeatureFactory<IN>
+	public class ArabicSegmenterFeatureFactory<In> : FeatureFactory<In>
 		where In : CoreLabel
 	{
 		private const long serialVersionUID = -4560226365250020067L;
@@ -35,7 +35,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 		/// <summary>Extracts all the features from the input data at a certain index.</summary>
 		/// <param name="cInfo">The complete data set as a List of WordInfo</param>
 		/// <param name="loc">The index at which to extract features.</param>
-		public override ICollection<string> GetCliqueFeatures(PaddedList<IN> cInfo, int loc, Clique clique)
+		public override ICollection<string> GetCliqueFeatures(PaddedList<In> cInfo, int loc, Clique clique)
 		{
 			ICollection<string> features = Generics.NewHashSet();
 			if (clique == cliqueC)
@@ -76,7 +76,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 			return features;
 		}
 
-		protected internal virtual ICollection<string> FeaturesC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];
@@ -133,7 +133,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 			return features;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];
@@ -146,7 +146,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 			return features;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp2C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp2C(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];
@@ -161,7 +161,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 			return features;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp3C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp3C(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];

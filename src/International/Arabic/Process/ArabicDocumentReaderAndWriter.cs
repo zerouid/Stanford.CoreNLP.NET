@@ -6,9 +6,9 @@ using Edu.Stanford.Nlp.Objectbank;
 using Edu.Stanford.Nlp.Process;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.International.Arabic.Process
 {
@@ -117,13 +117,13 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 
 		private sealed class _ISerializableFunction_131 : ISerializableFunction<string, IList<CoreLabel>>
 		{
+			private const long serialVersionUID = 5243251505653686497L;
+
 			public _ISerializableFunction_131(ArabicDocumentReaderAndWriter _enclosing)
 			{
 				this._enclosing = _enclosing;
-				this.serialVersionUID = 5243251505653686497L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IList<CoreLabel> Apply(string @in)
 			{

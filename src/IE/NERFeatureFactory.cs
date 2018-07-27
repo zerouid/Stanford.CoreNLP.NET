@@ -36,10 +36,10 @@ using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Trees.International.Pennchinese;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -359,7 +359,7 @@ namespace Edu.Stanford.Nlp.IE
 	/// <author>Huy Nguyen</author>
 	/// <author>Mengqiu Wang</author>
 	[System.Serializable]
-	public class NERFeatureFactory<In> : FeatureFactory<IN>
+	public class NERFeatureFactory<In> : FeatureFactory<In>
 		where In : CoreLabel
 	{
 		/// <summary>A logger for this class</summary>
@@ -385,7 +385,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <summary>Extracts all the features from the input data at a certain index.</summary>
 		/// <param name="cInfo">The complete data set as a List of WordInfo</param>
 		/// <param name="loc">The index at which to extract features.</param>
-		public override ICollection<string> GetCliqueFeatures(PaddedList<IN> cInfo, int loc, Clique clique)
+		public override ICollection<string> GetCliqueFeatures(PaddedList<In> cInfo, int loc, Clique clique)
 		{
 			ICollection<string> features = Generics.NewHashSet();
 			string domain = cInfo[0].Get(typeof(CoreAnnotations.DomainAnnotation));
@@ -558,7 +558,7 @@ namespace Edu.Stanford.Nlp.IE
 			}
 		}
 
-		private void DistSimAnnotate(PaddedList<IN> info)
+		private void DistSimAnnotate(PaddedList<In> info)
 		{
 			foreach (CoreLabel fl in info)
 			{
@@ -886,7 +886,7 @@ namespace Edu.Stanford.Nlp.IE
 			}
 		}
 
-		protected internal virtual ICollection<string> FeaturesC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesC(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel p3 = cInfo[loc - 3];
 			CoreLabel p2 = cInfo[loc - 2];
@@ -2028,7 +2028,7 @@ namespace Edu.Stanford.Nlp.IE
 			}
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpC(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel p = cInfo[loc - 1];
 			CoreLabel c = cInfo[loc];
@@ -2252,7 +2252,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCpC;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp2C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp2C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2302,7 +2302,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCp2C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp3C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp3C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2339,7 +2339,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCp3C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp4C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp4C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2378,7 +2378,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCp4C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCp5C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCp5C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2421,7 +2421,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCp5C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpCp2C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpCp2C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2519,7 +2519,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCpCp2C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpCp2Cp3C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpCp2Cp3C(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			CoreLabel p = cInfo[loc - 1];
@@ -2569,7 +2569,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCpCp2Cp3C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpCp2Cp3Cp4C(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpCp2Cp3Cp4C(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> featuresCpCp2Cp3Cp4C = new List<string>();
 			CoreLabel p = cInfo[loc - 1];
@@ -2587,7 +2587,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCpCp2Cp3Cp4C;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCnC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCnC(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			ICollection<string> featuresCnC = new List<string>();
@@ -2602,7 +2602,7 @@ namespace Edu.Stanford.Nlp.IE
 			return featuresCnC;
 		}
 
-		protected internal virtual ICollection<string> FeaturesCpCnC(PaddedList<IN> cInfo, int loc)
+		protected internal virtual ICollection<string> FeaturesCpCnC(PaddedList<In> cInfo, int loc)
 		{
 			CoreLabel c = cInfo[loc];
 			ICollection<string> featuresCpCnC = new List<string>();
@@ -2622,7 +2622,7 @@ namespace Edu.Stanford.Nlp.IE
 			return (flags.useReverse ? -1 * i : i);
 		}
 
-		private ICollection<string> OccurrencePatterns(PaddedList<IN> cInfo, int loc)
+		private ICollection<string> OccurrencePatterns(PaddedList<In> cInfo, int loc)
 		{
 			// features on last Cap
 			string word = GetWord(cInfo[loc]);

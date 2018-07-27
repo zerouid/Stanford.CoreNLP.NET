@@ -1,5 +1,5 @@
 using Org.Apache.Lucene.Document;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Util
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE.Machinereading.Structure
 {

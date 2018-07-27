@@ -8,9 +8,9 @@ using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Naturalli
 {
@@ -1050,12 +1050,12 @@ namespace Edu.Stanford.Nlp.Naturalli
 
 		private sealed class _IFeaturizer_920 : ClauseSplitterSearchProblem.IFeaturizer
 		{
+			private const long serialVersionUID = 4145523451314579506L;
 			public _IFeaturizer_920()
 			{
-				this.serialVersionUID = 4145523451314579506L;
+				this.serialVersionUID = serialVersionUID;
 			}
 
-			private const long serialVersionUID;
 
 			//    log.info("Search finished in " + ticks + " ticks and " + classifierEvals + " classifier evaluations.");
 			public bool IsSimpleSplit(ICounter<string> feats)

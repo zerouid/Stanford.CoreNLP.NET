@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Pipeline;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Quoteattribution
 {

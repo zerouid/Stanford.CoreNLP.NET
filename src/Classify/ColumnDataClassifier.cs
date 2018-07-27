@@ -30,6 +30,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Objectbank;
@@ -38,13 +41,7 @@ using Edu.Stanford.Nlp.Process;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Concurrent;
-using Java.Util.Regex;
-using Sharpen;
+using Microsoft.Extensions.Configuration;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -458,10 +455,10 @@ namespace Edu.Stanford.Nlp.Classify
 			IList<string[]> lineInfos = new List<string[]>(lines.Count);
 			foreach (string line in lines)
 			{
-				line = line.ReplaceFirst("#.*$", string.Empty);
+				var l = Regex.Replace(line, "#.*$", string.Empty);
 				// remove any trailing comments
 				// in principle, it'd be nice to save the comment, though, for possible use as a displayedColumn - make it column 1??
-				lineInfos.Add(line.Split("\\s+"));
+				lineInfos.Add(Regex.Split(l,"\\s+"));
 			}
 			return lineInfos;
 		}
@@ -477,7 +474,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// fields for short text documents, and then to be able to split them into
 		/// words with features like useSplitWords.
 		/// </remarks>
-		private static readonly Pattern tab = Pattern.Compile("\\t");
+		private static readonly Regex tab = new Regex("\\t", RegexOptions.Compiled);
 
 		/// <summary>Read a data set from a file and convert it into a Dataset object.</summary>
 		/// <remarks>
@@ -506,11 +503,11 @@ namespace Edu.Stanford.Nlp.Classify
 				}
 				if (globalFlags.usesRealValues)
 				{
-					dataset = RVFDataset.ReadSVMLightFormat(filename, lines);
+					dataset = RVFDataset<string,string>.ReadSVMLightFormat(filename, lines);
 				}
 				else
 				{
-					dataset = Dataset.ReadSVMLightFormat(filename, lines);
+					dataset = Dataset<string,string>.ReadSVMLightFormat(filename, lines);
 				}
 				if (lines != null)
 				{
@@ -536,7 +533,7 @@ namespace Edu.Stanford.Nlp.Classify
 					int lineNo = 0;
 					int minColumns = int.MaxValue;
 					int maxColumns = 0;
-					foreach (string line in ObjectBank.GetLineIterator(new File(filename), ColumnDataClassifier.Flags.encoding))
+					foreach (string line in ObjectBank<string>.GetLineIterator(filename, ColumnDataClassifier.Flags.encoding))
 					{
 						lineNo++;
 						if (ColumnDataClassifier.Flags.inputFormat == ColumnDataClassifier.InputFormat.Header)
@@ -555,7 +552,7 @@ namespace Edu.Stanford.Nlp.Classify
 						{
 							if (ColumnDataClassifier.Flags.inputFormat == ColumnDataClassifier.InputFormat.Comments)
 							{
-								if (line.Matches("\\s#.*"))
+								if (Regex.IsMatch(line, "\\s#.*"))
 								{
 									continue;
 								}
@@ -601,14 +598,14 @@ namespace Edu.Stanford.Nlp.Classify
 		/// <summary>Split according to whether we are using tsv file (default) or csv files.</summary>
 		private string[] SplitLineToFields(string line)
 		{
-			if (globalFlags.csvInput)
+			if (Flags.csvInput)
 			{
 				string[] strings = StringUtils.SplitOnCharWithQuoting(line, ',', '"', '"');
 				for (int i = 0; i < strings.Length; ++i)
 				{
 					if (strings[i].StartsWith("\"") && strings[i].EndsWith("\""))
 					{
-						strings[i] = Sharpen.Runtime.Substring(strings[i], 1, strings[i].Length - 1);
+						strings[i] = strings[i].Substring(1, strings[i].Length - 1);
 					}
 				}
 				return strings;
@@ -648,14 +645,14 @@ namespace Edu.Stanford.Nlp.Classify
 				double acc = ((double)tp + tn) / num;
 				macroF1 += f;
 				microAccuracy += tp;
-				logger.Info("Cls " + key + ": TP=" + tp + " FN=" + fn + " FP=" + fp + " TN=" + tn + "; Acc " + nf.Format(acc) + " P " + nf.Format(p) + " R " + nf.Format(r) + " F1 " + nf.Format(f));
+				logger.Info("Cls " + key + ": TP=" + tp + " FN=" + fn + " FP=" + fp + " TN=" + tn + "; Acc " + acc.ToString(nf) + " P " + p.ToString(nf) + " R " + r.ToString(nf) + " F1 " + f.ToString(nf));
 			}
 			if (globalFlags.groupingColumn >= 0 && globalFlags.rankingAccuracyClass != null)
 			{
 				double cor = (int)contingency.GetCount("Ranking|Correct");
 				double err = (int)contingency.GetCount("Ranking|Error");
 				double rankacc = (cor + err == 0) ? 0 : cor / (cor + err);
-				logger.Info("Ranking accuracy: " + nf.Format(rankacc));
+				logger.Info("Ranking accuracy: " + rankacc.ToString(nf));
 				double cov = (int)contingency.GetCount("Ranking|Covered");
 				double coverr = (int)contingency.GetCount("Ranking|Uncovered");
 				double covacc = (cov + coverr == 0) ? 0 : cov / (cov + coverr);
@@ -663,7 +660,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					double ce = (int)(contingency.GetCount("Ranking|Error") - contingency.GetCount("Ranking|Uncovered"));
 					double crankacc = (cor + ce == 0) ? 0 : cor / (cor + ce);
-					logger.Info(" (on " + nf.Format(covacc) + " of groups with correct answer: " + nf.Format(crankacc) + ')');
+					logger.Info(" (on " + covacc.ToString(nf) + " of groups with correct answer: " + crankacc.ToString(nf) + ')');
 				}
 				else
 				{
@@ -673,14 +670,14 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					double totalSim = contingency.GetCount("Ranking|Score");
 					double ranksim = (cor + err == 0) ? 0 : totalSim / (cor + err);
-					logger.Info("Ranking average score: " + nf.Format(ranksim));
+					logger.Info("Ranking average score: " + ranksim.ToString(nf));
 				}
 			}
 			microAccuracy = microAccuracy / num;
 			macroF1 = macroF1 / numClasses;
-			NumberFormat nf2 = new DecimalFormat("0.00000");
-			logger.Info("Accuracy/micro-averaged F1: " + nf2.Format(microAccuracy));
-			logger.Info("Macro-averaged F1: " + nf2.Format(macroF1));
+			string nf2 = "0.00000";
+			logger.Info("Accuracy/micro-averaged F1: " + microAccuracy.ToString(nf2));
+			logger.Info("Macro-averaged F1: " + macroF1.ToString(nf2));
 			return new Pair<double, double>(microAccuracy, macroF1);
 		}
 
@@ -700,7 +697,7 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private static string storedHeader;
 
-		private static readonly NumberFormat nf = new DecimalFormat("0.000");
+		private static readonly string nf = "0.000";
 
 		// These variables are only used by the private methods used by main() for displaying
 		// performance statistics when running the command-line version. So their being
@@ -715,16 +712,16 @@ namespace Edu.Stanford.Nlp.Classify
 				printedText = strs[globalFlags.displayedColumn];
 			}
 			string results;
-			if (globalFlags.displayAllAnswers)
+			if (Flags.displayAllAnswers)
 			{
 				// sort the labels by probability
-				TreeSet<Pair<double, string>> sortedLabels = new TreeSet<Pair<double, string>>();
+				SortedSet<Pair<double, string>> sortedLabels = new SortedSet<Pair<double, string>>();
 				foreach (string key in cntr.KeySet())
 				{
 					sortedLabels.Add(new Pair<double, string>(cntr.ProbabilityOf(key), key));
 				}
 				StringBuilder builder = new StringBuilder();
-				foreach (Pair<double, string> pair in sortedLabels.DescendingSet())
+				foreach (Pair<double, string> pair in sortedLabels.Reverse())
 				{
 					if (builder.Length > 0)
 					{
@@ -736,10 +733,10 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 			else
 			{
-				results = clAnswer + '\t' + nf.Format(cntr.ProbabilityOf(clAnswer)) + '\t' + nf.Format(cntr.ProbabilityOf(goldAnswer));
+				results = clAnswer + '\t' + cntr.ProbabilityOf(clAnswer).ToString(nf) + '\t' + cntr.ProbabilityOf(goldAnswer).ToString(nf);
 			}
 			string line;
-			if (printedText.IsEmpty())
+			if (string.IsNullOrEmpty(printedText))
 			{
 				line = goldAnswer + '\t' + results;
 			}
@@ -828,7 +825,7 @@ namespace Edu.Stanford.Nlp.Classify
 					}
 					message += "highest ranked guess was: " + ((currentHighestProbCorrect ? "correct" : "incorrect"));
 					logger.Info(message);
-					logger.Info(" (sim. = " + nf.Format(sim) + ')');
+					logger.Info(" (sim. = " + sim.ToString(nf) + ')');
 				}
 				if (currentHighestProbCorrect)
 				{
@@ -861,9 +858,9 @@ namespace Edu.Stanford.Nlp.Classify
 			if (!(globalFlags.crossValidationFolds > 0 && !globalFlags.printCrossValidationDecisions))
 			{
 				string message = string.Empty;
-				if (globalFlags.csvOutput != null)
+				if (Flags.csvOutput != null)
 				{
-					message += FormatCsv(globalFlags.csvOutput, storedHeader.Split("\t"), null);
+					message += FormatCsv(Flags.csvOutput, storedHeader.Split('\t'), null);
 				}
 				else
 				{
@@ -873,7 +870,7 @@ namespace Edu.Stanford.Nlp.Classify
 						message += "dataColumn" + globalFlags.displayedColumn + '\t';
 					}
 					message += "goldAnswer\t";
-					if (globalFlags.displayAllAnswers)
+					if (Flags.displayAllAnswers)
 					{
 						logger.Info(message + "[P(class) class]+ {sorted by probability}");
 					}
@@ -885,7 +882,7 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 			ICounter<string> contingency = new ClassicCounter<string>();
 			// store tp,fp,fn,tn
-			for (int i = 0; i < sz; i++)
+			for (int i = 0, sz = test.size; i < sz; i++)
 			{
 				TestExample(cl, test, lineInfos, contingency, i);
 			}
@@ -912,7 +909,7 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				logger.Info("### Test item " + i);
 				logger.Info(StringUtils.Join(example, "\t"));
-				if (cl is LinearClassifier)
+				if (cl is LinearClassifier<string,string>)
 				{
 					((LinearClassifier<string, string>)cl).JustificationOf(d);
 				}
@@ -927,13 +924,13 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				logScores = cl.ScoresOf(d);
 			}
-			Distribution<string> dist = Distribution.DistributionFromLogisticCounter(logScores);
+			Distribution<string> dist = Distribution<string>.DistributionFromLogisticCounter(logScores);
 			string answer = null;
 			if (globalFlags.biasedHyperplane != null)
 			{
 				// logger.info("Biased using counter: " +
 				//         globalFlags.biasedHyperplane);
-				IList<string> biggestKeys = new List<string>(logScores.KeySet());
+				List<string> biggestKeys = new List<string>(logScores.KeySet());
 				biggestKeys.Sort(Counters.ToComparatorDescending(logScores));
 				foreach (string key in biggestKeys)
 				{
@@ -964,18 +961,18 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				try
 				{
-					sim = double.ParseDouble(example[globalFlags.rankingScoreColumn]);
+					sim = double.Parse(example[globalFlags.rankingScoreColumn]);
 				}
-				catch (NumberFormatException)
+				catch
 				{
 				}
 			}
 			// just don't print it
 			if (!(globalFlags.crossValidationFolds > 0 && !globalFlags.printCrossValidationDecisions))
 			{
-				if (globalFlags.csvOutput != null)
+				if (Flags.csvOutput != null)
 				{
-					System.Console.Out.Write(FormatCsv(globalFlags.csvOutput, example, answer));
+					System.Console.Out.Write(FormatCsv(Flags.csvOutput, example, answer));
 				}
 				else
 				{
@@ -988,7 +985,7 @@ namespace Edu.Stanford.Nlp.Classify
 		private string FormatCsv(string format, string[] fields, string answer)
 		{
 			StringBuilder @out = new StringBuilder();
-			for (int i = 0; i < len; i++)
+			for (int i = 0, len = format.Length; i < len; i++)
 			{
 				char ch = format[i];
 				if (ch == '%' && i + 1 < len)
@@ -1056,7 +1053,7 @@ namespace Edu.Stanford.Nlp.Classify
 		{
 			string goldAnswer = globalFlags.goldAnswerColumn < strs.Length ? strs[globalFlags.goldAnswerColumn] : string.Empty;
 			IList<string> theFeatures = new List<string>();
-			ICollection<string> globalFeatures = Generics.NewHashSet();
+			ICollection<string> globalFeatures = new HashSet<string>();
 			if (globalFlags.useClassFeature)
 			{
 				globalFeatures.Add("CLASS");
@@ -1064,7 +1061,7 @@ namespace Edu.Stanford.Nlp.Classify
 			AddAllInterningAndPrefixing(theFeatures, globalFeatures, string.Empty);
 			for (int i = 0; i < flags.Length; i++)
 			{
-				ICollection<string> featuresC = Generics.NewHashSet();
+				ICollection<string> featuresC = new HashSet<string>();
 				//important that this is a hash set to prevent same feature from being added multiple times
 				MakeDatum(strs[i], flags[i], featuresC, goldAnswer);
 				AddAllInterningAndPrefixing(theFeatures, featuresC, i + "-");
@@ -1113,16 +1110,17 @@ namespace Edu.Stanford.Nlp.Classify
 			System.Diagnostics.Debug.Assert(prefix != null);
 			foreach (string protoFeat in addend.KeySet())
 			{
+				var tmp = protoFeat;
 				double count = addend.GetCount(protoFeat);
-				if (!prefix.IsEmpty())
+				if (!string.IsNullOrEmpty(prefix))
 				{
-					protoFeat = prefix + protoFeat;
+					tmp = prefix + protoFeat;
 				}
 				if (globalFlags.intern)
 				{
-					protoFeat = string.Intern(protoFeat);
+					tmp = string.Intern(protoFeat);
 				}
-				accumulator.IncrementCount(protoFeat, count);
+				accumulator.IncrementCount(tmp, count);
 			}
 		}
 
@@ -1131,15 +1129,16 @@ namespace Edu.Stanford.Nlp.Classify
 			System.Diagnostics.Debug.Assert(prefix != null);
 			foreach (string protoFeat in addend)
 			{
-				if (!prefix.IsEmpty())
+				var tmp = protoFeat;
+				if (!string.IsNullOrEmpty(prefix))
 				{
-					protoFeat = prefix + protoFeat;
+					tmp = prefix + protoFeat;
 				}
 				if (globalFlags.intern)
 				{
-					protoFeat = string.Intern(protoFeat);
+					tmp = string.Intern(protoFeat);
 				}
-				accumulator.Add(protoFeat);
+				accumulator.Add(tmp);
 			}
 		}
 
@@ -1150,11 +1149,11 @@ namespace Edu.Stanford.Nlp.Classify
 		/// </summary>
 		private static void AddFeatureValue(string cWord, ColumnDataClassifier.Flags flags, object featuresC)
 		{
-			double value = double.ValueOf(cWord);
+			double value = double.Parse(cWord);
 			if (flags.logTransform)
 			{
-				double log = Math.Log(value);
-				if (double.IsInfinite(log) || double.IsNaN(log))
+				double log = System.Math.Log(value);
+				if (double.IsNegativeInfinity(log) || double.IsPositiveInfinity(log) || double.IsNaN(log))
 				{
 					logger.Info("WARNING: Log transform attempted on out of range value; feature ignored");
 				}
@@ -1167,8 +1166,8 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				if (flags.logitTransform)
 				{
-					double logit = Math.Log(value / (1 - value));
-					if (double.IsInfinite(logit) || double.IsNaN(logit))
+					double logit = System.Math.Log(value / (1 - value));
+					if (double.IsNegativeInfinity(logit) || double.IsPositiveInfinity(logit) || double.IsNaN(logit))
 					{
 						logger.Info("WARNING: Logit transform attempted on out of range value; feature ignored");
 					}
@@ -1181,7 +1180,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					if (flags.sqrtTransform)
 					{
-						double sqrt = Math.Sqrt(value);
+						double sqrt = System.Math.Sqrt(value);
 						AddFeature(featuresC, "Sqrt", sqrt);
 					}
 					else
@@ -1271,7 +1270,7 @@ namespace Edu.Stanford.Nlp.Classify
 				double val = flags.binnedValuesNaN;
 				try
 				{
-					val = double.ParseDouble(cWord);
+					val = double.Parse(cWord);
 				}
 				catch (NumberFormatException)
 				{
@@ -1661,7 +1660,7 @@ namespace Edu.Stanford.Nlp.Classify
 			return subs;
 		}
 
-		private static PrintWriter cliqueWriter;
+		private static StreamWriter cliqueWriter;
 
 		private static void NewFeaturePrinter(string prefix, string suffix, string encoding)
 		{
@@ -1916,47 +1915,47 @@ namespace Edu.Stanford.Nlp.Classify
 			return lc;
 		}
 
-		private static string[] RegexpTokenize(Pattern tokenizerRegexp, Pattern ignoreRegexp, string inWord)
+		private static string[] RegexpTokenize(Regex tokenizerRegexp, Regex ignoreRegexp, string inWord)
 		{
 			IList<string> al = new List<string>();
 			string word = inWord;
-			while (!word.IsEmpty())
+			while (!string.IsNullOrEmpty(word))
 			{
 				// logger.info("String to match on is " + word);
-				Matcher mig = null;
+				Match mig = null;
 				if (ignoreRegexp != null)
 				{
-					mig = ignoreRegexp.Matcher(word);
+					mig = ignoreRegexp.Match(word);
 				}
-				if (mig != null && mig.LookingAt())
+				if (mig != null && mig.Success)
 				{
-					word = Sharpen.Runtime.Substring(word, mig.End());
+					word = word.Substring(mig.Index + mig.Length);
 				}
 				else
 				{
-					Matcher m = tokenizerRegexp.Matcher(word);
-					if (m.LookingAt())
+					Match m = tokenizerRegexp.Match(word);
+					if (m.Index == 0)
 					{
 						// Logging.logger(ColumnDataClassifier.class).info("Matched " + m.end() + " chars: " +
 						//		       word.substring(0, m.end()));
-						al.Add(Sharpen.Runtime.Substring(word, 0, m.End()));
-						word = Sharpen.Runtime.Substring(word, m.End());
+						al.Add(word.Substring(0, m.Length));
+						word = word.Substring(m.Length);
 					}
 					else
 					{
-						logger.Info("Warning: regexpTokenize pattern " + tokenizerRegexp + " didn't match on |" + Sharpen.Runtime.Substring(word, 0, 1) + "| of |" + word + '|');
+						logger.Info("Warning: regexpTokenize pattern " + tokenizerRegexp + " didn't match on |" + word.Substring(0, 1) + "| of |" + word + '|');
 						// logger.info("Default matched 1 char: " +
 						//		       word.substring(0, 1));
-						al.Add(Sharpen.Runtime.Substring(word, 0, 1));
-						word = Sharpen.Runtime.Substring(word, 1);
+						al.Add(word.Substring(0, 1));
+						word = word.Substring(1);
 					}
 				}
 			}
-			string[] bits = Sharpen.Collections.ToArray(al, new string[al.Count]);
+			string[] bits = al.ToArray();
 			return bits;
 		}
 
-		private static string[] SplitTokenize(Pattern splitRegexp, Pattern ignoreRegexp, string cWord)
+		private static string[] SplitTokenize(Regex splitRegexp, Regex ignoreRegexp, string cWord)
 		{
 			string[] bits = splitRegexp.Split(cWord);
 			if (ignoreRegexp != null)
@@ -1964,15 +1963,14 @@ namespace Edu.Stanford.Nlp.Classify
 				IList<string> keepBits = new List<string>(bits.Length);
 				foreach (string bit in bits)
 				{
-					if (!ignoreRegexp.Matcher(bit).Matches())
+					if (!ignoreRegexp.IsMatch(bit))
 					{
 						keepBits.Add(bit);
 					}
 				}
 				if (keepBits.Count != bits.Length)
 				{
-					bits = new string[keepBits.Count];
-					Sharpen.Collections.ToArray(keepBits, bits);
+					bits = keepBits.ToArray();
 				}
 			}
 			return bits;
@@ -2024,24 +2022,17 @@ namespace Edu.Stanford.Nlp.Classify
 		/// <summary>Initialize using values in Properties file.</summary>
 		/// <param name="props">Properties, with the special format of column.flag used in ColumnDataClassifier</param>
 		/// <returns>An array of flags for each data column, with additional global flags in element [0]</returns>
-		private static Pair<ColumnDataClassifier.Flags[], IClassifier<string, string>> SetProperties(Properties props)
+		private static Pair<ColumnDataClassifier.Flags[], IClassifier<string, string>> SetProperties(IConfiguration props)
 		{
 			ColumnDataClassifier.Flags[] myFlags;
 			IClassifier<string, string> classifier = null;
 			bool myUsesRealValues = false;
-			Pattern prefix;
-			try
-			{
-				prefix = Pattern.Compile("([0-9]+)\\.(.*)");
-			}
-			catch (PatternSyntaxException pse)
-			{
-				throw new Exception(pse);
-			}
+			Regex prefix;
+			prefix = new Regex("([0-9]+)\\.(.*)", RegexOptions.Compiled);
 			// if we are loading a classifier then we have to load it before we do anything
 			// else and have its Properties be the defaults that can then be overridden by
 			// other command-line arguments
-			string loadPath = props.GetProperty("loadClassifier");
+			string loadPath = props["loadClassifier"];
 			if (loadPath != null)
 			{
 				Pair<ColumnDataClassifier.Flags[], IClassifier<string, string>> pair = LoadClassifier(loadPath);
@@ -2055,21 +2046,22 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 			// initialize zero column flags used for global flags; it can't be null
 			logger.Info("Setting ColumnDataClassifier properties");
-			foreach (string key in props.StringPropertyNames())
+			foreach (var kvp in props.AsEnumerable())
 			{
-				string val = props.GetProperty(key);
-				logger.Info(key + " = " + val);
+				string val = kvp.Value;
+				string key = kvp.Key;
+				logger.Info(kvp.Key + " = " + val);
 				int col = 0;
 				// the default (first after class)
-				Matcher matcher = prefix.Matcher(key);
-				if (matcher.Matches())
+				Match matcher = prefix.Match(key);
+				if (matcher.Success)
 				{
-					col = System.Convert.ToInt32(matcher.Group(1));
-					key = matcher.Group(2);
+					col = System.Convert.ToInt32(matcher.Groups[1].Value);
+					key = matcher.Groups[2].Value;
 				}
 				if (col >= myFlags.Length)
 				{
-					myFlags = Arrays.CopyOf(myFlags, col + 1);
+					Array.Resize(ref myFlags, col + 1);
 				}
 				if (myFlags[col] == null)
 				{
@@ -2077,7 +2069,7 @@ namespace Edu.Stanford.Nlp.Classify
 				}
 				if (key.Equals("useString"))
 				{
-					myFlags[col].useString = bool.ParseBoolean(val);
+					myFlags[col].useString = bool.Parse(val);
 				}
 				else
 				{
@@ -2085,7 +2077,7 @@ namespace Edu.Stanford.Nlp.Classify
 					{
 						if (val != null)
 						{
-							string[] binnedLengthStrs = val.Split("[, ]+");
+							string[] binnedLengthStrs = Regex.Split(val, "[, ]+");
 							myFlags[col].binnedLengths = new int[binnedLengthStrs.Length];
 							for (int i = 0; i < myFlags[col].binnedLengths.Length; i++)
 							{
@@ -2097,7 +2089,7 @@ namespace Edu.Stanford.Nlp.Classify
 					{
 						if (key.Equals("binnedLengthsStatistics"))
 						{
-							if (bool.ParseBoolean(val))
+							if (bool.Parse(val))
 							{
 								myFlags[col].binnedLengthsCounter = new TwoDimensionalCounter<string, string>();
 							}
@@ -2106,13 +2098,13 @@ namespace Edu.Stanford.Nlp.Classify
 						{
 							if (key.Equals("splitWordCount"))
 							{
-								myFlags[col].splitWordCount = bool.ParseBoolean(val);
+								myFlags[col].splitWordCount = bool.Parse(val);
 							}
 							else
 							{
 								if (key.Equals("logSplitWordCount"))
 								{
-									myFlags[col].logSplitWordCount = bool.ParseBoolean(val);
+									myFlags[col].logSplitWordCount = bool.Parse(val);
 								}
 								else
 								{
@@ -2120,7 +2112,7 @@ namespace Edu.Stanford.Nlp.Classify
 									{
 										if (val != null)
 										{
-											string[] binnedSplitWordCountStrs = val.Split("[, ]+");
+											string[] binnedSplitWordCountStrs = Regex.Split(val, "[, ]+");
 											myFlags[col].binnedSplitWordCounts = new int[binnedSplitWordCountStrs.Length];
 											for (int i = 0; i < myFlags[col].binnedSplitWordCounts.Length; i++)
 											{
@@ -2140,7 +2132,7 @@ namespace Edu.Stanford.Nlp.Classify
 											{
 												if (val != null)
 												{
-													string[] binnedCountStrs = val.Split("[, ]+");
+													string[] binnedCountStrs = Regex.Split(val, "[, ]+");
 													myFlags[col].countCharsBins = new int[binnedCountStrs.Length];
 													for (int i = 0; i < binnedCountStrs.Length; i++)
 													{
@@ -2154,11 +2146,11 @@ namespace Edu.Stanford.Nlp.Classify
 												{
 													if (val != null)
 													{
-														string[] binnedValuesStrs = val.Split("[, ]+");
+														string[] binnedValuesStrs = Regex.Split(val, "[, ]+");
 														myFlags[col].binnedValues = new double[binnedValuesStrs.Length];
 														for (int i = 0; i < myFlags[col].binnedValues.Length; i++)
 														{
-															myFlags[col].binnedValues[i] = double.ParseDouble(binnedValuesStrs[i]);
+															myFlags[col].binnedValues[i] = double.Parse(binnedValuesStrs[i]);
 														}
 													}
 												}
@@ -2166,13 +2158,13 @@ namespace Edu.Stanford.Nlp.Classify
 												{
 													if (key.Equals("binnedValuesNaN"))
 													{
-														myFlags[col].binnedValuesNaN = double.ParseDouble(val);
+														myFlags[col].binnedValuesNaN = double.Parse(val);
 													}
 													else
 													{
 														if (key.Equals("binnedValuesStatistics"))
 														{
-															if (bool.ParseBoolean(val))
+															if (bool.Parse(val))
 															{
 																myFlags[col].binnedValuesCounter = new TwoDimensionalCounter<string, string>();
 															}
@@ -2181,19 +2173,19 @@ namespace Edu.Stanford.Nlp.Classify
 														{
 															if (key.Equals("useNGrams"))
 															{
-																myFlags[col].useNGrams = bool.ParseBoolean(val);
+																myFlags[col].useNGrams = bool.Parse(val);
 															}
 															else
 															{
 																if (key.Equals("usePrefixSuffixNGrams"))
 																{
-																	myFlags[col].usePrefixSuffixNGrams = bool.ParseBoolean(val);
+																	myFlags[col].usePrefixSuffixNGrams = bool.Parse(val);
 																}
 																else
 																{
 																	if (key.Equals("useSplitNGrams"))
 																	{
-																		myFlags[col].useSplitNGrams = bool.ParseBoolean(val);
+																		myFlags[col].useSplitNGrams = bool.Parse(val);
 																	}
 																	else
 																	{
@@ -2211,37 +2203,37 @@ namespace Edu.Stanford.Nlp.Classify
 																			{
 																				if (key.Equals("useSplitPrefixSuffixNGrams"))
 																				{
-																					myFlags[col].useSplitPrefixSuffixNGrams = bool.ParseBoolean(val);
+																					myFlags[col].useSplitPrefixSuffixNGrams = bool.Parse(val);
 																				}
 																				else
 																				{
 																					if (key.Equals("lowercaseNGrams"))
 																					{
-																						myFlags[col].lowercaseNGrams = bool.ParseBoolean(val);
+																						myFlags[col].lowercaseNGrams = bool.Parse(val);
 																					}
 																					else
 																					{
 																						if (key.Equals("lowercase"))
 																						{
-																							myFlags[col].lowercase = bool.ParseBoolean(val);
+																							myFlags[col].lowercase = bool.Parse(val);
 																						}
 																						else
 																						{
 																							if (key.Equals("useLowercaseSplitWords"))
 																							{
-																								myFlags[col].useLowercaseSplitWords = bool.ParseBoolean(val);
+																								myFlags[col].useLowercaseSplitWords = bool.Parse(val);
 																							}
 																							else
 																							{
 																								if (key.Equals("useSum"))
 																								{
-																									myFlags[col].useSum = bool.ParseBoolean(val);
+																									myFlags[col].useSum = bool.Parse(val);
 																								}
 																								else
 																								{
 																									if (key.Equals("tolerance"))
 																									{
-																										myFlags[col].tolerance = double.ParseDouble(val);
+																										myFlags[col].tolerance = double.Parse(val);
 																									}
 																									else
 																									{
@@ -2265,19 +2257,19 @@ namespace Edu.Stanford.Nlp.Classify
 																												{
 																													if (key.Equals("exitAfterTrainingFeaturization"))
 																													{
-																														myFlags[col].exitAfterTrainingFeaturization = bool.ParseBoolean(val);
+																														myFlags[col].exitAfterTrainingFeaturization = bool.Parse(val);
 																													}
 																													else
 																													{
 																														if (key.Equals("intern") || key.Equals("intern2"))
 																														{
-																															myFlags[col].intern = bool.ParseBoolean(val);
+																															myFlags[col].intern = bool.Parse(val);
 																														}
 																														else
 																														{
 																															if (key.Equals("cacheNGrams"))
 																															{
-																																myFlags[col].cacheNGrams = bool.ParseBoolean(val);
+																																myFlags[col].cacheNGrams = bool.Parse(val);
 																															}
 																															else
 																															{
@@ -2295,25 +2287,25 @@ namespace Edu.Stanford.Nlp.Classify
 																																	{
 																																		if (key.Equals("useNB"))
 																																		{
-																																			myFlags[col].useNB = bool.ParseBoolean(val);
+																																			myFlags[col].useNB = bool.Parse(val);
 																																		}
 																																		else
 																																		{
 																																			if (key.Equals("useBinary"))
 																																			{
-																																				myFlags[col].useBinary = bool.ParseBoolean(val);
+																																				myFlags[col].useBinary = bool.Parse(val);
 																																			}
 																																			else
 																																			{
 																																				if (key.Equals("l1reg"))
 																																				{
-																																					myFlags[col].l1reg = double.ParseDouble(val);
+																																					myFlags[col].l1reg = double.Parse(val);
 																																				}
 																																				else
 																																				{
 																																					if (key.Equals("useAdaptL1"))
 																																					{
-																																						myFlags[col].useAdaptL1 = bool.ParseBoolean(val);
+																																						myFlags[col].useAdaptL1 = bool.Parse(val);
 																																					}
 																																					else
 																																					{
@@ -2325,13 +2317,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																						{
 																																							if (key.Equals("l1regmin"))
 																																							{
-																																								myFlags[col].l1regmin = double.ParseDouble(val);
+																																								myFlags[col].l1regmin = double.Parse(val);
 																																							}
 																																							else
 																																							{
 																																								if (key.Equals("l1regmax"))
 																																								{
-																																									myFlags[col].l1regmax = double.ParseDouble(val);
+																																									myFlags[col].l1regmax = double.Parse(val);
 																																								}
 																																								else
 																																								{
@@ -2343,13 +2335,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																									{
 																																										if (key.Equals("featureWeightThreshold"))
 																																										{
-																																											myFlags[col].featureWeightThreshold = double.ParseDouble(val);
+																																											myFlags[col].featureWeightThreshold = double.Parse(val);
 																																										}
 																																										else
 																																										{
 																																											if (key.Equals("useClassFeature"))
 																																											{
-																																												myFlags[col].useClassFeature = bool.ParseBoolean(val);
+																																												myFlags[col].useClassFeature = bool.Parse(val);
 																																											}
 																																											else
 																																											{
@@ -2361,25 +2353,25 @@ namespace Edu.Stanford.Nlp.Classify
 																																												{
 																																													if (key.Equals("prior"))
 																																													{
-																																														if (Sharpen.Runtime.EqualsIgnoreCase(val, "no"))
+																																														if (string.Equals(val, "no", StringComparison.InvariantCultureIgnoreCase))
 																																														{
 																																															myFlags[col].prior = (int)(LogPrior.LogPriorType.Null);
 																																														}
 																																														else
 																																														{
-																																															if (Sharpen.Runtime.EqualsIgnoreCase(val, "huber"))
+																																															if (string.Equals(val, "huber", StringComparison.InvariantCultureIgnoreCase))
 																																															{
 																																																myFlags[col].prior = (int)(LogPrior.LogPriorType.Huber);
 																																															}
 																																															else
 																																															{
-																																																if (Sharpen.Runtime.EqualsIgnoreCase(val, "quadratic"))
+																																																if (string.Equals(val, "quadratic", StringComparison.InvariantCultureIgnoreCase))
 																																																{
 																																																	myFlags[col].prior = (int)(LogPrior.LogPriorType.Quadratic);
 																																																}
 																																																else
 																																																{
-																																																	if (Sharpen.Runtime.EqualsIgnoreCase(val, "quartic"))
+																																																	if (string.Equals(val, "quartic", StringComparison.InvariantCultureIgnoreCase))
 																																																	{
 																																																		myFlags[col].prior = (int)(LogPrior.LogPriorType.Quartic);
 																																																	}
@@ -2389,7 +2381,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																		{
 																																																			myFlags[col].prior = System.Convert.ToInt32(val);
 																																																		}
-																																																		catch (NumberFormatException)
+																																																		catch (Exception)
 																																																		{
 																																																			logger.Info("Unknown prior " + val + "; using none.");
 																																																		}
@@ -2402,13 +2394,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																													{
 																																														if (key.Equals("sigma"))
 																																														{
-																																															myFlags[col].sigma = double.ParseDouble(val);
+																																															myFlags[col].sigma = double.Parse(val);
 																																														}
 																																														else
 																																														{
 																																															if (key.Equals("epsilon"))
 																																															{
-																																																myFlags[col].epsilon = double.ParseDouble(val);
+																																																myFlags[col].epsilon = double.Parse(val);
 																																															}
 																																															else
 																																															{
@@ -2429,7 +2421,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																			myFlags[col].partialNGramRegexp = val;
 																																																			try
 																																																			{
-																																																				myFlags[col].partialNGramPattern = Pattern.Compile(myFlags[col].partialNGramRegexp);
+																																																				myFlags[col].partialNGramPattern = new Regex(myFlags[col].partialNGramRegexp, RegexOptions.Compiled);
 																																																			}
 																																																			catch (PatternSyntaxException)
 																																																			{
@@ -2443,9 +2435,9 @@ namespace Edu.Stanford.Nlp.Classify
 																																																			{
 																																																				try
 																																																				{
-																																																					myFlags[col].splitWordsPattern = Pattern.Compile(val);
+																																																					myFlags[col].splitWordsPattern = new Regex(val, RegexOptions.Compiled);
 																																																				}
-																																																				catch (PatternSyntaxException)
+																																																				catch (Exception)
 																																																				{
 																																																					logger.Info("Ill-formed splitWordsRegexp: " + val);
 																																																				}
@@ -2456,9 +2448,9 @@ namespace Edu.Stanford.Nlp.Classify
 																																																				{
 																																																					try
 																																																					{
-																																																						myFlags[col].splitWordsTokenizerPattern = Pattern.Compile(val);
+																																																						myFlags[col].splitWordsTokenizerPattern = new Regex(val, RegexOptions.Compiled);
 																																																					}
-																																																					catch (PatternSyntaxException)
+																																																					catch (Exception)
 																																																					{
 																																																						logger.Info("Ill-formed splitWordsTokenizerRegexp: " + val);
 																																																					}
@@ -2468,7 +2460,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																					if (key.Equals("splitWordsIgnoreRegexp"))
 																																																					{
 																																																						string trimVal = val.Trim();
-																																																						if (trimVal.IsEmpty())
+																																																						if (string.IsNullOrEmpty(trimVal))
 																																																						{
 																																																							myFlags[col].splitWordsIgnorePattern = null;
 																																																						}
@@ -2476,9 +2468,9 @@ namespace Edu.Stanford.Nlp.Classify
 																																																						{
 																																																							try
 																																																							{
-																																																								myFlags[col].splitWordsIgnorePattern = Pattern.Compile(trimVal);
+																																																								myFlags[col].splitWordsIgnorePattern = new Regex(trimVal, RegexOptions.Compiled);
 																																																							}
-																																																							catch (PatternSyntaxException)
+																																																							catch (Exception)
 																																																							{
 																																																								logger.Info("Ill-formed splitWordsIgnoreRegexp: " + trimVal);
 																																																							}
@@ -2488,37 +2480,37 @@ namespace Edu.Stanford.Nlp.Classify
 																																																					{
 																																																						if (key.Equals("useSplitWords"))
 																																																						{
-																																																							myFlags[col].useSplitWords = bool.ParseBoolean(val);
+																																																							myFlags[col].useSplitWords = bool.Parse(val);
 																																																						}
 																																																						else
 																																																						{
 																																																							if (key.Equals("useSplitWordPairs"))
 																																																							{
-																																																								myFlags[col].useSplitWordPairs = bool.ParseBoolean(val);
+																																																								myFlags[col].useSplitWordPairs = bool.Parse(val);
 																																																							}
 																																																							else
 																																																							{
 																																																								if (key.Equals("useLowercaseSplitWordPairs"))
 																																																								{
-																																																									myFlags[col].useLowercaseSplitWordPairs = bool.ParseBoolean(val);
+																																																									myFlags[col].useLowercaseSplitWordPairs = bool.Parse(val);
 																																																								}
 																																																								else
 																																																								{
 																																																									if (key.Equals("useAllSplitWordPairs"))
 																																																									{
-																																																										myFlags[col].useAllSplitWordPairs = bool.ParseBoolean(val);
+																																																										myFlags[col].useAllSplitWordPairs = bool.Parse(val);
 																																																									}
 																																																									else
 																																																									{
 																																																										if (key.Equals("useAllSplitWordTriples"))
 																																																										{
-																																																											myFlags[col].useAllSplitWordTriples = bool.ParseBoolean(val);
+																																																											myFlags[col].useAllSplitWordTriples = bool.Parse(val);
 																																																										}
 																																																										else
 																																																										{
 																																																											if (key.Equals("useSplitWordNGrams"))
 																																																											{
-																																																												myFlags[col].useSplitWordNGrams = bool.ParseBoolean(val);
+																																																												myFlags[col].useSplitWordNGrams = bool.Parse(val);
 																																																											}
 																																																											else
 																																																											{
@@ -2544,9 +2536,9 @@ namespace Edu.Stanford.Nlp.Classify
 																																																															myFlags[col].wordNGramBoundaryRegexp = val;
 																																																															try
 																																																															{
-																																																																myFlags[col].wordNGramBoundaryPattern = Pattern.Compile(myFlags[col].wordNGramBoundaryRegexp);
+																																																																myFlags[col].wordNGramBoundaryPattern = new Regex(myFlags[col].wordNGramBoundaryRegexp, RegexOptions.Compiled);
 																																																															}
-																																																															catch (PatternSyntaxException)
+																																																															catch (Exception)
 																																																															{
 																																																																logger.Info("Ill-formed wordNGramBoundary regexp: " + myFlags[col].wordNGramBoundaryRegexp);
 																																																																myFlags[col].wordNGramBoundaryRegexp = null;
@@ -2556,13 +2548,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																																														{
 																																																															if (key.Equals("useSplitFirstLastWords"))
 																																																															{
-																																																																myFlags[col].useSplitFirstLastWords = bool.ParseBoolean(val);
+																																																																myFlags[col].useSplitFirstLastWords = bool.Parse(val);
 																																																															}
 																																																															else
 																																																															{
 																																																																if (key.Equals("useLowercaseSplitFirstLastWords"))
 																																																																{
-																																																																	myFlags[col].useLowercaseSplitFirstLastWords = bool.ParseBoolean(val);
+																																																																	myFlags[col].useLowercaseSplitFirstLastWords = bool.Parse(val);
 																																																																}
 																																																																else
 																																																																{
@@ -2592,7 +2584,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																				{
 																																																																					if (key.Equals("displayAllAnswers"))
 																																																																					{
-																																																																						ColumnDataClassifier.Flags.displayAllAnswers = bool.ParseBoolean(val);
+																																																																						ColumnDataClassifier.Flags.displayAllAnswers = bool.Parse(val);
 																																																																					}
 																																																																					else
 																																																																					{
@@ -2604,13 +2596,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																						{
 																																																																							if (key.Equals("trainFromSVMLight"))
 																																																																							{
-																																																																								ColumnDataClassifier.Flags.trainFromSVMLight = bool.ParseBoolean(val);
+																																																																								ColumnDataClassifier.Flags.trainFromSVMLight = bool.Parse(val);
 																																																																							}
 																																																																							else
 																																																																							{
 																																																																								if (key.Equals("testFromSVMLight"))
 																																																																								{
-																																																																									ColumnDataClassifier.Flags.testFromSVMLight = bool.ParseBoolean(val);
+																																																																									ColumnDataClassifier.Flags.testFromSVMLight = bool.Parse(val);
 																																																																								}
 																																																																								else
 																																																																								{
@@ -2661,7 +2653,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																// logger.info("Gold answer column is " + (myFlags[col].goldAnswerColumn));  // it's a nuisance to print this when used programmatically
 																																																																																if (key.Equals("useQN"))
 																																																																																{
-																																																																																	myFlags[col].useQN = bool.ParseBoolean(val);
+																																																																																	myFlags[col].useQN = bool.Parse(val);
 																																																																																}
 																																																																																else
 																																																																																{
@@ -2673,65 +2665,65 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																	{
 																																																																																		if (key.Equals("featureFormat"))
 																																																																																		{
-																																																																																			myFlags[col].featureFormat = bool.ParseBoolean(val);
+																																																																																			myFlags[col].featureFormat = bool.Parse(val);
 																																																																																		}
 																																																																																		else
 																																																																																		{
 																																																																																			if (key.Equals("significantColumnId"))
 																																																																																			{
-																																																																																				myFlags[col].significantColumnId = bool.ParseBoolean(val);
+																																																																																				myFlags[col].significantColumnId = bool.Parse(val);
 																																																																																			}
 																																																																																			else
 																																																																																			{
 																																																																																				if (key.Equals("justify"))
 																																																																																				{
-																																																																																					myFlags[col].justify = bool.ParseBoolean(val);
+																																																																																					myFlags[col].justify = bool.Parse(val);
 																																																																																				}
 																																																																																				else
 																																																																																				{
 																																																																																					if (key.Equals("verboseOptimization"))
 																																																																																					{
-																																																																																						myFlags[col].verboseOptimization = bool.ParseBoolean(val);
+																																																																																						myFlags[col].verboseOptimization = bool.Parse(val);
 																																																																																					}
 																																																																																					else
 																																																																																					{
 																																																																																						if (key.Equals("realValued"))
 																																																																																						{
-																																																																																							myFlags[col].isRealValued = bool.ParseBoolean(val);
+																																																																																							myFlags[col].isRealValued = bool.Parse(val);
 																																																																																							myUsesRealValues = myUsesRealValues || myFlags[col].isRealValued;
 																																																																																						}
 																																																																																						else
 																																																																																						{
 																																																																																							if (key.Equals("logTransform"))
 																																																																																							{
-																																																																																								myFlags[col].logTransform = bool.ParseBoolean(val);
+																																																																																								myFlags[col].logTransform = bool.Parse(val);
 																																																																																								myUsesRealValues = myUsesRealValues || myFlags[col].logTransform;
 																																																																																							}
 																																																																																							else
 																																																																																							{
 																																																																																								if (key.Equals("logitTransform"))
 																																																																																								{
-																																																																																									myFlags[col].logitTransform = bool.ParseBoolean(val);
+																																																																																									myFlags[col].logitTransform = bool.Parse(val);
 																																																																																									myUsesRealValues = myUsesRealValues || myFlags[col].logitTransform;
 																																																																																								}
 																																																																																								else
 																																																																																								{
 																																																																																									if (key.Equals("sqrtTransform"))
 																																																																																									{
-																																																																																										myFlags[col].sqrtTransform = bool.ParseBoolean(val);
+																																																																																										myFlags[col].sqrtTransform = bool.Parse(val);
 																																																																																										myUsesRealValues = myUsesRealValues || myFlags[col].sqrtTransform;
 																																																																																									}
 																																																																																									else
 																																																																																									{
 																																																																																										if (key.Equals("filename"))
 																																																																																										{
-																																																																																											myFlags[col].filename = bool.ParseBoolean(val);
+																																																																																											myFlags[col].filename = bool.Parse(val);
 																																																																																										}
 																																																																																										else
 																																																																																										{
 																																																																																											if (key.Equals("biased"))
 																																																																																											{
-																																																																																												myFlags[col].biased = bool.ParseBoolean(val);
+																																																																																												myFlags[col].biased = bool.Parse(val);
 																																																																																											}
 																																																																																											else
 																																																																																											{
@@ -2740,11 +2732,11 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																													// logger.info("Constraints is " + constraints);
 																																																																																													if (val != null && val.Trim().Length > 0)
 																																																																																													{
-																																																																																														string[] bits = val.Split("[, ]+");
+																																																																																														string[] bits = Regex.Split(val, "[, ]+");
 																																																																																														myFlags[col].biasedHyperplane = new ClassicCounter<string>();
 																																																																																														for (int i = 0; i < bits.Length; i += 2)
 																																																																																														{
-																																																																																															myFlags[col].biasedHyperplane.SetCount(bits[i], double.ParseDouble(bits[i + 1]));
+																																																																																															myFlags[col].biasedHyperplane.SetCount(bits[i], double.Parse(bits[i + 1]));
 																																																																																														}
 																																																																																													}
 																																																																																												}
@@ -2759,13 +2751,13 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																													{
 																																																																																														if (key.Equals("printCrossValidationDecisions"))
 																																																																																														{
-																																																																																															myFlags[col].printCrossValidationDecisions = bool.ParseBoolean(val);
+																																																																																															myFlags[col].printCrossValidationDecisions = bool.Parse(val);
 																																																																																														}
 																																																																																														else
 																																																																																														{
 																																																																																															if (key.Equals("shuffleTrainingData"))
 																																																																																															{
-																																																																																																myFlags[col].shuffleTrainingData = bool.ParseBoolean(val);
+																																																																																																myFlags[col].shuffleTrainingData = bool.Parse(val);
 																																																																																															}
 																																																																																															else
 																																																																																															{
@@ -2777,27 +2769,27 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																																{
 																																																																																																	if (key.Equals("csvInput"))
 																																																																																																	{
-																																																																																																		myFlags[col].csvInput = bool.ParseBoolean(val);
+																																																																																																		Flags.csvInput = bool.Parse(val);
 																																																																																																	}
 																																																																																																	else
 																																																																																																	{
 																																																																																																		if (key.Equals("inputFormat"))
 																																																																																																		{
-																																																																																																			if (Sharpen.Runtime.EqualsIgnoreCase(val, "header"))
+																																																																																																			if (string.Equals(val, "header", StringComparison.OrdinalIgnoreCase))
 																																																																																																			{
-																																																																																																				myFlags[col].inputFormat = ColumnDataClassifier.InputFormat.Header;
+																																																																																																				Flags.inputFormat = ColumnDataClassifier.InputFormat.Header;
 																																																																																																			}
 																																																																																																			else
 																																																																																																			{
-																																																																																																				if (Sharpen.Runtime.EqualsIgnoreCase(val, "comments"))
+																																																																																																				if (string.Equals(val, "comments", StringComparison.OrdinalIgnoreCase))
 																																																																																																				{
-																																																																																																					myFlags[col].inputFormat = ColumnDataClassifier.InputFormat.Comments;
+																																																																																																					Flags.inputFormat = ColumnDataClassifier.InputFormat.Comments;
 																																																																																																				}
 																																																																																																				else
 																																																																																																				{
-																																																																																																					if (Sharpen.Runtime.EqualsIgnoreCase(val, "plain"))
+																																																																																																					if (string.Equals(val, "plain", StringComparison.OrdinalIgnoreCase))
 																																																																																																					{
-																																																																																																						myFlags[col].inputFormat = ColumnDataClassifier.InputFormat.Plain;
+																																																																																																						Flags.inputFormat = ColumnDataClassifier.InputFormat.Plain;
 																																																																																																					}
 																																																																																																					else
 																																																																																																					{
@@ -2811,7 +2803,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																																			if (key.Equals("splitWordsWithPTBTokenizer"))
 																																																																																																			{
 																																																																																																				// System.out.println("splitting with ptb tokenizer");
-																																																																																																				myFlags[col].splitWordsWithPTBTokenizer = bool.ParseBoolean(val);
+																																																																																																				myFlags[col].splitWordsWithPTBTokenizer = bool.Parse(val);
 																																																																																																			}
 																																																																																																			else
 																																																																																																			{
@@ -2824,17 +2816,17 @@ namespace Edu.Stanford.Nlp.Classify
 																																																																																																				{
 																																																																																																					if (key.Equals("showTokenization"))
 																																																																																																					{
-																																																																																																						myFlags[col].showTokenization = bool.ParseBoolean(val);
+																																																																																																						myFlags[col].showTokenization = bool.Parse(val);
 																																																																																																					}
 																																																																																																					else
 																																																																																																					{
 																																																																																																						if (key.Equals("csvOutput"))
 																																																																																																						{
-																																																																																																							myFlags[col].csvOutput = val;
+																																																																																																							Flags.csvOutput = val;
 																																																																																																						}
 																																																																																																						else
 																																																																																																						{
-																																																																																																							if (!key.IsEmpty() && !key.Equals("prop"))
+																																																																																																							if (!string.IsNullOrEmpty(key) && !key.Equals("prop"))
 																																																																																																							{
 																																																																																																								logger.Info("Unknown property: |" + key + '|');
 																																																																																																							}
@@ -3089,7 +3081,7 @@ namespace Edu.Stanford.Nlp.Classify
 				}
 				else
 				{
-					seed = Runtime.NanoTime();
+					seed = Environment.TickCount * 1000 * 1000;
 				}
 				train.ShuffleWithSideInformation(seed, lineInfos);
 			}
@@ -3304,7 +3296,7 @@ namespace Edu.Stanford.Nlp.Classify
 		}
 
 		[System.Serializable]
-		internal class Flags
+		public class Flags
 		{
 			private const long serialVersionUID = -7076671761070232566L;
 
@@ -3328,7 +3320,7 @@ namespace Edu.Stanford.Nlp.Classify
 
 			internal string partialNGramRegexp = null;
 
-			internal Pattern partialNGramPattern = null;
+			internal Regex partialNGramPattern = null;
 
 			internal bool useSum = false;
 
@@ -3344,11 +3336,11 @@ namespace Edu.Stanford.Nlp.Classify
 
 			internal bool intern = false;
 
-			internal Pattern splitWordsPattern = null;
+			internal Regex splitWordsPattern = null;
 
-			internal Pattern splitWordsTokenizerPattern = null;
+			internal Regex splitWordsTokenizerPattern = null;
 
-			internal Pattern splitWordsIgnorePattern = Pattern.Compile(DefaultIgnoreRegexp);
+			internal Regex splitWordsIgnorePattern = new Regex(DefaultIgnoreRegexp, RegexOptions.Compiled);
 
 			internal bool useSplitWords = false;
 
@@ -3444,7 +3436,7 @@ namespace Edu.Stanford.Nlp.Classify
 
 			internal string wordNGramBoundaryRegexp;
 
-			internal Pattern wordNGramBoundaryPattern;
+			internal Regex wordNGramBoundaryPattern;
 
 			internal bool useAdaptL1 = false;
 

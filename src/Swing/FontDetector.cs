@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Awt;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Swing
 {

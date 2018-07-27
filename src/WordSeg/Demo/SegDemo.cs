@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using Edu.Stanford.Nlp.IE.Crf;
 using Edu.Stanford.Nlp.Ling;
-using Java.Util;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Wordseg.Demo
 {

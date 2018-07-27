@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE
 {
 	/// <author>Mengqiu Wang</author>
-	public class EmpiricalNERPriorBIO<In> : EntityCachingAbstractSequencePriorBIO<IN>
+	public class EmpiricalNERPriorBIO<In> : EntityCachingAbstractSequencePriorBIO<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -30,7 +30,7 @@ namespace Edu.Stanford.Nlp.IE
 
 		public static bool Debug = false;
 
-		public EmpiricalNERPriorBIO(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<IN> doc, Pair<double[][], double[][]> matrices, SeqClassifierFlags flags)
+		public EmpiricalNERPriorBIO(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<In> doc, Pair<double[][], double[][]> matrices, SeqClassifierFlags flags)
 			: base(backgroundSymbol, classIndex, tagIndex, doc)
 		{
 			entityMatrix = matrices.First();

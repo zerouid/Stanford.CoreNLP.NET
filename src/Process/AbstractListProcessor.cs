@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Process
 {
@@ -31,10 +31,10 @@ namespace Edu.Stanford.Nlp.Process
 		/// </remarks>
 		/// <param name="lists">a List of objects of type List</param>
 		/// <returns>a List of objects of type List, each of which has been processed.</returns>
-		public virtual IList<IList<OUT>> ProcessLists(IList<IList<IN>> lists)
+		public virtual IList<IList<OUT>> ProcessLists(IList<IList<In>> lists)
 		{
 			IList<IList<OUT>> result = new List<IList<OUT>>(lists.Count);
-			foreach (IList<IN> list in lists)
+			foreach (IList<In> list in lists)
 			{
 				IList<OUT> outList = Process(list);
 				result.Add(outList);
@@ -42,6 +42,6 @@ namespace Edu.Stanford.Nlp.Process
 			return result;
 		}
 
-		public abstract IList<OUT> Process(IList<IN> arg1);
+		public abstract IList<OUT> Process(IList<In> arg1);
 	}
 }

@@ -1,6 +1,6 @@
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Trees.International.Pennchinese
 {

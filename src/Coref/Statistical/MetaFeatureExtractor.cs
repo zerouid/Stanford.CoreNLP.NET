@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Coref.Data;
 using Edu.Stanford.Nlp.Stats;
-using Java.Util;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Coref.Statistical
 {

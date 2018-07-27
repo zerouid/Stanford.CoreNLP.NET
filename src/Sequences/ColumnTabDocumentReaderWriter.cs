@@ -6,11 +6,11 @@ using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Process;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -71,7 +71,7 @@ namespace Edu.Stanford.Nlp.Sequences
 	/// <author>Angel Chang</author>
 	/// <author>Sonal Gupta (made the class generic)</author>
 	[System.Serializable]
-	public class ColumnTabDocumentReaderWriter<In> : IDocumentReaderAndWriter<IN>
+	public class ColumnTabDocumentReaderWriter<In> : IDocumentReaderAndWriter<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -89,7 +89,7 @@ namespace Edu.Stanford.Nlp.Sequences
 
 		private string tokensAnnotationClassName;
 
-		private ICoreTokenFactory<IN> tokenFactory;
+		private ICoreTokenFactory<In> tokenFactory;
 
 		// = null;
 		/// <summary>
@@ -110,7 +110,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			{
 				try
 				{
-					this.tokenFactory = (ICoreTokenFactory<IN>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(flags.tokenFactory));
+					this.tokenFactory = (ICoreTokenFactory<In>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(flags.tokenFactory));
 				}
 				catch (Exception e)
 				{
@@ -119,7 +119,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 			else
 			{
-				this.tokenFactory = (ICoreTokenFactory<IN>)new CoreLabelTokenFactory();
+				this.tokenFactory = (ICoreTokenFactory<In>)new CoreLabelTokenFactory();
 			}
 			Init(flags, this.tokenFactory, this.tokensAnnotationClassName);
 		}
@@ -145,7 +145,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			{
 				try
 				{
-					this.tokenFactory = (ICoreTokenFactory<IN>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(tokenFactoryClassName));
+					this.tokenFactory = (ICoreTokenFactory<In>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(tokenFactoryClassName));
 				}
 				catch (Exception e)
 				{
@@ -154,31 +154,31 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 			else
 			{
-				this.tokenFactory = (ICoreTokenFactory<IN>)new CoreLabelTokenFactory();
+				this.tokenFactory = (ICoreTokenFactory<In>)new CoreLabelTokenFactory();
 			}
 			Init(mapString, this.tokenFactory, this.tokensAnnotationClassName);
 		}
 
 		public virtual void Init(string map)
 		{
-			Init(map, (ICoreTokenFactory<IN>)new CoreLabelTokenFactory(), "edu.stanford.nlp.ling.CoreAnnotations$TokensAnnotation");
+			Init(map, (ICoreTokenFactory<In>)new CoreLabelTokenFactory(), "edu.stanford.nlp.ling.CoreAnnotations$TokensAnnotation");
 		}
 
-		public virtual void Init(SeqClassifierFlags flags, ICoreTokenFactory<IN> tokenFactory, string tokensAnnotationClassName)
+		public virtual void Init(SeqClassifierFlags flags, ICoreTokenFactory<In> tokenFactory, string tokensAnnotationClassName)
 		{
 			this.map = StringUtils.MapStringToArray(flags.map);
 			this.tokenFactory = tokenFactory;
 			this.tokensAnnotationClassName = tokensAnnotationClassName;
 		}
 
-		public virtual void Init(string map, ICoreTokenFactory<IN> tokenFactory, string tokensAnnotationClassName)
+		public virtual void Init(string map, ICoreTokenFactory<In> tokenFactory, string tokensAnnotationClassName)
 		{
 			this.map = StringUtils.MapStringToArray(map);
 			this.tokenFactory = tokenFactory;
 			this.tokensAnnotationClassName = tokensAnnotationClassName;
 		}
 
-		public virtual IEnumerator<IList<IN>> GetIterator(Reader r)
+		public virtual IEnumerator<IList<In>> GetIterator(Reader r)
 		{
 			BufferedReader br;
 			if (r is BufferedReader)
@@ -257,7 +257,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private class ColumnDocBufferedGetNextTokens<In> : ColumnTabDocumentReaderWriter.IGetNextFunction<IList<IN>>
+		private class ColumnDocBufferedGetNextTokens<In> : ColumnTabDocumentReaderWriter.IGetNextFunction<IList<In>>
 			where In : ICoreMap
 		{
 			internal ColumnTabDocumentReaderWriter.ColumnDocBufferedGetNext docGetNext;
@@ -268,13 +268,13 @@ namespace Edu.Stanford.Nlp.Sequences
 				this.docGetNext = new ColumnTabDocumentReaderWriter.ColumnDocBufferedGetNext(this, br, true);
 			}
 
-			public virtual IList<IN> GetNext()
+			public virtual IList<In> GetNext()
 			{
 				try
 				{
 					ICoreMap m = this.docGetNext.GetNext();
 					Type tokensAnnotationClass = Sharpen.Runtime.GetType(this._enclosing.tokensAnnotationClassName);
-					return (IList<IN>)((m != null) ? m.Get(tokensAnnotationClass) : null);
+					return (IList<In>)((m != null) ? m.Get(tokensAnnotationClass) : null);
 				}
 				catch (TypeLoadException e)
 				{
@@ -286,7 +286,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			private readonly ColumnTabDocumentReaderWriter<In> _enclosing;
 		}
 
-		private static string Join<In>(IEnumerable<IN> l, Type textKey, string glue)
+		private static string Join<In>(IEnumerable<In> l, Type textKey, string glue)
 			where In : ICoreMap
 		{
 			StringBuilder sb = new StringBuilder();
@@ -354,7 +354,7 @@ namespace Edu.Stanford.Nlp.Sequences
 				}
 			}
 
-			private Annotation CreateDoc(string docId, IList<IN> tokens, IList<IntPair> sentenceBoundaries, bool includeText)
+			private Annotation CreateDoc(string docId, IList<In> tokens, IList<IntPair> sentenceBoundaries, bool includeText)
 			{
 				try
 				{
@@ -390,7 +390,7 @@ namespace Edu.Stanford.Nlp.Sequences
 						foreach (IntPair p in sentenceBoundaries)
 						{
 							// get the sentence text from the first and last character offsets
-							IList<IN> sentenceTokens = new List<IN>(tokens.SubList(p.GetSource(), p.GetTarget() + 1));
+							IList<In> sentenceTokens = new List<In>(tokens.SubList(p.GetSource(), p.GetTarget() + 1));
 							int begin = sentenceTokens[0].Get(typeof(CoreAnnotations.CharacterOffsetBeginAnnotation));
 							int last = sentenceTokens.Count - 1;
 							int end = sentenceTokens[last].Get(typeof(CoreAnnotations.CharacterOffsetEndAnnotation));
@@ -419,7 +419,7 @@ namespace Edu.Stanford.Nlp.Sequences
 				return null;
 			}
 
-			private void MarkBoundary(IList<IN> words, IList<IntPair> boundaries)
+			private void MarkBoundary(IList<In> words, IList<IntPair> boundaries)
 			{
 				if (words != null && !words.IsEmpty())
 				{
@@ -452,7 +452,7 @@ namespace Edu.Stanford.Nlp.Sequences
 				try
 				{
 					string line;
-					IList<IN> words = null;
+					IList<In> words = null;
 					IList<IntPair> boundaries = null;
 					if (this.keepBoundaries)
 					{
@@ -498,7 +498,7 @@ namespace Edu.Stanford.Nlp.Sequences
 								{
 									if (words == null)
 									{
-										words = new List<IN>();
+										words = new List<In>();
 										this.docId = this.newDocId;
 										this.itemCnt++;
 									}
@@ -555,7 +555,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		}
 
 		// end class ColumnDocParser
-		public virtual void PrintAnswers(IList<IN> doc, PrintWriter @out)
+		public virtual void PrintAnswers(IList<In> doc, PrintWriter @out)
 		{
 			foreach (IN wi in doc)
 			{

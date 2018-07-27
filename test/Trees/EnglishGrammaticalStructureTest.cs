@@ -23,7 +23,7 @@
 //    USA
 //    Support/Questions: parser-user@lists.stanford.edu
 //    Licensing: parser-support@lists.stanford.edu
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Trees
 {

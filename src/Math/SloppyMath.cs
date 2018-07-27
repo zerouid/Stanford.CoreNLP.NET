@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Math
 {
@@ -918,7 +918,7 @@ namespace Edu.Stanford.Nlp.Math
 			// Do this with no locals other than the arguments to make it stupid easy
 			// for the JIT compiler to inline the code.
 			int e = -16;
-			return (negative ? -1. : 1.) * (((double)mantissa) * exps[(e + 308)]) * exps[(exponent + 308)];
+			return (negative ? -1.0 : 1.0) * (((double)mantissa) * exps[(e + 308)]) * exps[(exponent + 308)];
 		}
 
 		/// <summary>Segment a double into a mantissa and exponent.</summary>
@@ -934,14 +934,14 @@ namespace Edu.Stanford.Nlp.Math
 			while (d >= 10.0)
 			{
 				exponent += 1;
-				d = d / 10.;
+				d = d / 10.0;
 			}
 			while (d < 1.0)
 			{
 				exponent -= 1;
-				d = d * 10.;
+				d = d * 10.0;
 			}
-			return Triple.MakeTriple(negative, (long)(d * 10000000000000000.), exponent);
+			return Triple.MakeTriple(negative, (long)(d * 10000000000000000.0), exponent);
 		}
 
 		/// <summary>

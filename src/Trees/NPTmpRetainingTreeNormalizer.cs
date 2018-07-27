@@ -1,10 +1,10 @@
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees
 {
@@ -353,8 +353,6 @@ namespace Edu.Stanford.Nlp.Trees
 				this.serialVersionUID = -7250433816896327901L;
 			}
 
-			private const long serialVersionUID;
-
 			public bool Test(Tree t)
 			{
 				Tree[] kids = t.Children();
@@ -377,8 +375,6 @@ namespace Edu.Stanford.Nlp.Trees
 			{
 				this.serialVersionUID = 9000955019205336311L;
 			}
-
-			private const long serialVersionUID;
 
 			public bool Test(Tree t)
 			{

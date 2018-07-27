@@ -1,17 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Net;
-using Java.Nio.Channels;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Java.Util.Zip;
-using Sharpen;
+using ICSharpCode.SharpZipLib;
+using ICSharpCode.SharpZipLib.BZip2;
+using ICSharpCode.SharpZipLib.GZip;
+using Microsoft.Extensions.Configuration;
 
 namespace Edu.Stanford.Nlp.IO
 {
@@ -23,7 +24,7 @@ namespace Edu.Stanford.Nlp.IO
 	{
 		private const int SlurpBufferSize = 16384;
 
-		public static readonly string eolChar = Runtime.LineSeparator();
+		public static readonly string eolChar = Environment.NewLine;
 
 		public const string defaultEncoding = "utf-8";
 
@@ -41,60 +42,61 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="o">Object to be written to file</param>
 		/// <param name="filename">Name of the temp file</param>
 		/// <exception cref="System.IO.IOException">If can't write file.</exception>
-		/// <returns>File containing the object</returns>
-		public static File WriteObjectToFile(object o, string filename)
+		/// <returns>FileInfo containing the object</returns>
+		public static FileInfo WriteObjectToFile(object o, string filename)
 		{
-			return WriteObjectToFile(o, new File(filename));
+			return WriteObjectToFile(o, new FileInfo(filename));
 		}
 
-		/// <summary>Write an object to a specified File.</summary>
-		/// <remarks>Write an object to a specified File.  The file is silently gzipped if the filename ends with .gz.</remarks>
+		/// <summary>Write an object to a specified FileInfo.</summary>
+		/// <remarks>Write an object to a specified FileInfo.  The file is silently gzipped if the filename ends with .gz.</remarks>
 		/// <param name="o">Object to be written to file</param>
-		/// <param name="file">The temp File</param>
-		/// <exception cref="System.IO.IOException">If File cannot be written</exception>
-		/// <returns>File containing the object</returns>
-		public static File WriteObjectToFile(object o, File file)
+		/// <param name="file">The temp FileInfo</param>
+		/// <exception cref="System.IO.IOException">If FileInfo cannot be written</exception>
+		/// <returns>FileInfo containing the object</returns>
+		public static FileInfo WriteObjectToFile(object o, FileInfo file)
 		{
 			return WriteObjectToFile(o, file, false);
 		}
 
-		/// <summary>Write an object to a specified File.</summary>
-		/// <remarks>Write an object to a specified File. The file is silently gzipped if the filename ends with .gz.</remarks>
+		/// <summary>Write an object to a specified FileInfo.</summary>
+		/// <remarks>Write an object to a specified FileInfo. The file is silently gzipped if the filename ends with .gz.</remarks>
 		/// <param name="o">Object to be written to file</param>
-		/// <param name="file">The temp File</param>
+		/// <param name="file">The temp FileInfo</param>
 		/// <param name="append">If true, append to this file instead of overwriting it</param>
-		/// <exception cref="System.IO.IOException">If File cannot be written</exception>
-		/// <returns>File containing the object</returns>
-		public static File WriteObjectToFile(object o, File file, bool append)
+		/// <exception cref="System.IO.IOException">If FileInfo cannot be written</exception>
+		/// <returns>FileInfo containing the object</returns>
+		public static FileInfo WriteObjectToFile(object o, FileInfo file, bool append)
 		{
 			// file.createNewFile(); // cdm may 2005: does nothing needed
-			OutputStream os = new FileOutputStream(file, append);
-			if (file.GetName().EndsWith(".gz"))
+			Stream os = file.Open(append ? FileMode.Append : FileMode.Open, FileAccess.Write);
+			if (file.Name.EndsWith(".gz"))
 			{
-				os = new GZIPOutputStream(os);
+				os = new GZipOutputStream(os);
 			}
-			os = new BufferedOutputStream(os);
-			ObjectOutputStream oos = new ObjectOutputStream(os);
-			oos.WriteObject(o);
-			oos.Close();
+			using(os = new BufferedStream(os))
+			{
+				os.WriteObject(o);
+			}
 			return file;
 		}
 
 		/// <summary>Write object to a file with the specified name.</summary>
 		/// <param name="o">Object to be written to file</param>
 		/// <param name="filename">Name of the temp file</param>
-		/// <returns>File containing the object, or null if an exception was caught</returns>
-		public static File WriteObjectToFileNoExceptions(object o, string filename)
+		/// <returns>FileInfo containing the object, or null if an exception was caught</returns>
+		public static FileInfo WriteObjectToFileNoExceptions(object o, string filename)
 		{
-			File file = null;
-			ObjectOutputStream oos = null;
+			FileInfo file = null;
+			Stream oos = null;
 			try
 			{
-				file = new File(filename);
+				file = new FileInfo(filename);
 				// file.createNewFile(); // cdm may 2005: does nothing needed
-				oos = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(file))));
-				oos.WriteObject(o);
-				oos.Close();
+				using(oos = new GZipOutputStream(file.OpenWrite()))
+				{
+					oos.WriteObject(o);
+				}
 			}
 			catch (Exception e)
 			{
@@ -111,11 +113,12 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="o">Object to be written to file</param>
 		/// <param name="filename">Name of the temp file</param>
 		/// <exception cref="System.IO.IOException">If file cannot be written</exception>
-		/// <returns>File containing the object</returns>
-		public static File WriteObjectToTempFile(object o, string filename)
+		/// <returns>FileInfo containing the object</returns>
+		public static FileInfo WriteObjectToTempFile(object o, string filename)
 		{
-			File file = File.CreateTempFile(filename, ".tmp");
-			file.DeleteOnExit();
+			filename = Path.GetTempFileName() + ".tmp";
+			FileInfo file = new FileInfo(filename);
+			//file.DeleteOnExit();
 			WriteObjectToFile(o, file);
 			return file;
 		}
@@ -123,8 +126,8 @@ namespace Edu.Stanford.Nlp.IO
 		/// <summary>Write object to a temp file and ignore exceptions.</summary>
 		/// <param name="o">Object to be written to file</param>
 		/// <param name="filename">Name of the temp file</param>
-		/// <returns>File containing the object</returns>
-		public static File WriteObjectToTempFileNoExceptions(object o, string filename)
+		/// <returns>FileInfo containing the object</returns>
+		public static FileInfo WriteObjectToTempFileNoExceptions(object o, string filename)
 		{
 			try
 			{
@@ -139,12 +142,12 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		private static OutputStream GetBufferedOutputStream(string path)
+		private static Stream GetBufferedOutputStream(string path)
 		{
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(path));
+			Stream os = new BufferedStream(File.OpenWrite(path));
 			if (path.EndsWith(".gz"))
 			{
-				os = new GZIPOutputStream(os);
+				os = new GZipOutputStream(os);
 			}
 			return os;
 		}
@@ -157,9 +160,10 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.IO.IOException">In case of failure</exception>
 		public static void WriteStringToFile(string contents, string path, string encoding)
 		{
-			OutputStream writer = GetBufferedOutputStream(path);
-			writer.Write(Sharpen.Runtime.GetBytesForString(contents, encoding));
-			writer.Close();
+			using(StreamWriter writer = new StreamWriter(GetBufferedOutputStream(path),Encoding.GetEncoding(encoding)))
+			{
+				writer.Write(contents);
+			}
 		}
 
 		/// <summary>Writes a string to a file, squashing exceptions</summary>
@@ -168,18 +172,21 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="encoding">The encoding to encode in</param>
 		public static void WriteStringToFileNoExceptions(string contents, string path, string encoding)
 		{
-			OutputStream writer = null;
+			Stream os = null;
 			try
 			{
 				if (path.EndsWith(".gz"))
 				{
-					writer = new GZIPOutputStream(new FileOutputStream(path));
+					os = new GZipOutputStream(File.OpenWrite(path));
 				}
 				else
 				{
-					writer = new BufferedOutputStream(new FileOutputStream(path));
+					os = new BufferedStream(File.OpenWrite(path));
 				}
-				writer.Write(Sharpen.Runtime.GetBytesForString(contents, encoding));
+				using(var writer = new StreamWriter(os, Encoding.GetEncoding(encoding)) ) 
+				{
+					writer.Write(contents);
+				}
 			}
 			catch (Exception e)
 			{
@@ -187,7 +194,7 @@ namespace Edu.Stanford.Nlp.IO
 			}
 			finally
 			{
-				CloseIgnoringExceptions(writer);
+				CloseIgnoringExceptions(os);
 			}
 		}
 
@@ -196,21 +203,24 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="path">The file path</param>
 		/// <param name="encoding">The encoding to encode in</param>
 		/// <exception cref="System.IO.IOException">In case of failure</exception>
-		/// <returns>The File written to</returns>
-		public static File WriteStringToTempFile(string contents, string path, string encoding)
+		/// <returns>The FileInfo written to</returns>
+		public static FileInfo WriteStringToTempFile(string contents, string path, string encoding)
 		{
-			OutputStream writer;
-			File tmp = File.CreateTempFile(path, ".tmp");
+			Stream os;
+			FileInfo tmp = new FileInfo(Path.GetTempFileName() + ".tmp");
 			if (path.EndsWith(".gz"))
 			{
-				writer = new GZIPOutputStream(new FileOutputStream(tmp));
+				os = new GZipOutputStream(tmp.OpenWrite());
 			}
 			else
 			{
-				writer = new BufferedOutputStream(new FileOutputStream(tmp));
+				os = new BufferedStream(tmp.OpenWrite());
 			}
-			writer.Write(Sharpen.Runtime.GetBytesForString(contents, encoding));
-			writer.Close();
+
+			using(var writer = new StreamWriter(os, Encoding.GetEncoding(encoding)) ) 
+			{
+				writer.Write(contents);
+			}
 			return tmp;
 		}
 
@@ -227,23 +237,26 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="contents">The string to write</param>
 		/// <param name="path">The file path</param>
 		/// <param name="encoding">The encoding to encode in</param>
-		/// <returns>The File that was written to</returns>
-		public static File WriteStringToTempFileNoExceptions(string contents, string path, string encoding)
+		/// <returns>The FileInfo that was written to</returns>
+		public static FileInfo WriteStringToTempFileNoExceptions(string contents, string path, string encoding)
 		{
-			OutputStream writer = null;
-			File tmp = null;
+			Stream os = null;
+			FileInfo tmp = null;
 			try
 			{
-				tmp = File.CreateTempFile(path, ".tmp");
+				tmp = new FileInfo(Path.GetTempFileName() + ".tmp");
 				if (path.EndsWith(".gz"))
 				{
-					writer = new GZIPOutputStream(new FileOutputStream(tmp));
+					os = new GZipOutputStream(tmp.OpenWrite());
 				}
 				else
 				{
-					writer = new BufferedOutputStream(new FileOutputStream(tmp));
+					os = new BufferedStream(tmp.OpenWrite());
 				}
-				writer.Write(Sharpen.Runtime.GetBytesForString(contents, encoding));
+				using(var writer = new StreamWriter(os, Encoding.GetEncoding(encoding)) ) 
+				{
+					writer.Write(contents);
+				}
 			}
 			catch (Exception e)
 			{
@@ -251,7 +264,7 @@ namespace Edu.Stanford.Nlp.IO
 			}
 			finally
 			{
-				CloseIgnoringExceptions(writer);
+				CloseIgnoringExceptions(os);
 			}
 			return tmp;
 		}
@@ -272,36 +285,36 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.IO.IOException">If file cannot be read</exception>
 		/// <exception cref="System.TypeLoadException">If reading serialized object fails</exception>
 		/// <returns>The object read from the file.</returns>
-		public static T ReadObjectFromFile<T>(File file)
+		public static T ReadObjectFromFile<T>(FileInfo file)
 		{
 			try
 			{
-				using (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file)))))
+				using (Stream ois = new BufferedStream(new GZipInputStream(file.OpenRead())))
 				{
 					object o = ois.ReadObject();
-					return ErasureUtils.UncheckedCast(o);
+					return (T)o;
 				}
 			}
-			catch (ZipException)
+			catch (SharpZipBaseException)
 			{
-				using (ObjectInputStream ois_1 = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file))))
+				using (Stream ois_1 = new BufferedStream(file.OpenRead()))
 				{
 					object o = ois_1.ReadObject();
-					return ErasureUtils.UncheckedCast(o);
+					return (T)o;
 				}
 			}
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static DataInputStream GetDataInputStream(string filenameUrlOrClassPath)
+		public static Stream GetDataInputStream(string filenameUrlOrClassPath)
 		{
-			return new DataInputStream(GetInputStreamFromURLOrClasspathOrFileSystem(filenameUrlOrClassPath));
+			return GetInputStreamFromURLOrClasspathOrFileSystem(filenameUrlOrClassPath);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static DataOutputStream GetDataOutputStream(string filename)
+		public static Stream GetDataOutputStream(string filename)
 		{
-			return new DataOutputStream(GetBufferedOutputStream((filename)));
+			return GetBufferedOutputStream((filename));
 		}
 
 		/// <summary>Read an object from a stored file.</summary>
@@ -315,10 +328,10 @@ namespace Edu.Stanford.Nlp.IO
 		/// <returns>The object read from the file.</returns>
 		public static T ReadObjectFromURLOrClasspathOrFileSystem<T>(string filename)
 		{
-			using (ObjectInputStream ois = new ObjectInputStream(GetInputStreamFromURLOrClasspathOrFileSystem(filename)))
+			using (Stream ois = GetInputStreamFromURLOrClasspathOrFileSystem(filename))
 			{
 				object o = ois.ReadObject();
-				return ErasureUtils.UncheckedCast(o);
+				return (T)o;
 			}
 		}
 
@@ -328,7 +341,7 @@ namespace Edu.Stanford.Nlp.IO
 			try
 			{
 				Timing timing = new Timing();
-				obj = Edu.Stanford.Nlp.IO.IOUtils.ReadObjectFromURLOrClasspathOrFileSystem(path);
+				obj = Edu.Stanford.Nlp.IO.IOUtils.ReadObjectFromURLOrClasspathOrFileSystem<T>(path);
 				log.Info(msg + ' ' + path + " ... done [" + timing.ToSecondsString() + " sec].");
 			}
 			catch (Exception e)
@@ -340,10 +353,10 @@ namespace Edu.Stanford.Nlp.IO
 
 		/// <exception cref="System.IO.IOException"/>
 		/// <exception cref="System.TypeLoadException"/>
-		public static T ReadObjectFromObjectStream<T>(ObjectInputStream ois)
+		public static T ReadObjectFromObjectStream<T>(Stream ois)
 		{
 			object o = ois.ReadObject();
-			return ErasureUtils.UncheckedCast(o);
+			return (T)o;
 		}
 
 		/// <summary>Read an object from a stored file.</summary>
@@ -353,32 +366,33 @@ namespace Edu.Stanford.Nlp.IO
 		/// <returns>The object read from the file.</returns>
 		public static T ReadObjectFromFile<T>(string filename)
 		{
-			return ErasureUtils.UncheckedCast(ReadObjectFromFile(new File(filename)));
+			return ReadObjectFromFile<T>(new FileInfo(filename));
 		}
 
 		/// <summary>Read an object from a stored file without throwing exceptions.</summary>
 		/// <param name="file">The file pointing to the object to be retrieved</param>
 		/// <returns>The object read from the file, or null if an exception occurred.</returns>
-		public static T ReadObjectFromFileNoExceptions<T>(File file)
+		public static T ReadObjectFromFileNoExceptions<T>(FileInfo file)
 		{
 			object o = null;
 			try
 			{
-				ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file))));
-				o = ois.ReadObject();
-				ois.Close();
+				using(Stream ois = new BufferedStream(new GZipInputStream(file.OpenRead())))
+				{
+					o = ois.ReadObject();
+				}
 			}
 			catch (Exception e)
 			{
 				logger.Err(ThrowableToStackTrace(e));
 			}
-			return ErasureUtils.UncheckedCast(o);
+			return (T)o;
 		}
 
 		/// <exception cref="System.IO.IOException"/>
 		public static int LineCount(string textFileOrUrl)
 		{
-			using (BufferedReader r = ReaderFromString(textFileOrUrl))
+			using (var r = ReaderFromString(textFileOrUrl))
 			{
 				int numLines = 0;
 				while (r.ReadLine() != null)
@@ -390,16 +404,16 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static ObjectOutputStream WriteStreamFromString(string serializePath)
+		public static Stream WriteStreamFromString(string serializePath)
 		{
-			ObjectOutputStream oos;
+			Stream oos;
 			if (serializePath.EndsWith(".gz"))
 			{
-				oos = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(serializePath))));
+				oos = new BufferedStream(new GZipOutputStream(File.OpenWrite(serializePath)));
 			}
 			else
 			{
-				oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(serializePath)));
+				oos = new BufferedStream(File.OpenWrite(serializePath));
 			}
 			return oos;
 		}
@@ -415,10 +429,9 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="RuntimeIOException">On any IO error</exception>
 		/// <exception cref="System.ArgumentNullException">Input parameter is null</exception>
 		/// <exception cref="System.IO.IOException"/>
-		public static ObjectInputStream ReadStreamFromString(string filenameOrUrl)
+		public static Stream ReadStreamFromString(string filenameOrUrl)
 		{
-			InputStream @is = GetInputStreamFromURLOrClasspathOrFileSystem(filenameOrUrl);
-			return new ObjectInputStream(@is);
+			return GetInputStreamFromURLOrClasspathOrFileSystem(filenameOrUrl);
 		}
 
 		/// <summary>Locates this file either in the CLASSPATH or in the file system.</summary>
@@ -430,26 +443,27 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="name">The file or resource name</param>
 		/// <exception cref="Java.IO.FileNotFoundException">If the file does not exist</exception>
 		/// <returns>The InputStream of name, or null if not found</returns>
-		private static InputStream FindStreamInClasspathOrFileSystem(string name)
+		private static Stream FindStreamInClasspathOrFileSystem(string name)
 		{
 			// ms 10-04-2010:
 			// - even though this may look like a regular file, it may be a path inside a jar in the CLASSPATH
 			// - check for this first. This takes precedence over the file system.
-			InputStream @is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name);
-			// windows File.separator is \, but getting resources only works with /
+			Assembly asm = typeof(Edu.Stanford.Nlp.IO.IOUtils).Assembly;
+			Stream @is = asm.GetManifestResourceStream(name);
+			// windows FileInfo.separator is \, but getting resources only works with /
 			if (@is == null)
 			{
-				@is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name.ReplaceAll("\\\\", "/"));
+				@is = asm.GetManifestResourceStream(name.Replace("\\\\", "/"));
 				// Classpath doesn't like double slashes (e.g., /home/user//foo.txt)
 				if (@is == null)
 				{
-					@is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name.ReplaceAll("\\\\", "/").ReplaceAll("/+", "/"));
+					@is = asm.GetManifestResourceStream(Regex.Replace(name.Replace("\\\\", "/"),"/+", "/"));
 				}
 			}
 			// if not found in the CLASSPATH, load from the file system
 			if (@is == null)
 			{
-				@is = new FileInputStream(name);
+				@is = File.OpenRead(name);
 			}
 			return @is;
 		}
@@ -463,16 +477,17 @@ namespace Edu.Stanford.Nlp.IO
 		/// </returns>
 		public static bool ExistsInClasspathOrFileSystem(string name)
 		{
-			InputStream @is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name);
+			Assembly asm = typeof(Edu.Stanford.Nlp.IO.IOUtils).Assembly;
+			Stream @is = asm.GetManifestResourceStream(name);
 			if (@is == null)
 			{
-				@is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name.ReplaceAll("\\\\", "/"));
+				@is = asm.GetManifestResourceStream(name.Replace("\\\\", "/"));
 				if (@is == null)
 				{
-					@is = typeof(Edu.Stanford.Nlp.IO.IOUtils).GetClassLoader().GetResourceAsStream(name.ReplaceAll("\\\\", "/").ReplaceAll("/+", "/"));
+					@is = asm.GetManifestResourceStream(Regex.Replace(name.Replace("\\\\", "/"),"/+", "/"));
 				}
 			}
-			return @is != null || new File(name).Exists();
+			return @is != null || File.Exists(name);
 		}
 
 		/// <summary>
@@ -484,20 +499,19 @@ namespace Edu.Stanford.Nlp.IO
 		/// <returns>An InputStream for loading a resource</returns>
 		/// <exception cref="System.IO.IOException">On any IO error</exception>
 		/// <exception cref="System.ArgumentNullException">Input parameter is null</exception>
-		public static InputStream GetInputStreamFromURLOrClasspathOrFileSystem(string textFileOrUrl)
+		public static Stream GetInputStreamFromURLOrClasspathOrFileSystem(string textFileOrUrl)
 		{
-			InputStream @in;
+			Stream @in;
 			if (textFileOrUrl == null)
 			{
 				throw new ArgumentNullException("Attempt to open file with null name");
 			}
 			else
 			{
-				if (textFileOrUrl.Matches("https?://.*"))
+				if (Regex.IsMatch(textFileOrUrl,"^https?://.*"))
 				{
-					URL u = new URL(textFileOrUrl);
-					URLConnection uc = u.OpenConnection();
-					@in = uc.GetInputStream();
+					WebRequest wr = WebRequest.Create(textFileOrUrl);
+					@in = wr.GetResponse().GetResponseStream();
 				}
 				else
 				{
@@ -510,9 +524,8 @@ namespace Edu.Stanford.Nlp.IO
 						try
 						{
 							// Maybe this happens to be some other format of URL?
-							URL u = new URL(textFileOrUrl);
-							URLConnection uc = u.OpenConnection();
-							@in = uc.GetInputStream();
+							WebRequest wr = WebRequest.Create(textFileOrUrl);
+							@in = wr.GetResponse().GetResponseStream();
 						}
 						catch (IOException)
 						{
@@ -528,7 +541,7 @@ namespace Edu.Stanford.Nlp.IO
 			{
 				try
 				{
-					@in = new GZIPInputStream(@in);
+					@in = new GZipInputStream(@in);
 				}
 				catch (Exception e)
 				{
@@ -537,28 +550,28 @@ namespace Edu.Stanford.Nlp.IO
 			}
 			// buffer this stream.  even gzip streams benefit from buffering,
 			// such as for the shift reduce parser [cdm 2016: I think this is only because default buffer is small; see below]
-			@in = new BufferedInputStream(@in);
+			@in = new BufferedStream(@in);
 			return @in;
 		}
 
 		// todo [cdm 2015]: I think GZIPInputStream has its own buffer and so we don't need to buffer in that case.
 		// todo: Though it's default size is 512 bytes so need to make 8K in constructor. Or else buffering outside gzip is faster
 		// todo: final InputStream is = new GZIPInputStream( new FileInputStream( file ), 65536 );
-		/// <summary>Quietly opens a File.</summary>
+		/// <summary>Quietly opens a FileInfo.</summary>
 		/// <remarks>
-		/// Quietly opens a File. If the file ends with a ".gz" extension,
+		/// Quietly opens a FileInfo. If the file ends with a ".gz" extension,
 		/// automatically opens a GZIPInputStream to wrap the constructed
 		/// FileInputStream.
 		/// </remarks>
 		/// <exception cref="Edu.Stanford.Nlp.IO.RuntimeIOException"/>
-		public static InputStream InputStreamFromFile(File file)
+		public static Stream InputStreamFromFile(FileInfo file)
 		{
 			try
 			{
-				InputStream @is = new BufferedInputStream(new FileInputStream(file));
-				if (file.GetName().EndsWith(".gz"))
+				Stream @is = new BufferedStream(file.OpenRead());
+				if (file.Name.EndsWith(".gz"))
 				{
-					@is = new GZIPInputStream(@is);
+					@is = new GZipInputStream(@is);
 				}
 				return @is;
 			}
@@ -568,22 +581,22 @@ namespace Edu.Stanford.Nlp.IO
 			}
 		}
 
-		/// <summary>Open a BufferedReader to a File.</summary>
+		/// <summary>Open a BufferedReader to a FileInfo.</summary>
 		/// <remarks>
-		/// Open a BufferedReader to a File. If the file's getName() ends in .gz,
+		/// Open a BufferedReader to a FileInfo. If the file's getName() ends in .gz,
 		/// it is interpreted as a gzipped file (and uncompressed). The file is then
 		/// interpreted as a utf-8 text file.
 		/// </remarks>
 		/// <param name="file">What to read from</param>
 		/// <returns>The BufferedReader</returns>
 		/// <exception cref="RuntimeIOException">If there is an I/O problem</exception>
-		public static BufferedReader ReaderFromFile(File file)
+		public static StreamReader ReaderFromFile(FileInfo file)
 		{
-			InputStream @is = null;
+			Stream @is = null;
 			try
 			{
 				@is = InputStreamFromFile(file);
-				return new BufferedReader(new InputStreamReader(@is, "UTF-8"));
+				return new StreamReader(@is, Encoding.UTF8);
 			}
 			catch (IOException ioe)
 			{
@@ -593,9 +606,9 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		// todo [cdm 2014]: get rid of this method, using other methods. This will change the semantics to null meaning UTF-8, but that seems better in 2015.
-		/// <summary>Open a BufferedReader to a File.</summary>
+		/// <summary>Open a BufferedReader to a FileInfo.</summary>
 		/// <remarks>
-		/// Open a BufferedReader to a File. If the file's getName() ends in .gz,
+		/// Open a BufferedReader to a FileInfo. If the file's getName() ends in .gz,
 		/// it is interpreted as a gzipped file (and uncompressed). The file is then
 		/// turned into a BufferedReader with the given encoding.
 		/// If the encoding passed in is null, then the system default encoding is used.
@@ -604,19 +617,19 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="encoding">What charset to use. A null String is interpreted as platform default encoding</param>
 		/// <returns>The BufferedReader</returns>
 		/// <exception cref="RuntimeIOException">If there is an I/O problem</exception>
-		public static BufferedReader ReaderFromFile(File file, string encoding)
+		public static StreamReader ReaderFromFile(FileInfo file, string encoding)
 		{
-			InputStream @is = null;
+			Stream @is = null;
 			try
 			{
 				@is = InputStreamFromFile(file);
 				if (encoding == null)
 				{
-					return new BufferedReader(new InputStreamReader(@is));
+					return new StreamReader(@is);
 				}
 				else
 				{
-					return new BufferedReader(new InputStreamReader(@is, encoding));
+					return new StreamReader(@is, Encoding.GetEncoding(encoding));
 				}
 			}
 			catch (IOException ioe)
@@ -629,9 +642,9 @@ namespace Edu.Stanford.Nlp.IO
 		/// <summary>Open a BufferedReader on stdin.</summary>
 		/// <remarks>Open a BufferedReader on stdin. Use the user's default encoding.</remarks>
 		/// <returns>The BufferedReader</returns>
-		public static BufferedReader ReaderFromStdin()
+		public static StreamReader ReaderFromStdin()
 		{
-			return new BufferedReader(new InputStreamReader(Runtime.@in));
+			return new StreamReader(System.Console.OpenStandardInput());
 		}
 
 		/// <summary>Open a BufferedReader on stdin.</summary>
@@ -642,13 +655,13 @@ namespace Edu.Stanford.Nlp.IO
 		/// </param>
 		/// <returns>The BufferedReader</returns>
 		/// <exception cref="System.IO.IOException">If there is an I/O problem</exception>
-		public static BufferedReader ReaderFromStdin(string encoding)
+		public static StreamReader ReaderFromStdin(string encoding)
 		{
 			if (encoding == null)
 			{
-				return new BufferedReader(new InputStreamReader(Runtime.@in));
+				return new StreamReader(System.Console.OpenStandardInput());
 			}
-			return new BufferedReader(new InputStreamReader(Runtime.@in, encoding));
+			return new StreamReader(System.Console.OpenStandardInput(), Encoding.GetEncoding(encoding));
 		}
 
 		// TODO [cdm 2015]: Should we rename these methods. Sort of misleading: They really read files, resources, etc. specified by a String
@@ -667,9 +680,9 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="textFileOrUrl">What to read from</param>
 		/// <returns>The BufferedReader</returns>
 		/// <exception cref="System.IO.IOException">If there is an I/O problem</exception>
-		public static BufferedReader ReaderFromString(string textFileOrUrl)
+		public static StreamReader ReaderFromString(string textFileOrUrl)
 		{
-			return new BufferedReader(new InputStreamReader(GetInputStreamFromURLOrClasspathOrFileSystem(textFileOrUrl), "UTF-8"));
+			return new StreamReader(GetInputStreamFromURLOrClasspathOrFileSystem(textFileOrUrl), Encoding.UTF8);
 		}
 
 		/// <summary>Open a BufferedReader to a file or URL specified by a String name.</summary>
@@ -689,14 +702,14 @@ namespace Edu.Stanford.Nlp.IO
 		/// </param>
 		/// <returns>The BufferedReader</returns>
 		/// <exception cref="System.IO.IOException">If there is an I/O problem</exception>
-		public static BufferedReader ReaderFromString(string textFileOrUrl, string encoding)
+		public static StreamReader ReaderFromString(string textFileOrUrl, string encoding)
 		{
-			InputStream @is = GetInputStreamFromURLOrClasspathOrFileSystem(textFileOrUrl);
+			Stream @is = GetInputStreamFromURLOrClasspathOrFileSystem(textFileOrUrl);
 			if (encoding == null)
 			{
-				return new BufferedReader(new InputStreamReader(@is));
+				return new StreamReader(@is);
 			}
-			return new BufferedReader(new InputStreamReader(@is, encoding));
+			return new StreamReader(@is, Encoding.GetEncoding(encoding));
 		}
 
 		/// <summary>Returns an Iterable of the lines in the file.</summary>
@@ -733,7 +746,7 @@ namespace Edu.Stanford.Nlp.IO
 		/// </remarks>
 		/// <param name="file">The file whose lines are to be read.</param>
 		/// <returns>An Iterable containing the lines from the file.</returns>
-		public static IEnumerable<string> ReadLines(File file)
+		public static IEnumerable<string> ReadLines(FileInfo file)
 		{
 			return ReadLines(file, null, null);
 		}
@@ -750,7 +763,7 @@ namespace Edu.Stanford.Nlp.IO
 		/// InputStream.
 		/// </param>
 		/// <returns>An Iterable containing the lines from the file.</returns>
-		public static IEnumerable<string> ReadLines(File file, Type fileInputStreamWrapper)
+		public static IEnumerable<string> ReadLines(FileInfo file, Type fileInputStreamWrapper)
 		{
 			return ReadLines(file, fileInputStreamWrapper, null);
 		}
@@ -772,14 +785,14 @@ namespace Edu.Stanford.Nlp.IO
 		/// </param>
 		/// <param name="encoding">The encoding to use when reading lines.</param>
 		/// <returns>An Iterable containing the lines from the file.</returns>
-		public static IEnumerable<string> ReadLines(File file, Type fileInputStreamWrapper, string encoding)
+		public static IEnumerable<string> ReadLines(FileInfo file, Type fileInputStreamWrapper, string encoding)
 		{
 			return new IOUtils.GetLinesIterable(file, fileInputStreamWrapper, encoding);
 		}
 
 		internal class GetLinesIterable : IEnumerable<string>
 		{
-			internal readonly File file;
+			internal readonly FileInfo file;
 
 			internal readonly string path;
 
@@ -787,7 +800,7 @@ namespace Edu.Stanford.Nlp.IO
 
 			internal readonly string encoding;
 
-			internal GetLinesIterable(File file, Type fileInputStreamWrapper, string encoding)
+			internal GetLinesIterable(FileInfo file, Type fileInputStreamWrapper, string encoding)
 			{
 				// TODO: better programming style would be to make this two
 				// separate classes, but we don't expect to make more versions of
@@ -807,7 +820,7 @@ namespace Edu.Stanford.Nlp.IO
 			}
 
 			/// <exception cref="System.IO.IOException"/>
-			private InputStream GetStream()
+			private Stream GetStream()
 			{
 				if (file != null)
 				{
@@ -821,11 +834,14 @@ namespace Edu.Stanford.Nlp.IO
 					}
 					else
 					{
-						throw new AssertionError("No known path to read");
+						throw new Exception("No known path to read");
 					}
 				}
 			}
-
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
 			public virtual IEnumerator<string> GetEnumerator()
 			{
 				return new _IEnumerator_758(this);
@@ -841,7 +857,7 @@ namespace Edu.Stanford.Nlp.IO
 					this.readerOpen = true;
 				}
 
-				protected internal readonly BufferedReader reader;
+				protected internal readonly StreamReader reader;
 
 				protected internal string line;
 
@@ -852,6 +868,10 @@ namespace Edu.Stanford.Nlp.IO
 					return this.line != null;
 				}
 
+				object IEnumerator.Current
+				{
+					get { return this.Current; }
+				}
 				public string Current
 				{
 					get
@@ -859,11 +879,16 @@ namespace Edu.Stanford.Nlp.IO
 						string nextLine = this.line;
 						if (nextLine == null)
 						{
-							throw new NoSuchElementException();
+							throw new InvalidOperationException();
 						}
 						this.line = this.GetLine();
 						return nextLine;
 					}
+				}
+				
+				public void Reset()
+				{
+					throw new NotSupportedException();
 				}
 
 				protected internal string GetLine()
@@ -884,22 +909,22 @@ namespace Edu.Stanford.Nlp.IO
 					}
 				}
 
-				protected internal BufferedReader GetReader()
+				protected internal StreamReader GetReader()
 				{
 					try
 					{
-						InputStream stream = this._enclosing.GetStream();
+						Stream stream = this._enclosing.GetStream();
 						if (this._enclosing.fileInputStreamWrapper != null)
 						{
-							stream = this._enclosing.fileInputStreamWrapper.GetConstructor(typeof(InputStream)).NewInstance(stream);
+							stream = (Stream)this._enclosing.fileInputStreamWrapper.GetConstructor(new [] { typeof(Stream) }).Invoke(new [] { stream });
 						}
 						if (this._enclosing.encoding == null)
 						{
-							return new BufferedReader(new InputStreamReader(stream));
+							return new StreamReader(stream);
 						}
 						else
 						{
-							return new BufferedReader(new InputStreamReader(stream, this._enclosing.encoding));
+							return new StreamReader(stream, Encoding.GetEncoding(this._enclosing.encoding));
 						}
 					}
 					catch (Exception e)
@@ -913,19 +938,35 @@ namespace Edu.Stanford.Nlp.IO
 					throw new NotSupportedException();
 				}
 
-				~_IEnumerator_758()
-				{
-					// todo [cdm 2018]: Probably should remove this but in current implementation reader is internal and can only close by getting to eof.
-					base.Finalize();
-					if (this.readerOpen)
-					{
-						IOUtils.logger.Warn("Forgot to close FileIterable -- closing from finalize()");
-						this.reader.Close();
-					}
-				}
-
 				private readonly GetLinesIterable _enclosing;
-			}
+
+                #region IDisposable Support
+                private bool disposedValue = false; // To detect redundant calls
+
+                void Dispose(bool disposing)
+                {
+                    if (!disposedValue)
+                    {
+                        if (disposing)
+                        {
+							if (this.readerOpen)
+							{
+								IOUtils.logger.Warn("Forgot to close FileIterable -- closing from finalize()");
+								this.reader.Dispose();
+							}
+                        }
+                        disposedValue = true;
+                    }
+                }
+
+                // This code added to correctly implement the disposable pattern.
+                public void Dispose()
+                {
+                    // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                    Dispose(true);
+                }
+                #endregion
+            }
 		}
 
 		// end static class GetLinesIterable
@@ -933,7 +974,7 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="r">input reader</param>
 		/// <param name="includeEol">whether to keep eol-characters in the returned strings</param>
 		/// <returns>iterable of lines (as strings)</returns>
-		public static IEnumerable<string> GetLineIterable(Reader r, bool includeEol)
+		public static IEnumerable<string> GetLineIterable(StreamReader r, bool includeEol)
 		{
 			if (includeEol)
 			{
@@ -941,11 +982,11 @@ namespace Edu.Stanford.Nlp.IO
 			}
 			else
 			{
-				return new IOUtils.LineReaderIterable((r is BufferedReader) ? (BufferedReader)r : new BufferedReader(r));
+				return new IOUtils.LineReaderIterable(r);
 			}
 		}
 
-		public static IEnumerable<string> GetLineIterable(Reader r, int bufferSize, bool includeEol)
+		public static IEnumerable<string> GetLineIterable(StreamReader r, int bufferSize, bool includeEol)
 		{
 			if (includeEol)
 			{
@@ -953,7 +994,7 @@ namespace Edu.Stanford.Nlp.IO
 			}
 			else
 			{
-				return new IOUtils.LineReaderIterable((r is BufferedReader) ? (BufferedReader)r : new BufferedReader(r, bufferSize));
+				return new IOUtils.LineReaderIterable(r);
 			}
 		}
 
@@ -963,13 +1004,17 @@ namespace Edu.Stanford.Nlp.IO
 		/// </summary>
 		private sealed class LineReaderIterable : IEnumerable<string>
 		{
-			private readonly BufferedReader reader;
+			private readonly StreamReader reader;
 
-			private LineReaderIterable(BufferedReader reader)
+			public LineReaderIterable(StreamReader reader)
 			{
 				this.reader = reader;
 			}
 
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
 			public IEnumerator<string> GetEnumerator()
 			{
 				return new _IEnumerator_864(this);
@@ -1002,6 +1047,10 @@ namespace Edu.Stanford.Nlp.IO
 					return this.next != null;
 				}
 
+				object IEnumerator.Current 
+				{
+					get { return this.Current; }
+				}
 				public string Current
 				{
 					get
@@ -1009,7 +1058,7 @@ namespace Edu.Stanford.Nlp.IO
 						string nextLine = this.next;
 						if (nextLine == null)
 						{
-							throw new NoSuchElementException();
+							throw new InvalidOperationException();
 						}
 						this.next = this.GetNext();
 						return nextLine;
@@ -1021,8 +1070,47 @@ namespace Edu.Stanford.Nlp.IO
 					throw new NotSupportedException();
 				}
 
-				private readonly LineReaderIterable _enclosing;
-			}
+                public void Reset()
+                {
+                    throw new NotSupportedException();
+                }
+
+                private readonly LineReaderIterable _enclosing;
+
+                #region IDisposable Support
+                private bool disposedValue = false; // To detect redundant calls
+
+                void Dispose(bool disposing)
+                {
+                    if (!disposedValue)
+                    {
+                        if (disposing)
+                        {
+                            // TODO: dispose managed state (managed objects).
+                        }
+                        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                        // TODO: set large fields to null.
+
+                        disposedValue = true;
+                    }
+                }
+
+                // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+                // ~_IEnumerator_864() {
+                //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                //   Dispose(false);
+                // }
+
+                // This code added to correctly implement the disposable pattern.
+                public void Dispose()
+                {
+                    // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                    Dispose(true);
+                    // TODO: uncomment the following line if the finalizer is overridden above.
+                    // GC.SuppressFinalize(this);
+                }
+                #endregion
+            }
 		}
 
 		/// <summary>Line iterator that preserves the eol-character exactly as read from reader.</summary>
@@ -1033,21 +1121,25 @@ namespace Edu.Stanford.Nlp.IO
 		/// </remarks>
 		private sealed class EolPreservingLineReaderIterable : IEnumerable<string>
 		{
-			private readonly Reader reader;
+			private readonly StreamReader reader;
 
 			private readonly int bufferSize;
 
-			private EolPreservingLineReaderIterable(Reader reader)
+			public EolPreservingLineReaderIterable(StreamReader reader)
 				: this(reader, SlurpBufferSize)
 			{
 			}
 
-			private EolPreservingLineReaderIterable(Reader reader, int bufferSize)
+			public EolPreservingLineReaderIterable(StreamReader reader, int bufferSize)
 			{
 				this.reader = reader;
 				this.bufferSize = bufferSize;
 			}
 
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
 			public IEnumerator<string> GetEnumerator()
 			{
 				return new _IEnumerator_921(this);
@@ -1088,7 +1180,7 @@ namespace Edu.Stanford.Nlp.IO
 						{
 							if (this.charBufferPos < 0)
 							{
-								this.charsInBuffer = this._enclosing.reader.Read(this.charBuffer);
+								this.charsInBuffer = this._enclosing.reader.Read(this.charBuffer, 0, this.charBuffer.Length);
 								if (this.charsInBuffer < 0)
 								{
 									// No more!!!
@@ -1179,13 +1271,17 @@ namespace Edu.Stanford.Nlp.IO
 					return !this.done;
 				}
 
+				object IEnumerator.Current
+				{
+					get { return this.Current; }
+				}
 				public string Current
 				{
 					get
 					{
 						if (!this.MoveNext())
 						{
-							throw new NoSuchElementException();
+							throw new InvalidOperationException();
 						}
 						string res = this.next;
 						this.next = null;
@@ -1198,8 +1294,48 @@ namespace Edu.Stanford.Nlp.IO
 					throw new NotSupportedException();
 				}
 
-				private readonly EolPreservingLineReaderIterable _enclosing;
-			}
+                public void Reset()
+                {
+                    throw new NotSupportedException();
+                }
+
+                private readonly EolPreservingLineReaderIterable _enclosing;
+
+                #region IDisposable Support
+                private bool disposedValue = false; // To detect redundant calls
+
+                void Dispose(bool disposing)
+                {
+                    if (!disposedValue)
+                    {
+                        if (disposing)
+                        {
+                            // TODO: dispose managed state (managed objects).
+                        }
+
+                        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                        // TODO: set large fields to null.
+
+                        disposedValue = true;
+                    }
+                }
+
+                // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+                // ~_IEnumerator_921() {
+                //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                //   Dispose(false);
+                // }
+
+                // This code added to correctly implement the disposable pattern.
+                public void Dispose()
+                {
+                    // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                    Dispose(true);
+                    // TODO: uncomment the following line if the finalizer is overridden above.
+                    // GC.SuppressFinalize(this);
+                }
+                #endregion
+            }
 			// end iterator()
 		}
 
@@ -1214,13 +1350,13 @@ namespace Edu.Stanford.Nlp.IO
 		/// From a suggestion in a talk by Josh Bloch. Calling close() will flush().
 		/// </remarks>
 		/// <param name="c">The IO resource to close (e.g., a Stream/Reader)</param>
-		public static void CloseIgnoringExceptions(ICloseable c)
+		public static void CloseIgnoringExceptions(IDisposable c)
 		{
 			if (c != null)
 			{
 				try
 				{
-					c.Close();
+					c.Dispose();
 				}
 				catch (IOException)
 				{
@@ -1232,18 +1368,18 @@ namespace Edu.Stanford.Nlp.IO
 		/// <summary>Iterate over all the files in the directory, recursively.</summary>
 		/// <param name="dir">The root directory.</param>
 		/// <returns>All files within the directory.</returns>
-		public static IEnumerable<File> IterFilesRecursive(File dir)
+		public static IEnumerable<FileInfo> IterFilesRecursive(FileInfo dir)
 		{
-			return IterFilesRecursive(dir, (Pattern)null);
+			return IterFilesRecursive(dir, (Regex)null);
 		}
 
 		/// <summary>Iterate over all the files in the directory, recursively.</summary>
 		/// <param name="dir">The root directory.</param>
 		/// <param name="ext">A string that must be at the end of all files (e.g. ".txt")</param>
 		/// <returns>All files within the directory ending in the given extension.</returns>
-		public static IEnumerable<File> IterFilesRecursive(File dir, string ext)
+		public static IEnumerable<FileInfo> IterFilesRecursive(FileInfo dir, string ext)
 		{
-			return IterFilesRecursive(dir, Pattern.Compile(Pattern.Quote(ext) + "$"));
+			return IterFilesRecursive(dir, new Regex(Regex.Escape(ext) + "$"));
 		}
 
 		/// <summary>Iterate over all the files in the directory, recursively.</summary>
@@ -1253,73 +1389,78 @@ namespace Edu.Stanford.Nlp.IO
 		/// Matcher.find(), so use ^ and $ to specify endpoints.
 		/// </param>
 		/// <returns>All files within the directory.</returns>
-		public static IEnumerable<File> IterFilesRecursive(File dir, Pattern pattern)
+		public static IEnumerable<FileInfo> IterFilesRecursive(FileInfo dir, Regex pattern)
 		{
 			return new _IEnumerable_1073(dir, pattern);
 		}
 
-		private sealed class _IEnumerable_1073 : IEnumerable<File>
+		private sealed class _IEnumerable_1073 : IEnumerable<FileInfo>
 		{
-			public _IEnumerable_1073(File dir, Pattern pattern)
+			public _IEnumerable_1073(FileInfo dir, Regex pattern)
 			{
 				this.dir = dir;
 				this.pattern = pattern;
 			}
 
-			public IEnumerator<File> GetEnumerator()
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
+			public IEnumerator<FileInfo> GetEnumerator()
 			{
 				return new _AbstractIterator_1075(dir, pattern);
 			}
 
-			private sealed class _AbstractIterator_1075 : AbstractIterator<File>
+			private sealed class _AbstractIterator_1075 : AbstractIterator<FileInfo>
 			{
-				public _AbstractIterator_1075(File dir, Pattern pattern)
+				public _AbstractIterator_1075(FileInfo dir, Regex pattern)
 				{
 					this.dir = dir;
 					this.pattern = pattern;
-					this.files = new LinkedList<File>(Java.Util.Collections.Singleton(dir));
+					this.files = new Queue<FileInfo>(new [] { dir });
 					this.file = this.FindNext();
 				}
 
-				private readonly IQueue<File> files;
+				private readonly Queue<FileInfo> files;
 
-				private File file;
+				private FileInfo file;
 
 				public override bool MoveNext()
 				{
 					return this.file != null;
 				}
 
-				public override File Current
+				public override FileInfo Current
 				{
 					get
 					{
-						File result = this.file;
+						FileInfo result = this.file;
 						if (result == null)
 						{
-							throw new NoSuchElementException();
+							throw new InvalidOperationException();
 						}
 						this.file = this.FindNext();
 						return result;
 					}
 				}
 
-				private File FindNext()
+				private FileInfo FindNext()
 				{
-					File next = null;
-					while (!this.files.IsEmpty() && next == null)
+					FileInfo next = null;
+					while (this.files.Count > 0 && next == null)
 					{
-						next = this.files.Remove();
-						if (next.IsDirectory())
+						next = this.files.Dequeue();
+						if (next.Attributes == FileAttributes.Directory)
 						{
-							Sharpen.Collections.AddAll(this.files, Arrays.AsList(next.ListFiles()));
+							foreach(var f in Directory.EnumerateFiles(next.FullName).Select(_ => new FileInfo(_)))
+								this.files.Enqueue(f);
 							next = null;
 						}
 						else
 						{
 							if (pattern != null)
 							{
-								if (!pattern.Matcher(next.GetPath()).Find())
+								if (!pattern.IsMatch(next.FullName))
 								{
 									next = null;
 								}
@@ -1329,30 +1470,30 @@ namespace Edu.Stanford.Nlp.IO
 					return next;
 				}
 
-				private readonly File dir;
+				private readonly FileInfo dir;
 
-				private readonly Pattern pattern;
+				private readonly Regex pattern;
 			}
 
-			private readonly File dir;
+			private readonly FileInfo dir;
 
-			private readonly Pattern pattern;
+			private readonly Regex pattern;
 		}
 
-		/// <summary>Returns all the text in the given File as a single String.</summary>
+		/// <summary>Returns all the text in the given FileInfo as a single String.</summary>
 		/// <remarks>
-		/// Returns all the text in the given File as a single String.
+		/// Returns all the text in the given FileInfo as a single String.
 		/// If the file's name ends in .gz, it is assumed to be gzipped and is silently uncompressed.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpFile(File file)
+		public static string SlurpFile(FileInfo file)
 		{
 			return SlurpFile(file, null);
 		}
 
-		/// <summary>Returns all the text in the given File as a single String.</summary>
+		/// <summary>Returns all the text in the given FileInfo as a single String.</summary>
 		/// <remarks>
-		/// Returns all the text in the given File as a single String.
+		/// Returns all the text in the given FileInfo as a single String.
 		/// If the file's name ends in .gz, it is assumed to be gzipped and is silently uncompressed.
 		/// </remarks>
 		/// <param name="file">The file to read from</param>
@@ -1361,24 +1502,24 @@ namespace Edu.Stanford.Nlp.IO
 		/// the platform default character encoding is used.
 		/// </param>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpFile(File file, string encoding)
+		public static string SlurpFile(FileInfo file, string encoding)
 		{
 			return IOUtils.SlurpReader(IOUtils.EncodedInputStreamReader(InputStreamFromFile(file), encoding));
 		}
 
-		/// <summary>Returns all the text in the given File as a single String.</summary>
+		/// <summary>Returns all the text in the given FileInfo as a single String.</summary>
 		/// <exception cref="System.IO.IOException"/>
 		public static string SlurpGZippedFile(string filename)
 		{
-			Reader r = EncodedInputStreamReader(new GZIPInputStream(new FileInputStream(filename)), null);
+			StreamReader r = EncodedInputStreamReader(new GZipInputStream(File.OpenRead(filename)), null);
 			return IOUtils.SlurpReader(r);
 		}
 
-		/// <summary>Returns all the text in the given File as a single String.</summary>
+		/// <summary>Returns all the text in the given FileInfo as a single String.</summary>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpGZippedFile(File file)
+		public static string SlurpGZippedFile(FileInfo file)
 		{
-			Reader r = EncodedInputStreamReader(new GZIPInputStream(new FileInputStream(file)), null);
+			StreamReader r = EncodedInputStreamReader(new GZipInputStream(file.OpenRead()), null);
 			return IOUtils.SlurpReader(r);
 		}
 
@@ -1390,7 +1531,7 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.IO.IOException"/>
 		public static string SlurpFile(string filename, string encoding)
 		{
-			Reader r = ReaderFromString(filename, encoding);
+			StreamReader r = ReaderFromString(filename, encoding);
 			return IOUtils.SlurpReader(r);
 		}
 
@@ -1426,7 +1567,7 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		/// <summary>Returns all the text at the given URL.</summary>
-		public static string SlurpURLNoExceptions(URL u, string encoding)
+		public static string SlurpURLNoExceptions(Uri u, string encoding)
 		{
 			try
 			{
@@ -1441,75 +1582,85 @@ namespace Edu.Stanford.Nlp.IO
 
 		/// <summary>Returns all the text at the given URL.</summary>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpURL(URL u, string encoding)
+		public static string SlurpURL(Uri u, string encoding)
 		{
-			string lineSeparator = Runtime.LineSeparator();
-			URLConnection uc = u.OpenConnection();
-			uc.SetReadTimeout(30000);
-			InputStream @is;
-			try
+			using(var client = new WebClient())
 			{
-				@is = uc.GetInputStream();
+				client.Encoding = Encoding.GetEncoding(encoding);
+				return client.DownloadString(u);
 			}
-			catch (SocketTimeoutException e)
-			{
-				logger.Error("Socket time out; returning empty string.");
-				logger.Err(ThrowableToStackTrace(e));
-				return string.Empty;
-			}
-			using (BufferedReader br = new BufferedReader(new InputStreamReader(@is, encoding)))
-			{
-				StringBuilder buff = new StringBuilder(SlurpBufferSize);
-				// make biggish
-				for (string temp; (temp = br.ReadLine()) != null; )
-				{
-					buff.Append(temp);
-					buff.Append(lineSeparator);
-				}
-				return buff.ToString();
-			}
+			// string lineSeparator = Environment.NewLine;
+			// URLConnection uc = u.OpenConnection();
+			// uc.SetReadTimeout(30000);
+			// InputStream @is;
+			// try
+			// {
+			// 	@is = uc.GetInputStream();
+			// }
+			// catch (SocketTimeoutException e)
+			// {
+			// 	logger.Error("Socket time out; returning empty string.");
+			// 	logger.Err(ThrowableToStackTrace(e));
+			// 	return string.Empty;
+			// }
+			// using (BufferedReader br = new BufferedReader(new InputStreamReader(@is, encoding)))
+			// {
+			// 	StringBuilder buff = new StringBuilder(SlurpBufferSize);
+			// 	// make biggish
+			// 	for (string temp; (temp = br.ReadLine()) != null; )
+			// 	{
+			// 		buff.Append(temp);
+			// 		buff.Append(lineSeparator);
+			// 	}
+			// 	return buff.ToString();
+			// }
 		}
 
-		public static string GetUrlEncoding(URLConnection connection)
-		{
-			string contentType = connection.GetContentType();
-			string[] values = contentType.Split(";");
-			string charset = defaultEncoding;
-			// might or might not be right....
-			foreach (string value in values)
-			{
-				value = value.Trim();
-				if (value.ToLower(Locale.English).StartsWith("charset="))
-				{
-					charset = Sharpen.Runtime.Substring(value, "charset=".Length);
-				}
-			}
-			return charset;
-		}
+		// public static string GetUrlEncoding(URLConnection connection)
+		// {
+		// 	string contentType = connection.GetContentType();
+		// 	string[] values = contentType.Split(";");
+		// 	string charset = defaultEncoding;
+		// 	// might or might not be right....
+		// 	foreach (string value in values)
+		// 	{
+		// 		value = value.Trim();
+		// 		if (value.ToLower(Locale.English).StartsWith("charset="))
+		// 		{
+		// 			charset = Sharpen.Runtime.Substring(value, "charset=".Length);
+		// 		}
+		// 	}
+		// 	return charset;
+		// }
 
 		/// <summary>Returns all the text at the given URL.</summary>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpURL(URL u)
+		public static string SlurpURL(Uri u)
 		{
-			URLConnection uc = u.OpenConnection();
-			string encoding = GetUrlEncoding(uc);
-			InputStream @is = uc.GetInputStream();
-			using (BufferedReader br = new BufferedReader(new InputStreamReader(@is, encoding)))
+			using(var client = new WebClient())
 			{
-				StringBuilder buff = new StringBuilder(SlurpBufferSize);
-				// make biggish
-				string lineSeparator = Runtime.LineSeparator();
-				for (string temp; (temp = br.ReadLine()) != null; )
-				{
-					buff.Append(temp);
-					buff.Append(lineSeparator);
-				}
-				return buff.ToString();
+				return client.DownloadString(u);
 			}
+
+			// URLConnection uc = u.OpenConnection();
+			// string encoding = GetUrlEncoding(uc);
+			// InputStream @is = uc.GetInputStream();
+			// using (BufferedReader br = new BufferedReader(new InputStreamReader(@is, encoding)))
+			// {
+			// 	StringBuilder buff = new StringBuilder(SlurpBufferSize);
+			// 	// make biggish
+			// 	string lineSeparator = Runtime.LineSeparator();
+			// 	for (string temp; (temp = br.ReadLine()) != null; )
+			// 	{
+			// 		buff.Append(temp);
+			// 		buff.Append(lineSeparator);
+			// 	}
+			// 	return buff.ToString();
+			// }
 		}
 
 		/// <summary>Returns all the text at the given URL.</summary>
-		public static string SlurpURLNoExceptions(URL u)
+		public static string SlurpURLNoExceptions(Uri u)
 		{
 			try
 			{
@@ -1526,7 +1677,7 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.Exception"/>
 		public static string SlurpURL(string path)
 		{
-			return SlurpURL(new URL(path));
+			return SlurpURL(new Uri(path));
 		}
 
 		/// <summary>Returns all the text at the given URL.</summary>
@@ -1560,11 +1711,11 @@ namespace Edu.Stanford.Nlp.IO
 		/// is willing to tolerate missing files, they should catch that
 		/// exception.
 		/// </remarks>
-		public static string SlurpFileNoExceptions(File file)
+		public static string SlurpFileNoExceptions(FileInfo file)
 		{
 			try
 			{
-				return IOUtils.SlurpReader(EncodedInputStreamReader(new FileInputStream(file), null));
+				return IOUtils.SlurpReader(EncodedInputStreamReader(file.OpenRead(), null));
 			}
 			catch (IOException e)
 			{
@@ -1601,37 +1752,41 @@ namespace Edu.Stanford.Nlp.IO
 		/// Closes the Reader when done.
 		/// </remarks>
 		/// <returns>The text in the file.</returns>
-		public static string SlurpReader(Reader reader)
+		public static string SlurpReader(StreamReader reader)
 		{
-			StringBuilder buff = new StringBuilder();
-			try
+			using(reader) 
 			{
-				using (BufferedReader r = new BufferedReader(reader))
-				{
-					char[] chars = new char[SlurpBufferSize];
-					while (true)
-					{
-						int amountRead = r.Read(chars, 0, SlurpBufferSize);
-						if (amountRead < 0)
-						{
-							break;
-						}
-						buff.Append(chars, 0, amountRead);
-					}
-				}
+				return reader.ReadToEnd();
 			}
-			catch (Exception e)
-			{
-				throw new RuntimeIOException("slurpReader IO problem", e);
-			}
-			return buff.ToString();
+			// StringBuilder buff = new StringBuilder();
+			// try
+			// {
+			// 	using (BufferedReader r = new BufferedReader(reader))
+			// 	{
+			// 		char[] chars = new char[SlurpBufferSize];
+			// 		while (true)
+			// 		{
+			// 			int amountRead = r.Read(chars, 0, SlurpBufferSize);
+			// 			if (amountRead < 0)
+			// 			{
+			// 				break;
+			// 			}
+			// 			buff.Append(chars, 0, amountRead);
+			// 		}
+			// 	}
+			// }
+			// catch (Exception e)
+			// {
+			// 	throw new RuntimeIOException("slurpReader IO problem", e);
+			// }
+			// return buff.ToString();
 		}
 
 		/// <summary>Read the contents of an input stream, decoding it according to the given character encoding.</summary>
 		/// <param name="input">The input stream to read from</param>
 		/// <returns>The String representation of that input stream</returns>
 		/// <exception cref="System.IO.IOException"/>
-		public static string SlurpInputStream(InputStream input, string encoding)
+		public static string SlurpInputStream(Stream input, string encoding)
 		{
 			return SlurpReader(EncodedInputStreamReader(input, encoding));
 		}
@@ -1640,18 +1795,19 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="input">The input bytes.</param>
 		/// <param name="output">Where the bytes should be written.</param>
 		/// <exception cref="System.IO.IOException"/>
-		public static void WriteStreamToStream(InputStream input, OutputStream output)
+		public static void WriteStreamToStream(Stream input, Stream output)
 		{
-			byte[] buffer = new byte[4096];
-			while (true)
-			{
-				int len = input.Read(buffer);
-				if (len == -1)
-				{
-					break;
-				}
-				output.Write(buffer, 0, len);
-			}
+			input.CopyTo(output);
+			// byte[] buffer = new byte[4096];
+			// while (true)
+			// {
+			// 	int len = input.Read(buffer);
+			// 	if (len == -1)
+			// 	{
+			// 		break;
+			// 	}
+			// 	output.Write(buffer, 0, len);
+			// }
 		}
 
 		/// <summary>Read in a CSV formatted file with a header row.</summary>
@@ -1663,7 +1819,7 @@ namespace Edu.Stanford.Nlp.IO
 		public static IList<IDictionary<string, string>> ReadCSVWithHeader(string path, char quoteChar, char escapeChar)
 		{
 			string[] labels = null;
-			IList<IDictionary<string, string>> rows = Generics.NewArrayList();
+			IList<IDictionary<string, string>> rows = new List<IDictionary<string, string>>();
 			foreach (string line in IOUtils.ReadLines(path))
 			{
 				// logger.info("Splitting "+line);
@@ -1675,10 +1831,10 @@ namespace Edu.Stanford.Nlp.IO
 				{
 					string[] cells = StringUtils.SplitOnCharWithQuoting(line, ',', quoteChar, escapeChar);
 					System.Diagnostics.Debug.Assert((cells.Length == labels.Length));
-					IDictionary<string, string> cellMap = Generics.NewHashMap();
+					IDictionary<string, string> cellMap = new Dictionary<string,string>();
 					for (int i = 0; i < labels.Length; i++)
 					{
-						cellMap[labels[i]] = cells[i];
+						cellMap.Add(labels[i], cells[i]);
 					}
 					rows.Add(cellMap);
 				}
@@ -1768,7 +1924,7 @@ namespace Edu.Stanford.Nlp.IO
 								{
 									rtn[i] = buffer[i].ToString();
 								}
-								lines.Add(rtn);
+								lines.AddLast(rtn);
 								//((update state))
 								columnI = 0;
 								buffer[columnI] = new StringBuilder();
@@ -1804,12 +1960,12 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="filename">Name of file to open</param>
 		/// <returns>Input stream that can be used to read from the file</returns>
 		/// <exception cref="System.IO.IOException">if there are exceptions opening the file</exception>
-		public static InputStream GetFileInputStream(string filename)
+		public static Stream GetFileInputStream(string filename)
 		{
-			InputStream @in = new FileInputStream(filename);
+			Stream @in = File.OpenRead(filename);
 			if (filename.EndsWith(".gz"))
 			{
-				@in = new GZIPInputStream(@in);
+				@in = new GZipInputStream(@in);
 			}
 			else
 			{
@@ -1826,12 +1982,12 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="filename">Name of file to open</param>
 		/// <returns>Output stream that can be used to write to the file</returns>
 		/// <exception cref="System.IO.IOException">if there are exceptions opening the file</exception>
-		public static OutputStream GetFileOutputStream(string filename)
+		public static Stream GetFileOutputStream(string filename)
 		{
-			OutputStream @out = new FileOutputStream(filename);
+			Stream @out = File.OpenWrite(filename);
 			if (filename.EndsWith(".gz"))
 			{
-				@out = new GZIPOutputStream(@out);
+				@out = new GZipOutputStream(@out);
 			}
 			else
 			{
@@ -1845,12 +2001,12 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static OutputStream GetFileOutputStream(string filename, bool append)
+		public static Stream GetFileOutputStream(string filename, bool append)
 		{
-			OutputStream @out = new FileOutputStream(filename, append);
+			Stream @out = File.Open(filename, append ? FileMode.Append : FileMode.Open, FileAccess.Write);
 			if (filename.EndsWith(".gz"))
 			{
-				@out = new GZIPOutputStream(@out);
+				@out = new GZipOutputStream(@out);
 			}
 			else
 			{
@@ -1865,42 +2021,41 @@ namespace Edu.Stanford.Nlp.IO
 
 		/// <exception cref="System.IO.IOException"/>
 		[System.ObsoleteAttribute(@"Just call readerFromString(filename)")]
-		public static BufferedReader GetBufferedFileReader(string filename)
+		public static StreamReader GetBufferedFileReader(string filename)
 		{
 			return ReaderFromString(filename, defaultEncoding);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
 		[System.ObsoleteAttribute(@"Just call readerFromString(filename)")]
-		public static BufferedReader GetBufferedReaderFromClasspathOrFileSystem(string filename)
+		public static StreamReader GetBufferedReaderFromClasspathOrFileSystem(string filename)
 		{
 			return ReaderFromString(filename, defaultEncoding);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static PrintWriter GetPrintWriter(File textFile)
+		public static StreamWriter GetPrintWriter(FileInfo textFile)
 		{
 			return GetPrintWriter(textFile, null);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static PrintWriter GetPrintWriter(File textFile, string encoding)
+		public static StreamWriter GetPrintWriter(FileInfo textFile, string encoding)
 		{
-			File f = textFile.GetAbsoluteFile();
 			if (encoding == null)
 			{
 				encoding = defaultEncoding;
 			}
-			return new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), encoding)), true);
+			return new StreamWriter(textFile.OpenWrite(), Encoding.GetEncoding(encoding)) { AutoFlush = true };
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static PrintWriter GetPrintWriter(string filename)
+		public static StreamWriter GetPrintWriter(string filename)
 		{
 			return GetPrintWriter(filename, defaultEncoding);
 		}
 
-		public static PrintWriter GetPrintWriterIgnoringExceptions(string filename)
+		public static StreamWriter GetPrintWriterIgnoringExceptions(string filename)
 		{
 			try
 			{
@@ -1912,7 +2067,7 @@ namespace Edu.Stanford.Nlp.IO
 			}
 		}
 
-		public static PrintWriter GetPrintWriterOrDie(string filename)
+		public static StreamWriter GetPrintWriterOrDie(string filename)
 		{
 			try
 			{
@@ -1925,37 +2080,30 @@ namespace Edu.Stanford.Nlp.IO
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static PrintWriter GetPrintWriter(string filename, string encoding)
+		public static StreamWriter GetPrintWriter(string filename, string encoding)
 		{
-			OutputStream @out = GetFileOutputStream(filename);
+			Stream @out = GetFileOutputStream(filename);
 			if (encoding == null)
 			{
 				encoding = defaultEncoding;
 			}
-			return new PrintWriter(new BufferedWriter(new OutputStreamWriter(@out, encoding)), true);
+			return new StreamWriter(@out, Encoding.GetEncoding(encoding), 8192) { AutoFlush = true };
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static InputStream GetBZip2PipedInputStream(string filename)
+		public static Stream GetBZip2PipedInputStream(string filename)
 		{
-			string bzcat = Runtime.GetProperty("bzcat", "bzcat");
-			Runtime rt = Runtime.GetRuntime();
-			string cmd = bzcat + " " + filename;
-			//log.info("getBZip2PipedInputStream: Running command: "+cmd);
-			Process p = rt.Exec(cmd);
-			TextWriter errWriter = new BufferedWriter(new OutputStreamWriter(System.Console.Error));
-			StreamGobbler errGobbler = new StreamGobbler(p.GetErrorStream(), errWriter);
-			errGobbler.Start();
-			return p.GetInputStream();
+
+			return new BZip2InputStream(File.OpenRead(filename));
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public static OutputStream GetBZip2PipedOutputStream(string filename)
+		public static Stream GetBZip2PipedOutputStream(string filename)
 		{
-			return new BZip2PipedOutputStream(filename);
+			return new BZip2OutputStream(File.OpenWrite(filename));
 		}
 
-		private static readonly Pattern tab = Pattern.Compile("\t");
+		private static readonly Regex tab = new Regex("\t", RegexOptions.Compiled);
 
 		/// <summary>Read column as set</summary>
 		/// <param name="infile">- filename</param>
@@ -1964,8 +2112,8 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.IO.IOException"/>
 		public static ICollection<string> ReadColumnSet(string infile, int field)
 		{
-			BufferedReader br = IOUtils.GetBufferedFileReader(infile);
-			ICollection<string> set = Generics.NewHashSet();
+			StreamReader br = IOUtils.GetBufferedFileReader(infile);
+			ICollection<string> set = new HashSet<string>();
 			for (string line; (line = br.ReadLine()) != null; )
 			{
 				line = line.Trim();
@@ -1997,15 +2145,15 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.Reflection.TargetInvocationException"/>
 		public static IList<C> ReadObjectFromColumns<C>(Type objClass, string filename, string[] fieldNames, string delimiter)
 		{
-			Pattern delimiterPattern = Pattern.Compile(delimiter);
+			Regex delimiterPattern = new Regex(delimiter, RegexOptions.Compiled);
 			IList<C> list = new List<C>();
-			BufferedReader br = IOUtils.GetBufferedFileReader(filename);
+			StreamReader br = IOUtils.GetBufferedFileReader(filename);
 			for (string line; (line = br.ReadLine()) != null; )
 			{
 				line = line.Trim();
 				if (line.Length > 0)
 				{
-					C item = StringUtils.ColumnStringToObject(objClass, line, delimiterPattern, fieldNames);
+					C item = StringUtils.ColumnStringToObject<C>(objClass, line, delimiterPattern, fieldNames);
 					list.Add(item);
 				}
 			}
@@ -2016,21 +2164,14 @@ namespace Edu.Stanford.Nlp.IO
 		/// <exception cref="System.IO.IOException"/>
 		public static IDictionary<string, string> ReadMap(string filename)
 		{
-			IDictionary<string, string> map = Generics.NewHashMap();
-			try
+			IDictionary<string, string> map = new Dictionary<string, string>();
+			StreamReader br = IOUtils.GetBufferedFileReader(filename);
+			for (string line; (line = br.ReadLine()) != null; )
 			{
-				BufferedReader br = IOUtils.GetBufferedFileReader(filename);
-				for (string line; (line = br.ReadLine()) != null; )
-				{
-					string[] fields = tab.Split(line, 2);
-					map[fields[0]] = fields[1];
-				}
-				br.Close();
+				string[] fields = tab.Split(line, 2);
+				map[fields[0]] = fields[1];
 			}
-			catch (IOException ex)
-			{
-				throw new Exception(ex);
-			}
+			br.Close();
 			return map;
 		}
 
@@ -2056,16 +2197,17 @@ namespace Edu.Stanford.Nlp.IO
 			// todo: This is same as slurpFile (!)
 			try
 			{
-				StringBuilder sb = new StringBuilder();
-				BufferedReader @in = new BufferedReader(new EncodingFileReader(filename, encoding));
-				string line;
-				while ((line = @in.ReadLine()) != null)
-				{
-					sb.Append(line);
-					sb.Append(eolChar);
-				}
-				@in.Close();
-				return sb.ToString();
+				return File.ReadAllText(filename, Encoding.GetEncoding(encoding));
+				// StringBuilder sb = new StringBuilder();
+				// BufferedReader @in = new BufferedReader(new EncodingFileReader(filename, encoding));
+				// string line;
+				// while ((line = @in.ReadLine()) != null)
+				// {
+				// 	sb.Append(line);
+				// 	sb.Append(eolChar);
+				// }
+				// @in.Close();
+				// return sb.ToString();
 			}
 			catch (IOException e)
 			{
@@ -2101,7 +2243,7 @@ namespace Edu.Stanford.Nlp.IO
 			try
 			{
 				IList<string> lines = new List<string>();
-				BufferedReader @in = ReaderFromString(filename, encoding);
+				StreamReader @in = ReaderFromString(filename, encoding);
 				string line;
 				int i = 0;
 				while ((line = @in.ReadLine()) != null)
@@ -2127,17 +2269,17 @@ namespace Edu.Stanford.Nlp.IO
 		/// A JavaNLP specific convenience routine for obtaining the current
 		/// scratch directory for the machine you're currently running on.
 		/// </summary>
-		public static File GetJNLPLocalScratch()
+		public static FileInfo GetJNLPLocalScratch(IConfiguration properties)
 		{
 			try
 			{
-				string machineName = InetAddress.GetLocalHost().GetHostName().Split("\\.")[0];
-				string username = Runtime.GetProperty("user.name");
-				return new File("/" + machineName + "/scr1/" + username);
+				string machineName = Dns.GetHostName();
+				string username = properties["user.name"];
+				return new FileInfo("/" + machineName + "/scr1/" + username);
 			}
 			catch (Exception)
 			{
-				return new File("./scr/");
+				return new FileInfo("./scr/");
 			}
 		}
 
@@ -2149,26 +2291,26 @@ namespace Edu.Stanford.Nlp.IO
 		/// </remarks>
 		/// <param name="tgtDir">The directory that you wish to ensure exists</param>
 		/// <exception cref="System.IO.IOException">If directory can't be created, is an existing file, or for other reasons</exception>
-		public static File EnsureDir(File tgtDir)
+		public static FileSystemInfo EnsureDir(FileSystemInfo tgtDir)
 		{
-			if (tgtDir.Exists())
+			if (tgtDir.Exists)
 			{
-				if (tgtDir.IsDirectory())
+				if (tgtDir.Attributes == FileAttributes.Directory)
 				{
 					return tgtDir;
 				}
 				else
 				{
-					throw new IOException("Could not create directory " + tgtDir.GetAbsolutePath() + ", as a file already exists at that path.");
+					throw new IOException("Could not create directory " + tgtDir.FullName + ", as a file already exists at that path.");
 				}
 			}
 			else
 			{
-				if (!tgtDir.Mkdirs())
-				{
-					throw new IOException("Could not create directory " + tgtDir.GetAbsolutePath());
-				}
-				return tgtDir;
+				// if (!tgtDir.Create())
+				// {
+				// 	throw new IOException("Could not create directory " + tgtDir.FullName);
+				// }
+				return Directory.CreateDirectory(tgtDir.FullName);
 			}
 		}
 
@@ -2181,20 +2323,17 @@ namespace Edu.Stanford.Nlp.IO
 		/// <see langword="false"/>
 		/// otherwise
 		/// </returns>
-		public static bool DeleteDirRecursively(File dir)
+		public static bool DeleteDirRecursively(FileSystemInfo dir)
 		{
-			if (dir.IsDirectory())
+			try
 			{
-				foreach (File f in dir.ListFiles())
-				{
-					bool success = DeleteDirRecursively(f);
-					if (!success)
-					{
-						return false;
-					}
-				}
+				Directory.Delete(dir.FullName, true);
+				return true;
 			}
-			return dir.Delete();
+			catch
+			{
+				return false;
+			}
 		}
 
 		public static string GetExtension(string fileName)
@@ -2204,7 +2343,7 @@ namespace Edu.Stanford.Nlp.IO
 				return null;
 			}
 			int idx = fileName.LastIndexOf('.');
-			return Sharpen.Runtime.Substring(fileName, idx + 1);
+			return fileName.Substring(idx + 1);
 		}
 
 		/// <summary>Create a Reader with an explicit encoding around an InputStream.</summary>
@@ -2217,16 +2356,16 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="encoding">A charset encoding</param>
 		/// <returns>A Reader</returns>
 		/// <exception cref="System.IO.IOException">If any IO problem</exception>
-		public static Reader EncodedInputStreamReader(InputStream stream, string encoding)
+		public static StreamReader EncodedInputStreamReader(Stream stream, string encoding)
 		{
 			// InputStreamReader doesn't allow encoding to be null;
 			if (encoding == null)
 			{
-				return new InputStreamReader(stream);
+				return new StreamReader(stream);
 			}
 			else
 			{
-				return new InputStreamReader(stream, encoding);
+				return new StreamReader(stream, Encoding.GetEncoding(encoding));
 			}
 		}
 
@@ -2240,16 +2379,16 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="encoding">A charset encoding</param>
 		/// <returns>A Reader</returns>
 		/// <exception cref="System.IO.IOException">If any IO problem</exception>
-		public static TextWriter EncodedOutputStreamWriter(OutputStream stream, string encoding)
+		public static TextWriter EncodedOutputStreamWriter(Stream stream, string encoding)
 		{
 			// OutputStreamWriter doesn't allow encoding to be null;
 			if (encoding == null)
 			{
-				return new OutputStreamWriter(stream);
+				return new StreamWriter(stream);
 			}
 			else
 			{
-				return new OutputStreamWriter(stream, encoding);
+				return new StreamWriter(stream, Encoding.GetEncoding(encoding));
 			}
 		}
 
@@ -2264,16 +2403,16 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="autoFlush">Whether to make an autoflushing Writer</param>
 		/// <returns>A Reader</returns>
 		/// <exception cref="System.IO.IOException">If any IO problem</exception>
-		public static PrintWriter EncodedOutputStreamPrintWriter(OutputStream stream, string encoding, bool autoFlush)
+		public static StreamWriter EncodedOutputStreamPrintWriter(Stream stream, string encoding, bool autoFlush)
 		{
 			// PrintWriter doesn't allow encoding to be null; or to have charset and flush
 			if (encoding == null)
 			{
-				return new PrintWriter(stream, autoFlush);
+				return new StreamWriter(stream) { AutoFlush = true };
 			}
 			else
 			{
-				return new PrintWriter(new OutputStreamWriter(stream, encoding), autoFlush);
+				return new StreamWriter(stream, Encoding.GetEncoding(encoding)) { AutoFlush = true };
 			}
 		}
 
@@ -2285,25 +2424,30 @@ namespace Edu.Stanford.Nlp.IO
 		/// A raw file copy function -- this is not public since no error checks are made as to the
 		/// consistency of the file being copied. Use instead:
 		/// </remarks>
-		/// <seealso cref="Cp(Java.IO.File, Java.IO.File, bool)"/>
+		/// <seealso cref="Cp(Java.IO.FileInfo, Java.IO.FileInfo, bool)"/>
 		/// <param name="source">The source file. This is guaranteed to exist, and is guaranteed to be a file.</param>
 		/// <param name="target">The target file.</param>
 		/// <exception cref="System.IO.IOException">Throws an exception if the copy fails.</exception>
-		private static void CopyFile(File source, File target)
+		private static void CopyFile(FileInfo source, FileInfo target)
 		{
-			FileChannel sourceChannel = new FileInputStream(source).GetChannel();
-			FileChannel targetChannel = new FileOutputStream(target).GetChannel();
-			// allow for the case that it doesn't all transfer in one go (though it probably does for a file cp)
-			long pos = 0;
-			long toCopy = sourceChannel.Size();
-			while (toCopy > 0)
+			using(var src = source.OpenRead())
+			using(var dest = target.OpenWrite())
 			{
-				long bytes = sourceChannel.TransferTo(pos, toCopy, targetChannel);
-				pos += bytes;
-				toCopy -= bytes;
+				src.CopyTo(dest);
 			}
-			sourceChannel.Close();
-			targetChannel.Close();
+			// FileChannel sourceChannel = new FileInputStream(source).GetChannel();
+			// FileChannel targetChannel = new FileOutputStream(target).GetChannel();
+			// // allow for the case that it doesn't all transfer in one go (though it probably does for a file cp)
+			// long pos = 0;
+			// long toCopy = sourceChannel.Size();
+			// while (toCopy > 0)
+			// {
+			// 	long bytes = sourceChannel.TransferTo(pos, toCopy, targetChannel);
+			// 	pos += bytes;
+			// 	toCopy -= bytes;
+			// }
+			// sourceChannel.Close();
+			// targetChannel.Close();
 		}
 
 		/// <summary><p>An implementation of cp, as close to the Unix command as possible.</summary>
@@ -2319,83 +2463,94 @@ namespace Edu.Stanford.Nlp.IO
 		/// If either the copy fails (standard IO Exception), or the command is invalid
 		/// (e.g., copying a directory without the recursive flag)
 		/// </exception>
-		public static void Cp(File source, File target, bool recursive)
+		public static void Cp(FileInfo source, FileInfo target, bool recursive)
 		{
 			// Error checks
-			if (source.IsDirectory() && !recursive)
+			if (source.Attributes == FileAttributes.Directory && !recursive)
 			{
 				// cp a b -- a is a directory
 				throw new IOException("cp: omitting directory: " + source);
 			}
-			if (!target.GetParentFile().Exists())
+			if (!target.Directory.Exists)
 			{
 				// cp a b/c/d/e -- b/c/d doesn't exist
 				throw new IOException("cp: cannot copy to directory: " + recursive + " (parent doesn't exist)");
 			}
-			if (!target.GetParentFile().IsDirectory())
+			if (target.Directory.Attributes != FileAttributes.Directory)
 			{
 				// cp a b/c/d/e -- b/c/d is a regular file
 				throw new IOException("cp: cannot copy to directory: " + recursive + " (parent isn't a directory)");
 			}
 			// Get true target
-			File trueTarget;
-			if (target.Exists() && target.IsDirectory())
+			FileInfo trueTarget;
+			if (target.Exists && target.Attributes == FileAttributes.Directory)
 			{
-				trueTarget = new File(target.GetPath() + File.separator + source.GetName());
+				trueTarget = new FileInfo(Path.Combine(target.FullName, Path.GetFileName(source.FullName)));
 			}
 			else
 			{
 				trueTarget = target;
 			}
 			// Copy
-			if (source.IsFile())
+			if (source.Attributes != FileAttributes.Directory)
 			{
 				// Case: copying a file
 				CopyFile(source, trueTarget);
 			}
 			else
 			{
-				if (source.IsDirectory())
+				if (source.Attributes == FileAttributes.Directory)
 				{
 					// Case: copying a directory
-					File[] children = source.ListFiles();
+					FileInfo[] children = Directory.GetFiles(source.FullName).Select(_=> new FileInfo(_)).ToArray();
 					if (children == null)
 					{
 						throw new IOException("cp: could not list files in source: " + source);
 					}
-					if (target.Exists())
+					if (target.Exists)
 					{
 						// Case: cp -r a b -- b exists
-						if (!target.IsDirectory())
+						if (target.Attributes != FileAttributes.Directory)
 						{
 							// cp -r a b -- b is a regular file
 							throw new IOException("cp: cannot copy directory into regular file: " + target);
 						}
-						if (trueTarget.Exists() && !trueTarget.IsDirectory())
+						if (trueTarget.Exists && trueTarget.Attributes != FileAttributes.Directory)
 						{
 							// cp -r a b -- b/a is not a directory
 							throw new IOException("cp: overwriting a file with a directory: " + trueTarget);
 						}
-						if (!trueTarget.Exists() && !trueTarget.Mkdir())
+						if (!trueTarget.Exists)
 						{
-							// cp -r a b -- b/a cannot be created
-							throw new IOException("cp: could not create directory: " + trueTarget);
+							try 
+							{ 
+								Directory.CreateDirectory(trueTarget.FullName);
+							}
+							catch
+							{
+								// cp -r a b -- b/a cannot be created
+								throw new IOException("cp: could not create directory: " + trueTarget);
+							}
 						}
 					}
 					else
 					{
 						// Case: cp -r a b -- b does not exist
 						System.Diagnostics.Debug.Assert(trueTarget == target);
-						if (!trueTarget.Mkdir())
+						try 
+						{ 
+							Directory.CreateDirectory(trueTarget.FullName);
+						}
+						catch
 						{
 							// cp -r a b -- cannot create b as a directory
 							throw new IOException("cp: could not create target directory: " + trueTarget);
 						}
 					}
 					// Actually do the copy
-					foreach (File child in children)
+					foreach (FileInfo child in children)
 					{
-						File childTarget = new File(trueTarget.GetPath() + File.separator + child.GetName());
+						FileInfo childTarget = new FileInfo(Path.Combine(trueTarget.FullName, Path.GetFileName(child.FullName)));
 						Cp(child, childTarget, recursive);
 					}
 				}
@@ -2406,9 +2561,9 @@ namespace Edu.Stanford.Nlp.IO
 			}
 		}
 
-		/// <seealso cref="Cp(Java.IO.File, Java.IO.File, bool)"/>
+		/// <seealso cref="Cp(Java.IO.FileInfo, Java.IO.FileInfo, bool)"/>
 		/// <exception cref="System.IO.IOException"/>
-		public static void Cp(File source, File target)
+		public static void Cp(FileInfo source, FileInfo target)
 		{
 			Cp(source, target, false);
 		}
@@ -2423,27 +2578,25 @@ namespace Edu.Stanford.Nlp.IO
 		/// <param name="encoding">The encoding to read the file in.</param>
 		/// <returns>The read lines, one String per line.</returns>
 		/// <exception cref="System.IO.IOException">if the file could not be read.</exception>
-		public static string[] Tail(File f, int n, string encoding)
+		public static string[] Tail(FileInfo f, int n, string encoding)
 		{
 			if (n == 0)
 			{
 				return new string[0];
 			}
 			// Variables
-			RandomAccessFile raf = new RandomAccessFile(f, "r");
+			Stream raf = f.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			int linesRead = 0;
 			IList<byte> bytes = new List<byte>();
 			IList<string> linesReversed = new List<string>();
 			// Seek to end of file
-			long length = raf.Length() - 1;
-			raf.Seek(length);
 			// Read backwards
-			for (long seek = length; seek >= 0; --seek)
+			for (long seek = 0; seek <= raf.Length; seek++)
 			{
 				// Seek back
-				raf.Seek(seek);
+				raf.Seek(-seek, SeekOrigin.End);
 				// Read the next character
-				byte c = raf.ReadByte();
+				byte c = (byte)raf.ReadByte();
 				if (c == '\n')
 				{
 					// If it's a newline, handle adding the line
@@ -2452,7 +2605,7 @@ namespace Edu.Stanford.Nlp.IO
 					{
 						str[i] = bytes[str.Length - i - 1];
 					}
-					linesReversed.Add(Sharpen.Runtime.GetStringForBytes(str, encoding));
+					linesReversed.Add(Encoding.GetEncoding(encoding).GetString(str));
 					bytes = new List<byte>();
 					linesRead += 1;
 					if (linesRead == n)
@@ -2474,7 +2627,7 @@ namespace Edu.Stanford.Nlp.IO
 				{
 					str[i] = bytes[str.Length - i - 1];
 				}
-				linesReversed.Add(Sharpen.Runtime.GetStringForBytes(str, encoding));
+				linesReversed.Add(Encoding.GetEncoding(encoding).GetString(str));
 			}
 			// Create output
 			string[] rtn = new string[linesReversed.Count];
@@ -2486,9 +2639,9 @@ namespace Edu.Stanford.Nlp.IO
 			return rtn;
 		}
 
-		/// <seealso cref="Tail(Java.IO.File, int, string)"></seealso>
+		/// <seealso cref="Tail(Java.IO.FileInfo, int, string)"></seealso>
 		/// <exception cref="System.IO.IOException"/>
-		public static string[] Tail(File f, int n)
+		public static string[] Tail(FileInfo f, int n)
 		{
 			return Tail(f, n, "utf-8");
 		}
@@ -2528,19 +2681,19 @@ namespace Edu.Stanford.Nlp.IO
 		/// </ul>
 		/// </remarks>
 		/// <param name="file">The file or directory to delete.</param>
-		public static void DeleteRecursively(File file)
+		public static void DeleteRecursively(FileInfo file)
 		{
 			// Sanity checks
-			if (blacklistedPathsToRemove.Contains(file.GetPath()))
+			if (blacklistedPathsToRemove.Contains(file.FullName))
 			{
 				throw new ArgumentException("You're trying to delete " + file + "! I _really_ don't think you want to do that...");
 			}
 			int count = 0;
 			long size = 0;
-			foreach (File f in IterFilesRecursive(file))
+			foreach (FileInfo f in IterFilesRecursive(file))
 			{
 				count += 1;
-				size += f.Length();
+				size += f.Length;
 			}
 			if (count > 100)
 			{
@@ -2552,12 +2705,12 @@ namespace Edu.Stanford.Nlp.IO
 				throw new ArgumentException("Deleting more than 10GB; you should do this manually");
 			}
 			// Do delete
-			if (file.IsDirectory())
+			if (file.Attributes == FileAttributes.Directory)
 			{
-				File[] children = file.ListFiles();
+				FileInfo[] children = Directory.GetFiles(file.FullName).Select(_ => new FileInfo(_)).ToArray();
 				if (children != null)
 				{
-					foreach (File child in children)
+					foreach (FileInfo child in children)
 					{
 						DeleteRecursively(child);
 					}
@@ -2574,16 +2727,16 @@ namespace Edu.Stanford.Nlp.IO
 		/// </remarks>
 		/// <param name="callback">The function to run for every line of input.</param>
 		/// <exception cref="System.IO.IOException">Thrown from the underlying input stream.</exception>
-		public static void Console(string prompt, IConsumer<string> callback)
+		public static void Console(string prompt, Action<string> callback)
 		{
-			BufferedReader reader = new BufferedReader(new InputStreamReader(Runtime.@in));
+			StreamReader reader = new StreamReader(System.Console.OpenStandardInput());
 			string line;
 			System.Console.Out.Write(prompt);
 			while ((line = reader.ReadLine()) != null)
 			{
 				switch (line.ToLower())
 				{
-					case string.Empty:
+					case "":
 					{
 						break;
 					}
@@ -2597,7 +2750,7 @@ namespace Edu.Stanford.Nlp.IO
 
 					default:
 					{
-						callback.Accept(line);
+						callback(line);
 						break;
 					}
 				}
@@ -2608,29 +2761,30 @@ namespace Edu.Stanford.Nlp.IO
 		/// <summary>Create a prompt, and read a single line of response.</summary>
 		/// <param name="prompt">An optional prompt to show the user.</param>
 		/// <exception cref="System.IO.IOException">Throw from the underlying reader.</exception>
-		public static string PromptUserInput(Optional<string> prompt)
+		public static string PromptUserInput(string prompt)
 		{
-			BufferedReader reader = new BufferedReader(new InputStreamReader(Runtime.@in));
-			System.Console.Out.Write(prompt.OrElse("> "));
+			StreamReader reader = new StreamReader(System.Console.OpenStandardInput());
+			System.Console.Out.Write(prompt ?? "> ");
 			return reader.ReadLine();
 		}
 
 		/// <seealso cref="Console(string, Java.Util.Function.IConsumer{T})"></seealso>
 		/// <exception cref="System.IO.IOException"/>
-		public static void Console(IConsumer<string> callback)
+		public static void Console(Action<string> callback)
 		{
 			Console("> ", callback);
 		}
 
 		public static string ThrowableToStackTrace(Exception t)
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append(t).Append(eolChar);
-			foreach (StackTraceElement e in t.GetStackTrace())
-			{
-				sb.Append("\t at ").Append(e).Append(eolChar);
-			}
-			return sb.ToString();
+			return t.ToString();
+			// StringBuilder sb = new StringBuilder();
+			// sb.Append(t).Append(eolChar);
+			// foreach (StackTraceElement e in t.GetStackTrace())
+			// {
+			// 	sb.Append("\t at ").Append(e).Append(eolChar);
+			// }
+			// return sb.ToString();
 		}
 	}
 }

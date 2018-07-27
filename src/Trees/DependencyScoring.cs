@@ -5,10 +5,10 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees
 {
@@ -556,8 +556,6 @@ namespace Edu.Stanford.Nlp.Trees
 			{
 				this.serialVersionUID = 1L;
 			}
-
-			private const long serialVersionUID;
 
 			public override bool Equals(object o)
 			{

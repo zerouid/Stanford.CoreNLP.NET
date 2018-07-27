@@ -5,10 +5,10 @@ using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Fsm
 {
@@ -139,7 +139,7 @@ namespace Edu.Stanford.Nlp.Fsm
 		}
 
 		/// <exception cref="Java.Lang.CloneNotSupportedException"/>
-		public virtual Edu.Stanford.Nlp.Fsm.TransducerGraph Clone()
+		public virtual object Clone()
 		{
 			base.MemberwiseClone();
 			Edu.Stanford.Nlp.Fsm.TransducerGraph result = new Edu.Stanford.Nlp.Fsm.TransducerGraph(this, (TransducerGraph.IArcProcessor)null);
@@ -188,18 +188,18 @@ namespace Edu.Stanford.Nlp.Fsm
 		}
 
 		/// <summary>Returns a Set of type TransducerGraph.Arc.</summary>
-		public virtual ICollection<TransducerGraph.Arc> GetArcsByInput(object node)
+		public virtual ICollection<TransducerGraph.Arc<Node, In,Out>> GetArcsByInput(object node)
 		{
 			return Ensure(arcsByInput[node]);
 		}
 
 		/// <summary>Returns a Set of type TransducerGraph.Arc.</summary>
-		public virtual ICollection<TransducerGraph.Arc> GetArcsBySource(object node)
+		public virtual ICollection<TransducerGraph.Arc<Node, In,Out>> GetArcsBySource(object node)
 		{
 			return Ensure(arcsBySource[node]);
 		}
 
-		private static ICollection<TransducerGraph.Arc> Ensure(ICollection<TransducerGraph.Arc> s)
+		private static ICollection<TransducerGraph.Arc<Node, In,Out>> Ensure<Node, In,Out>(ICollection<TransducerGraph.Arc<Node, In,Out>> s)
 		{
 			if (s == null)
 			{
@@ -209,25 +209,25 @@ namespace Edu.Stanford.Nlp.Fsm
 		}
 
 		/// <summary>Returns a Set of type TransducerGraph.Arc.</summary>
-		public virtual ICollection<TransducerGraph.Arc> GetArcsByTarget(object node)
+		public virtual ICollection<TransducerGraph.Arc<Node, In,Out>> GetArcsByTarget(object node)
 		{
 			return Ensure(arcsByTarget[node]);
 		}
 
 		/// <summary>Can only be one because automaton is deterministic.</summary>
-		public virtual TransducerGraph.Arc GetArcBySourceAndInput(object node, object input)
+		public virtual TransducerGraph.Arc<Node, In,Out> GetArcBySourceAndInput(object node, object input)
 		{
 			return arcsBySourceAndInput[Generics.NewPair(node, input)];
 		}
 
 		/// <summary>Returns a Set of type TransducerGraph.Arc.</summary>
-		public virtual ICollection<TransducerGraph.Arc> GetArcsByTargetAndInput(object node, object input)
+		public virtual ICollection<TransducerGraph.Arc<Node, In,Out>> GetArcsByTargetAndInput(object node, object input)
 		{
 			return Ensure(arcsByTargetAndInput[Generics.NewPair(node, input)]);
 		}
 
 		/// <summary>Slow implementation.</summary>
-		public virtual TransducerGraph.Arc GetArc(object source, object target)
+		public virtual TransducerGraph.Arc<Node, In,Out> GetArc(object source, object target)
 		{
 			ISet arcsFromSource = arcsBySource[source];
 			ISet arcsToTarget = arcsByTarget[target];
@@ -259,7 +259,7 @@ namespace Edu.Stanford.Nlp.Fsm
 		/// true if and only if it added Arc a to the graph.
 		/// determinism.
 		/// </returns>
-		protected internal virtual bool AddArc(TransducerGraph.Arc a)
+		protected internal virtual bool AddArc<Node, In, Out>(TransducerGraph.Arc<Node, In, Out> a)
 		{
 			object source = a.GetSourceNode();
 			object target = a.GetTargetNode();
@@ -291,7 +291,7 @@ namespace Edu.Stanford.Nlp.Fsm
 			return true;
 		}
 
-		public virtual bool RemoveArc(TransducerGraph.Arc a)
+		public virtual bool RemoveArc<Node, In,Out>(TransducerGraph.Arc<Node, In,Out> a)
 		{
 			object source = a.GetSourceNode();
 			object target = a.GetTargetNode();

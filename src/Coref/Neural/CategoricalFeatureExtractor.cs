@@ -6,9 +6,8 @@ using Edu.Stanford.Nlp.Coref.Statistical;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Neural;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Org.Ejml.Simple;
-using Sharpen;
+using MathNet.Numerics;
+
 
 namespace Edu.Stanford.Nlp.Coref.Neural
 {

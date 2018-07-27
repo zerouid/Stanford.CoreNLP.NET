@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -26,7 +23,7 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private readonly int kFold;
 
-		private readonly CrossValidator.SavedState[] savedStates;
+		private readonly CrossValidator<L,F>.SavedState[] savedStates;
 
 		public CrossValidator(GeneralDataset<L, F> trainData)
 			: this(trainData, 10)
@@ -46,7 +43,7 @@ namespace Edu.Stanford.Nlp.Classify
 
 		/// <summary>Returns an Iterator over train/test/saved states.</summary>
 		/// <returns>An Iterator over train/test/saved states</returns>
-		private IEnumerator<Triple<GeneralDataset<L, F>, GeneralDataset<L, F>, CrossValidator.SavedState>> Iterator()
+		private IEnumerator<Triple<GeneralDataset<L, F>, GeneralDataset<L, F>, CrossValidator<L,F>.SavedState>> Iterator()
 		{
 			return new CrossValidator.CrossValidationIterator(this);
 		}

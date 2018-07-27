@@ -6,9 +6,9 @@ using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Trees.International.Pennchinese;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Lang;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Wordseg
 {
@@ -36,7 +36,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 	/// <author>Pichuan Chang</author>
 	/// <author>Christopher Manning</author>
 	[System.Serializable]
-	public class Gale2007ChineseSegmenterFeatureFactory<In> : FeatureFactory<IN>
+	public class Gale2007ChineseSegmenterFeatureFactory<In> : FeatureFactory<In>
 		where In : CoreLabel
 	{
 		private const int Debug = 0;
@@ -82,7 +82,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 		/// <summary>Extracts all the features from the input data at a certain index.</summary>
 		/// <param name="cInfo">The complete data set as a List of WordInfo</param>
 		/// <param name="loc">The index at which to extract features.</param>
-		public override ICollection<string> GetCliqueFeatures(PaddedList<IN> cInfo, int loc, Clique clique)
+		public override ICollection<string> GetCliqueFeatures(PaddedList<In> cInfo, int loc, Clique clique)
 		{
 			ICollection<string> features = Generics.NewHashSet();
 			if (clique == cliqueC)

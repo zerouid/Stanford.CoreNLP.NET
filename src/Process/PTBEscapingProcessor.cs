@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Java.Lang;
-using Java.Net;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Process
 {
@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// <author>Sarah Spikes (sdspikes@cs.stanford.edu) (Templatization)</author>
 	/// <?/>
 	/// <?/>
-	public class PTBEscapingProcessor<In, L, F> : AbstractListProcessor<IN, IHasWord, L, F>, IFunction<IList<IN>, IList<IHasWord>>
+	public class PTBEscapingProcessor<In, L, F> : AbstractListProcessor<IN, IHasWord, L, F>, IFunction<IList<In>, IList<IHasWord>>
 		where In : IHasWord
 	{
 		private static readonly char[] EmptyCharArray = new char[0];
@@ -71,7 +71,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Escape a List of HasWords.  Implements the
 		/// Function&lt;List&lt;HasWord&gt;, List&lt;HasWord&gt;&gt; interface.
 		/// </remarks>
-		public virtual IList<IHasWord> Apply(IList<IN> hasWordsList)
+		public virtual IList<IHasWord> Apply(IList<In> hasWordsList)
 		{
 			return Process(hasWordsList);
 		}

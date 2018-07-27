@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Java.Util;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Stats
 {
@@ -261,17 +261,17 @@ namespace Edu.Stanford.Nlp.Stats
 		public virtual void TestIncrement()
 		{
 			c.Clear();
-			NUnit.Framework.Assert.AreEqual(0., c.GetCount("r"));
-			NUnit.Framework.Assert.AreEqual(1., c.IncrementCount("r"));
-			NUnit.Framework.Assert.AreEqual(1., c.GetCount("r"));
+			NUnit.Framework.Assert.AreEqual(0.0, c.GetCount("r"));
+			NUnit.Framework.Assert.AreEqual(1.0, c.IncrementCount("r"));
+			NUnit.Framework.Assert.AreEqual(1.0, c.GetCount("r"));
 			c.SetCount("p", 0);
 			c.SetCount("q", 2);
 			NUnit.Framework.Assert.AreEqual(true, c.ContainsKey("q"));
 			NUnit.Framework.Assert.AreEqual(false, c.ContainsKey("!!!"));
-			NUnit.Framework.Assert.AreEqual(0., c.GetCount("p"));
-			NUnit.Framework.Assert.AreEqual(1., c.IncrementCount("p"));
-			NUnit.Framework.Assert.AreEqual(1., c.GetCount("p"));
-			NUnit.Framework.Assert.AreEqual(4., c.TotalCount());
+			NUnit.Framework.Assert.AreEqual(0.0, c.GetCount("p"));
+			NUnit.Framework.Assert.AreEqual(1.0, c.IncrementCount("p"));
+			NUnit.Framework.Assert.AreEqual(1.0, c.GetCount("p"));
+			NUnit.Framework.Assert.AreEqual(4.0, c.TotalCount());
 			c.DecrementCount("s", 5.0);
 			NUnit.Framework.Assert.AreEqual(-5.0, c.GetCount("s"));
 			c.Remove("s");
@@ -286,15 +286,15 @@ namespace Edu.Stanford.Nlp.Stats
 			c.SetCount("q", 2);
 			if (integral)
 			{
-				NUnit.Framework.Assert.AreEqual(3., c.IncrementCount("p", 3.5));
-				NUnit.Framework.Assert.AreEqual(3., c.GetCount("p"));
-				NUnit.Framework.Assert.AreEqual(5., c.TotalCount());
+				NUnit.Framework.Assert.AreEqual(3.0, c.IncrementCount("p", 3.5));
+				NUnit.Framework.Assert.AreEqual(3.0, c.GetCount("p"));
+				NUnit.Framework.Assert.AreEqual(5.0, c.TotalCount());
 			}
 			else
 			{
-				NUnit.Framework.Assert.AreEqual(4., c.IncrementCount("p", 3.5));
-				NUnit.Framework.Assert.AreEqual(4., c.GetCount("p"));
-				NUnit.Framework.Assert.AreEqual(6., c.TotalCount());
+				NUnit.Framework.Assert.AreEqual(4.0, c.IncrementCount("p", 3.5));
+				NUnit.Framework.Assert.AreEqual(4.0, c.GetCount("p"));
+				NUnit.Framework.Assert.AreEqual(6.0, c.TotalCount());
 			}
 		}
 
@@ -311,8 +311,8 @@ namespace Edu.Stanford.Nlp.Stats
 				// 0.5 gives 0 and 0.3 gives -1, so -1
 				double ans = c.LogIncrementCount("p", Math.Log(.3));
 				// System.out.println(ans);
-				NUnit.Framework.Assert.AreEqual(0., ans, .0001);
-				NUnit.Framework.Assert.AreEqual(-1., c.TotalCount(), .0001);
+				NUnit.Framework.Assert.AreEqual(0.0, ans, .0001);
+				NUnit.Framework.Assert.AreEqual(-1.0, c.TotalCount(), .0001);
 			}
 			else
 			{

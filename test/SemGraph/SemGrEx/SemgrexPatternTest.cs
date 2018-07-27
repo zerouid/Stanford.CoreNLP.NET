@@ -5,10 +5,10 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Patterns;
 using Edu.Stanford.Nlp.Semgraph;
 using Edu.Stanford.Nlp.Trees;
-using Java.IO;
-using Java.Nio.Charset;
+
+
 using NUnit.Framework;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Semgraph.Semgrex
 {

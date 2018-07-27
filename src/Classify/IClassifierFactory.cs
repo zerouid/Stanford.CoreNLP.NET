@@ -1,5 +1,3 @@
-using Sharpen;
-
 namespace Edu.Stanford.Nlp.Classify
 {
 	/// <summary>

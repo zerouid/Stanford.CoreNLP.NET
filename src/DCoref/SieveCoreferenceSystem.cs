@@ -37,13 +37,7 @@ using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Logging;
-using Java.Util.Regex;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Dcoref
 {
@@ -1700,12 +1694,12 @@ LOOP_break: ;
 			return finalScore;
 		}
 
-		public static void PrintConllOutput(Document document, PrintWriter writer, bool gold)
+		public static void PrintConllOutput(Document document, StreamWriter writer, bool gold)
 		{
 			PrintConllOutput(document, writer, gold, false);
 		}
 
-		public static void PrintConllOutput(Document document, PrintWriter writer, bool gold, bool filterSingletons)
+		public static void PrintConllOutput(Document document, StreamWriter writer, bool gold, bool filterSingletons)
 		{
 			IList<IList<Mention>> orderedMentions;
 			if (gold)
@@ -1723,7 +1717,7 @@ LOOP_break: ;
 			PrintConllOutput(document, writer, orderedMentions, gold);
 		}
 
-		private static void PrintConllOutput(Document document, PrintWriter writer, IList<IList<Mention>> orderedMentions, bool gold)
+		private static void PrintConllOutput(Document document, StreamWriter writer, IList<IList<Mention>> orderedMentions, bool gold)
 		{
 			Annotation anno = document.annotation;
 			IList<IList<string[]>> conllDocSentences = document.conllDoc.sentenceWordLists;

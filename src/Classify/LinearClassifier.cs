@@ -32,12 +32,6 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -1033,7 +1027,7 @@ namespace Edu.Stanford.Nlp.Classify
 		}
 
 		/// <summary>Print histogram counts from hist and examples over a certain range</summary>
-		private static void PrintHistCounts(int ind, string title, PrintWriter pw, double[][] hist, object[][] histEg)
+		private static void PrintHistCounts(int ind, string title, StreamWriter pw, double[][] hist, object[][] histEg)
 		{
 			pw.Println(title);
 			for (int i = 0; i < 200; i++)
@@ -1092,7 +1086,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// Print all features in the classifier and the weight that they assign
 		/// to each class. Print to the given PrintWriter.
 		/// </remarks>
-		public virtual void Dump(PrintWriter pw)
+		public virtual void Dump(StreamWriter pw)
 		{
 			IDatum<L, F> allFeatures = new BasicDatum<L, F>(Features(), (L)null);
 			JustificationOf(allFeatures, pw);
@@ -1116,7 +1110,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// Print all features active for a particular datum and the weight that
 		/// the classifier assigns to each class for those features.
 		/// </summary>
-		private void JustificationOfRVFDatum(RVFDatum<L, F> example, PrintWriter pw)
+		private void JustificationOfRVFDatum(RVFDatum<L, F> example, StreamWriter pw)
 		{
 			int featureLength = 0;
 			int labelLength = 6;
@@ -1219,7 +1213,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// Print all features active for a particular datum and the weight that
 		/// the classifier assigns to each class for those features.
 		/// </summary>
-		public virtual void JustificationOf(IDatum<L, F> example, PrintWriter pw)
+		public virtual void JustificationOf(IDatum<L, F> example, StreamWriter pw)
 		{
 			JustificationOf(example, pw, null);
 		}
@@ -1233,7 +1227,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// the classifier assigns to each class for those features. Sorts by feature
 		/// name if 'sorted' is true.
 		/// </remarks>
-		public virtual void JustificationOf(IDatum<L, F> example, PrintWriter pw, bool sorted)
+		public virtual void JustificationOf(IDatum<L, F> example, StreamWriter pw, bool sorted)
 		{
 			if (example is RVFDatum<object, object>)
 			{
@@ -1241,7 +1235,7 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 		}
 
-		public virtual void JustificationOf<T>(IDatum<L, F> example, PrintWriter pw, IFunction<F, T> printer)
+		public virtual void JustificationOf<T>(IDatum<L, F> example, StreamWriter pw, Func<F, T> printer)
 		{
 			JustificationOf(example, pw, printer, false);
 		}

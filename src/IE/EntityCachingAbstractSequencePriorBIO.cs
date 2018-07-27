@@ -5,9 +5,9 @@ using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Lang;
-using Java.Util;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -42,7 +42,7 @@ namespace Edu.Stanford.Nlp.IE
 
 		private readonly IList<string> wordDoc;
 
-		public EntityCachingAbstractSequencePriorBIO(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<IN> doc)
+		public EntityCachingAbstractSequencePriorBIO(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<In> doc)
 		{
 			this.classIndex = classIndex;
 			this.tagIndex = tagIndex;

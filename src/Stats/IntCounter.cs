@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Stats
 {
@@ -920,13 +920,13 @@ namespace Edu.Stanford.Nlp.Stats
 
 		private sealed class _IFactory_726 : IFactory<ICounter<E>>
 		{
+			private const long serialVersionUID = 7470763055803428477L;
+
 			public _IFactory_726(IntCounter<E> _enclosing)
 			{
 				this._enclosing = _enclosing;
-				this.serialVersionUID = 7470763055803428477L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public ICounter<E> Create()
 			{

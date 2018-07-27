@@ -4,18 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Java.Util.Stream;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Util
 {
@@ -101,7 +94,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>Whether the regex can be found in str</returns>
 		public static bool Find(string str, string regex)
 		{
-			return Pattern.Compile(regex).Matcher(str).Find();
+			return new Regex(regex).IsMatch(str);
 		}
 
 		/// <summary>Convenience method: a case-insensitive variant of Collection.contains.</summary>
@@ -112,7 +105,7 @@ namespace Edu.Stanford.Nlp.Util
 		{
 			foreach (string sPrime in c)
 			{
-				if (Sharpen.Runtime.EqualsIgnoreCase(sPrime, s))
+				if (string.Equals(sPrime, s, StringComparison.OrdinalIgnoreCase))
 				{
 					return true;
 				}
@@ -135,7 +128,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>Whether the regex can be found at the start of str</returns>
 		public static bool LookingAt(string str, string regex)
 		{
-			return Pattern.Compile(regex).Matcher(str).LookingAt();
+			return Regex.IsMatch(str, @"\A(?:" + regex + ")");
 		}
 
 		/// <summary>
@@ -154,15 +147,15 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>A String[] s is returned such that s[yn]=xn</returns>
 		public static string[] MapStringToArray(string map)
 		{
-			string[] m = map.Split("[,;]");
+			string[] m = map.Split(',',';');
 			int maxIndex = 0;
 			string[] keys = new string[m.Length];
 			int[] indices = new int[m.Length];
 			for (int i = 0; i < m.Length; i++)
 			{
 				int index = m[i].LastIndexOf('=');
-				keys[i] = Sharpen.Runtime.Substring(m[i], 0, index);
-				indices[i] = System.Convert.ToInt32(Sharpen.Runtime.Substring(m[i], index + 1));
+				keys[i] = m[i].Substring(0, index);
+				indices[i] = System.Convert.ToInt32(m[i].Substring(index + 1));
 				if (indices[i] > maxIndex)
 				{
 					maxIndex = indices[i];
@@ -182,24 +175,24 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>A Map m is returned such that m.get(xn) = yn</returns>
 		public static IDictionary<string, string> MapStringToMap(string map)
 		{
-			string[] m = map.Split("[,;]");
-			IDictionary<string, string> res = Generics.NewHashMap();
+			string[] m = map.Split(',',';');
+			IDictionary<string, string> res = new Dictionary<string,string>();
 			foreach (string str in m)
 			{
 				int index = str.LastIndexOf('=');
-				string key = Sharpen.Runtime.Substring(str, 0, index);
-				string val = Sharpen.Runtime.Substring(str, index + 1);
-				res[key.Trim()] = val.Trim();
+				string key = str.Substring(0, index);
+				string val = str.Substring( index + 1);
+				res.Add(key.Trim(),val.Trim());
 			}
 			return res;
 		}
 
-		public static IList<Pattern> RegexesToPatterns(IEnumerable<string> regexes)
+		public static IList<Regex> RegexesToPatterns(IEnumerable<string> regexes)
 		{
-			IList<Pattern> patterns = new List<Pattern>();
+			IList<Regex> patterns = new List<Regex>();
 			foreach (string regex in regexes)
 			{
-				patterns.Add(Pattern.Compile(regex));
+				patterns.Add(new Regex(regex, RegexOptions.Compiled));
 			}
 			return patterns;
 		}
@@ -216,21 +209,21 @@ namespace Edu.Stanford.Nlp.Util
 		/// null. Note that this uses Matcher.find() rather than Matcher.matches().
 		/// If str is null, returns null.
 		/// </remarks>
-		public static IList<string> RegexGroups(Pattern regex, string str)
+		public static IList<string> RegexGroups(Regex regex, string str)
 		{
 			if (str == null)
 			{
 				return null;
 			}
-			Matcher matcher = regex.Matcher(str);
-			if (!matcher.Find())
+			Match matcher = regex.Match(str);
+			if (!matcher.Success)
 			{
 				return null;
 			}
-			IList<string> groups = new List<string>(matcher.GroupCount());
-			for (int index = 1; index <= matcher.GroupCount(); index++)
+			IList<string> groups = new List<string>(matcher.Groups.Count);
+			for (int index = 1; index <= matcher.Groups.Count; index++)
 			{
-				groups.Add(matcher.Group(index));
+				groups.Add(matcher.Groups[index].Value);
 			}
 			return groups;
 		}
@@ -250,7 +243,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>Whether the regex matches the whole of this str</returns>
 		public static bool Matches(string str, string regex)
 		{
-			return Pattern.Compile(regex).Matcher(str).Matches();
+			return new Regex(@"\A(?:" + regex + @")\z").IsMatch(str);
 		}
 
 		public static ICollection<string> StringToSet(string str, string delimiter)
@@ -258,12 +251,11 @@ namespace Edu.Stanford.Nlp.Util
 			ICollection<string> ret = null;
 			if (str != null)
 			{
-				string[] fields = str.Split(delimiter);
-				ret = Generics.NewHashSet(fields.Length);
+				string[] fields = Regex.Split(str,delimiter);
+				ret = new HashSet<string>();
 				foreach (string field in fields)
 				{
-					field = field.Trim();
-					ret.Add(field);
+					ret.Add(field.Trim());
 				}
 			}
 			return ret;
@@ -289,7 +281,7 @@ namespace Edu.Stanford.Nlp.Util
 			return sb.ToString();
 		}
 
-		public static string Join<E, _T1>(IList<_T1> l, string glue, IFunction<E, string> toStringFunc, int start, int end)
+		public static string Join<E, _T1>(IList<_T1> l, string glue, Func<E, string> toStringFunc, int start, int end)
 			where _T1 : E
 		{
 			StringBuilder sb = new StringBuilder();
@@ -665,12 +657,12 @@ namespace Edu.Stanford.Nlp.Util
 		/// <exception cref="System.ArgumentException">if str cannot be tokenized by the two regex</exception>
 		public static IList<string> ValueSplit(string str, string valueRegex, string separatorRegex)
 		{
-			Pattern vPat = Pattern.Compile(valueRegex);
-			Pattern sPat = Pattern.Compile(separatorRegex);
+			Regex vPat = new Regex(valueRegex);
+			Regex sPat = new Regex(separatorRegex);
 			IList<string> ret = new List<string>();
 			while (!str.IsEmpty())
 			{
-				Matcher vm = vPat.Matcher(str);
+				Match vm = vPat.Match(str);
 				if (vm.LookingAt())
 				{
 					ret.Add(vm.Group());
@@ -684,7 +676,7 @@ namespace Edu.Stanford.Nlp.Util
 				}
 				if (!str.IsEmpty())
 				{
-					Matcher sm = sPat.Matcher(str);
+					Match sm = sPat.Match(str);
 					if (sm.LookingAt())
 					{
 						str = Sharpen.Runtime.Substring(str, sm.End());
@@ -1619,8 +1611,8 @@ namespace Edu.Stanford.Nlp.Util
 
 		public static string StripSGML(string orig)
 		{
-			Pattern sgmlPattern = Pattern.Compile("<.*?>", Pattern.Dotall);
-			Matcher sgmlMatcher = sgmlPattern.Matcher(orig);
+			Regex sgmlPattern = new Regex("<.*?>", RegexOptions.Singleline);
+			Match sgmlMatcher = sgmlPattern.Match(orig);
 			return sgmlMatcher.ReplaceAll(string.Empty);
 		}
 
@@ -2003,8 +1995,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <exception cref="System.Reflection.TargetInvocationException"/>
 		public static T ColumnStringToObject<T>(Type objClass, string str, string delimiterRegex, string[] fieldNames)
 		{
-			Pattern delimiterPattern = Pattern.Compile(delimiterRegex);
-			return Edu.Stanford.Nlp.Util.StringUtils.ColumnStringToObject(objClass, str, delimiterPattern, fieldNames);
+			Regex delimiterPattern = new Regex(delimiterRegex, RegexOptions.Compiled);
+			return Edu.Stanford.Nlp.Util.StringUtils.ColumnStringToObject<T>(objClass, str, delimiterPattern, fieldNames);
 		}
 
 		/// <summary>
@@ -2022,21 +2014,21 @@ namespace Edu.Stanford.Nlp.Util
 		/// <exception cref="System.MissingMethodException"/>
 		/// <exception cref="Java.Lang.NoSuchFieldException"/>
 		/// <exception cref="System.Reflection.TargetInvocationException"/>
-		public static T ColumnStringToObject<T>(Type objClass, string str, Pattern delimiterPattern, string[] fieldNames)
+		public static T ColumnStringToObject<T>(Type objClass, string str, Regex delimiterPattern, string[] fieldNames)
 		{
 			string[] fields = delimiterPattern.Split(str);
-			T item = ErasureUtils.UncheckedCast(System.Activator.CreateInstance(objClass));
+			T item = (T)System.Activator.CreateInstance(objClass);
 			for (int i = 0; i < fields.Length; i++)
 			{
 				try
 				{
-					FieldInfo field = Sharpen.Runtime.GetDeclaredField(objClass, fieldNames[i]);
+					FieldInfo field = objClass.GetField(fieldNames[i], BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 					field.SetValue(item, fields[i]);
 				}
 				catch (MemberAccessException)
 				{
-					MethodInfo method = Sharpen.Runtime.GetDeclaredMethod(objClass, "set" + Edu.Stanford.Nlp.Util.StringUtils.Capitalize(fieldNames[i]), typeof(string));
-					method.Invoke(item, fields[i]);
+					MethodInfo method = objClass.GetMethod("set" + Edu.Stanford.Nlp.Util.StringUtils.Capitalize(fieldNames[i]), new [] { typeof(string) });
+					method.Invoke(item, new [] { fields[i] });
 				}
 			}
 			return item;
@@ -2107,8 +2099,8 @@ namespace Edu.Stanford.Nlp.Util
 		{
 			from = EscapeString(from, new char[] { '.', '[', ']', '\\' }, '\\');
 			// special chars in regex
-			Pattern p = Pattern.Compile(from);
-			Matcher m = p.Matcher(text);
+			Regex p = new Regex(from);
+			Match m = p.Match(text);
 			return m.ReplaceAll(to);
 		}
 
@@ -2581,8 +2573,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>true if the String is valid</returns>
 		public static bool IsAlpha(string s)
 		{
-			Pattern p = Pattern.Compile("^[\\p{Alpha}\\s]+$");
-			Matcher m = p.Matcher(s);
+			Regex p = new Regex("^[\\p{Alpha}\\s]+$");
+			Match m = p.Match(s);
 			return m.Matches();
 		}
 
@@ -2591,8 +2583,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>true if the String is valid</returns>
 		public static bool IsNumeric(string s)
 		{
-			Pattern p = Pattern.Compile("^[\\p{Digit}\\s\\.]+$");
-			Matcher m = p.Matcher(s);
+			Regex p = new Regex("^[\\p{Digit}\\s\\.]+$");
+			Match m = p.Match(s);
 			return m.Matches();
 		}
 
@@ -2601,8 +2593,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>true if the String is valid</returns>
 		public static bool IsAlphanumeric(string s)
 		{
-			Pattern p = Pattern.Compile("^[\\p{Alnum}\\s\\.]+$");
-			Matcher m = p.Matcher(s);
+			Regex p = new Regex("^[\\p{Alnum}\\s\\.]+$");
+			Match m = p.Match(s);
 			return m.Matches();
 		}
 
@@ -2611,8 +2603,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>true if the String is valid</returns>
 		public static bool IsPunct(string s)
 		{
-			Pattern p = Pattern.Compile("^[\\p{Punct}]+$");
-			Matcher m = p.Matcher(s);
+			Regex p = new Regex("^[\\p{Punct}]+$");
+			Match m = p.Match(s);
 			return m.Matches();
 		}
 
@@ -2621,8 +2613,8 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>true if the String is valid</returns>
 		public static bool IsAcronym(string s)
 		{
-			Pattern p = Pattern.Compile("^[\\p{Upper}]+$");
-			Matcher m = p.Matcher(s);
+			Regex p = new Regex("^[\\p{Upper}]+$");
+			Match m = p.Match(s);
 			return m.Matches();
 		}
 
@@ -2663,8 +2655,8 @@ namespace Edu.Stanford.Nlp.Util
 				return null;
 			}
 			// ${VAR_NAME} or $VAR_NAME
-			Pattern p = Pattern.Compile("\\$\\{(\\w+)\\}");
-			Matcher m = p.Matcher(str);
+			Regex p = new Regex("\\$\\{(\\w+)\\}");
+			Match m = p.Match(str);
 			StringBuilder sb = new StringBuilder();
 			while (m.Find())
 			{
@@ -2843,7 +2835,7 @@ namespace Edu.Stanford.Nlp.Util
 			return ngrams;
 		}
 
-		private static Pattern diacriticalMarksPattern = Pattern.Compile("\\p{InCombiningDiacriticalMarks}");
+		private static Regex diacriticalMarksPattern = new Regex("\\p{InCombiningDiacriticalMarks}");
 
 		public static string Normalize(string s)
 		{
@@ -2860,7 +2852,7 @@ namespace Edu.Stanford.Nlp.Util
 			// A more conservative approach is to do explicit folding just for ascii character
 			//   (see RuleBasedNameMatcher.normalize)
 			string d = Normalizer.Normalize(s, Normalizer.Form.Nfkd);
-			d = diacriticalMarksPattern.Matcher(d).ReplaceAll(string.Empty);
+			d = diacriticalMarksPattern.Match(d).ReplaceAll(string.Empty);
 			return Normalizer.Normalize(d, Normalizer.Form.Nfkc);
 		}
 
@@ -3496,9 +3488,9 @@ namespace Edu.Stanford.Nlp.Util
 		public static string ExpandEnvironmentVariables(string raw, IDictionary<string, string> env)
 		{
 			string pattern = "\\$\\{?([a-zA-Z_]+[a-zA-Z0-9_]*)\\}?";
-			Pattern expr = Pattern.Compile(pattern);
+			Regex expr = new Regex(pattern);
 			string text = raw;
-			Matcher matcher = expr.Matcher(text);
+			Match matcher = expr.Match(text);
 			while (matcher.Find())
 			{
 				string envValue = env[matcher.Group(1)];
@@ -3510,8 +3502,8 @@ namespace Edu.Stanford.Nlp.Util
 				{
 					envValue = envValue.Replace("\\", "\\\\");
 				}
-				Pattern subexpr = Pattern.Compile(Pattern.Quote(matcher.Group(0)));
-				text = subexpr.Matcher(text).ReplaceAll(envValue);
+				Regex subexpr = new Regex(Regex.Escape(matcher.Group(0)));
+				text = subexpr.Match(text).ReplaceAll(envValue);
 			}
 			return text;
 		}

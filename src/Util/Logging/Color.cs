@@ -1,5 +1,7 @@
-using Java.Lang;
-using Sharpen;
+
+
+
+using System.Text;
 
 namespace Edu.Stanford.Nlp.Util.Logging
 {
@@ -43,7 +45,7 @@ namespace Edu.Stanford.Nlp.Util.Logging
 			StringBuilder b = new StringBuilder();
 			if (Redwood.supportsAnsi)
 			{
-				b.Append(Edu.Stanford.Nlp.Util.Logging.Color.ansiCode);
+				b.Append(ansiCode);
 			}
 			b.Append(toColor);
 			if (Redwood.supportsAnsi)

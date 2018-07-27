@@ -30,16 +30,16 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util;
-using Java.Util.Zip;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
 	/// <summary>Subclass of CRFClassifier that performs dropout feature-noisying training</summary>
 	/// <author>Mengqiu Wang</author>
-	public class CRFClassifierFloat<In> : CRFClassifier<IN>
+	public class CRFClassifierFloat<In> : CRFClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>

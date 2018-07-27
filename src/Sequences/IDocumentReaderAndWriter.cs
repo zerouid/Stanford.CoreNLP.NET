@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Objectbank;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -19,7 +19,7 @@ namespace Edu.Stanford.Nlp.Sequences
 	/// immediately after construction.
 	/// </remarks>
 	/// <author>Jenny Finkel</author>
-	public interface IDocumentReaderAndWriter<In> : IIteratorFromReaderFactory<IList<IN>>
+	public interface IDocumentReaderAndWriter<In> : IIteratorFromReaderFactory<IList<In>>
 		where In : ICoreMap
 	{
 		/* Serializable, */
@@ -39,6 +39,6 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// </summary>
 		/// <param name="doc">The document which has answers (it has been classified)</param>
 		/// <param name="out">Where to send the output</param>
-		void PrintAnswers(IList<IN> doc, PrintWriter @out);
+		void PrintAnswers(IList<In> doc, PrintWriter @out);
 	}
 }

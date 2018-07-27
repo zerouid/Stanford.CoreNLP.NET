@@ -6,8 +6,8 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -29,18 +29,18 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// <summary>A logger for this class</summary>
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierEvaluator));
 
-		private readonly CRFClassifier<IN> classifier;
+		private readonly CRFClassifier<In> classifier;
 
 		/// <summary>NOTE: Default uses -r, specify without -r if IOB.</summary>
 		private string cmdStr = "/u/nlp/bin/conlleval -r";
 
 		private string[] cmd;
 
-		internal ICollection<IList<IN>> data;
+		internal ICollection<IList<In>> data;
 
 		internal IList<Triple<int[][][], int[], double[][][]>> featurizedData;
 
-		public CRFClassifierEvaluator(string description, CRFClassifier<IN> classifier, ICollection<IList<IN>> data, IList<Triple<int[][][], int[], double[][][]>> featurizedData)
+		public CRFClassifierEvaluator(string description, CRFClassifier<In> classifier, ICollection<IList<In>> data, IList<Triple<int[][][], int[], double[][][]>> featurizedData)
 		{
 			// TODO: Use data structure to hold data + features
 			// Cache already featurized documents
@@ -54,7 +54,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			saveOutput = true;
 		}
 
-		public CRFClassifierEvaluator(string description, CRFClassifier<IN> classifier)
+		public CRFClassifierEvaluator(string description, CRFClassifier<In> classifier)
 		{
 			this.description = description;
 			this.classifier = classifier;
@@ -62,7 +62,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		}
 
 		/// <summary>Set the data to test on</summary>
-		public virtual void SetTestData(ICollection<IList<IN>> data, IList<Triple<int[][][], int[], double[][][]>> featurizedData)
+		public virtual void SetTestData(ICollection<IList<In>> data, IList<Triple<int[][][], int[], double[][][]>> featurizedData)
 		{
 			this.data = data;
 			this.featurizedData = featurizedData;

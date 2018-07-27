@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Quoteattribution;
 using Edu.Stanford.Nlp.Quoteattribution.Sieves;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Quoteattribution.Sieves.MSSieves
 {

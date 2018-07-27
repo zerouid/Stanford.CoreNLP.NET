@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Patterns
 {

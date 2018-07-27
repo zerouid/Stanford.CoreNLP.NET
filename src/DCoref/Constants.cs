@@ -1,7 +1,3 @@
-using Java.Util;
-using Java.Util.Logging;
-using Sharpen;
-
 namespace Edu.Stanford.Nlp.Dcoref
 {
 	public class Constants

@@ -5,8 +5,8 @@ using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Trees.International.Pennchinese;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util.Regex;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Wordseg
 {
@@ -35,7 +35,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 	/// <author>Huihsin Tseng</author>
 	/// <author>Pichuan Chang</author>
 	[System.Serializable]
-	public class ChineseSegmenterFeatureFactory<In> : FeatureFactory<IN>
+	public class ChineseSegmenterFeatureFactory<In> : FeatureFactory<In>
 		where In : CoreLabel
 	{
 		private const long serialVersionUID = 3387166382968763350L;
@@ -52,7 +52,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 		/// <summary>Extracts all the features from the input data at a certain index.</summary>
 		/// <param name="cInfo">The complete data set as a List of WordInfo</param>
 		/// <param name="loc">The index at which to extract features.</param>
-		public override ICollection<string> GetCliqueFeatures(PaddedList<IN> cInfo, int loc, Clique clique)
+		public override ICollection<string> GetCliqueFeatures(PaddedList<In> cInfo, int loc, Clique clique)
 		{
 			ICollection<string> features = Generics.NewHashSet();
 			if (clique == cliqueC)
@@ -171,7 +171,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 		}
 
 		//is EnglishPU
-		public virtual ICollection<string> FeaturesC(PaddedList<IN> cInfo, int loc)
+		public virtual ICollection<string> FeaturesC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];
@@ -216,7 +216,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 
 		private static CorpusDictionary outDict = null;
 
-		public virtual ICollection<string> FeaturesCpC(PaddedList<IN> cInfo, int loc)
+		public virtual ICollection<string> FeaturesCpC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];
@@ -617,7 +617,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 			return features;
 		}
 
-		public virtual ICollection<string> FeaturesCnC(PaddedList<IN> cInfo, int loc)
+		public virtual ICollection<string> FeaturesCnC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = new List<string>();
 			CoreLabel c = cInfo[loc];

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling.Tokensregex;
 using Edu.Stanford.Nlp.Ling.Tokensregex.Types;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Java.Lang;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Ling.Tokensregex.Parser
 {
@@ -129,7 +129,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex.Parser
 		{
 			// todo [cdm 2014]: I suspect this doesn't work because of how JavaCC escapes \
 			// Trim start/end quote and unescape \"
-			return Sharpen.Runtime.Substring(str, 1, str.Length - 1).ReplaceAll("\u005c\u005c\u005c\u005c\u005c"", "\u005c"");
+			return Sharpen.Runtime.Substring(str, 1, str.Length - 1).ReplaceAll("\u005c\u005c\u005c\u005c\u005c\"", "\u005c\"");
 		}
 
 		private void AppendSpecialTokens(StringBuilder sb, Token st)

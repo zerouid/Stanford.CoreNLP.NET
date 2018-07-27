@@ -37,11 +37,11 @@ using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Ner
 {
@@ -101,7 +101,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 	/// <author>Shipra Dingare</author>
 	/// <author>Huy Nguyen</author>
 	/// <author>Sarah Spikes (sdspikes@cs.stanford.edu) - cleanup and filling in types</author>
-	public class CMMClassifier<In> : AbstractSequenceClassifier<IN>
+	public class CMMClassifier<In> : AbstractSequenceClassifier<In>
 		where In : CoreLabel
 	{
 		/// <summary>A logger for this class</summary>
@@ -160,7 +160,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		/// s
 		/// to be classified.
 		/// </param>
-		public override IList<IN> Classify(IList<IN> document)
+		public override IList<In> Classify(IList<In> document)
 		{
 			if (flags.useSequences)
 			{
@@ -184,7 +184,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		/// <see cref="Edu.Stanford.Nlp.Ling.CoreLabel"/>
 		/// s to be classified
 		/// </param>
-		private void ClassifyNoSeq(IList<IN> document)
+		private void ClassifyNoSeq(IList<In> document)
 		{
 			if (flags.useReverse)
 			{
@@ -251,7 +251,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		}
 
 		/// <summary>Returns the most likely class for the word at the given position.</summary>
-		protected internal virtual string ClassOf(IList<IN> lineInfos, int pos)
+		protected internal virtual string ClassOf(IList<In> lineInfos, int pos)
 		{
 			IDatum<string, string> d = MakeDatum(lineInfos, pos, featureFactories);
 			return classifier.ClassOf(d);
@@ -259,7 +259,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 
 		/// <summary>Returns the log conditional likelihood of the given dataset.</summary>
 		/// <returns>The log conditional likelihood of the given dataset.</returns>
-		public virtual double Loglikelihood(IList<IN> lineInfos)
+		public virtual double Loglikelihood(IList<In> lineInfos)
 		{
 			double cll = 0.0;
 			for (int i = 0; i < lineInfos.Count; i++)
@@ -291,7 +291,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 			return cll;
 		}
 
-		public override ISequenceModel GetSequenceModel(IList<IN> document)
+		public override ISequenceModel GetSequenceModel(IList<In> document)
 		{
 			//log.info(flags.useReverse);
 			if (flags.useReverse)
@@ -300,7 +300,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 			}
 			// cdm Aug 2005: why is this next line needed?  Seems really ugly!!!  [2006: it broke things! removed]
 			// document.add(0, new CoreLabel());
-			ISequenceModel ts = new CMMClassifier.Scorer<IN>(document, classIndex, this, (!flags.useTaggySequences ? (flags.usePrevSequences ? 1 : 0) : flags.maxLeft), (flags.useNextSequences ? 1 : 0), answerArrays);
+			ISequenceModel ts = new CMMClassifier.Scorer<In>(document, classIndex, this, (!flags.useTaggySequences ? (flags.usePrevSequences ? 1 : 0) : flags.maxLeft), (flags.useNextSequences ? 1 : 0), answerArrays);
 			return ts;
 		}
 
@@ -315,7 +315,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		/// <see cref="Edu.Stanford.Nlp.Ling.CoreLabel"/>
 		/// s to be classified
 		/// </param>
-		private void ClassifySeq(IList<IN> document)
+		private void ClassifySeq(IList<In> document)
 		{
 			if (document.IsEmpty())
 			{
@@ -482,16 +482,16 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		// end testSeq
 		/// <param name="filename">adaptation file</param>
 		/// <param name="trainDataset">original dataset (used in training)</param>
-		public virtual void Adapt(string filename, Dataset<string, string> trainDataset, IDocumentReaderAndWriter<IN> readerWriter)
+		public virtual void Adapt(string filename, Dataset<string, string> trainDataset, IDocumentReaderAndWriter<In> readerWriter)
 		{
 			// flags.ocrTrain = false;  // ?? Do we need this? (Pi-Chuan Sat Nov  5 15:42:49 2005)
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromFile(filename, readerWriter);
+			ObjectBank<IList<In>> docs = MakeObjectBankFromFile(filename, readerWriter);
 			Adapt(docs, trainDataset);
 		}
 
 		/// <param name="featureLabels">adaptation docs</param>
 		/// <param name="trainDataset">original dataset (used in training)</param>
-		public virtual void Adapt(ObjectBank<IList<IN>> featureLabels, Dataset<string, string> trainDataset)
+		public virtual void Adapt(ObjectBank<IList<In>> featureLabels, Dataset<string, string> trainDataset)
 		{
 			Dataset<string, string> adapt = GetDataset(featureLabels, trainDataset);
 			Adapt(adapt);
@@ -500,7 +500,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		/// <param name="featureLabels">retrain docs</param>
 		/// <param name="featureIndex">featureIndex of original dataset (used in training)</param>
 		/// <param name="labelIndex">labelIndex of original dataset (used in training)</param>
-		public virtual void Retrain(ObjectBank<IList<IN>> featureLabels, IIndex<string> featureIndex, IIndex<string> labelIndex)
+		public virtual void Retrain(ObjectBank<IList<In>> featureLabels, IIndex<string> featureIndex, IIndex<string> labelIndex)
 		{
 			int fs = featureIndex.Size();
 			// old dim
@@ -553,7 +553,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 		log.info(weights[delme-1][0]);
 		log.info("size of weights: "+delme);
 		*/
-		public virtual void Retrain(ObjectBank<IList<IN>> doc)
+		public virtual void Retrain(ObjectBank<IList<In>> doc)
 		{
 			if (classifier == null)
 			{
@@ -565,7 +565,7 @@ namespace Edu.Stanford.Nlp.IE.Ner
 			Retrain(doc, findex, lindex);
 		}
 
-		public override void Train(ICollection<IList<IN>> wordInfos, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public override void Train(ICollection<IList<In>> wordInfos, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			Dataset<string, string> train = GetDataset(wordInfos);
 			//train.summaryStatistics();
@@ -649,7 +649,7 @@ LOOP_break: ;
 		/// The Dataset which is an efficient encoding of the information
 		/// in a List of Datums
 		/// </returns>
-		public virtual Dataset<string, string> GetDataset(ICollection<IList<IN>> data)
+		public virtual Dataset<string, string> GetDataset(ICollection<IList<In>> data)
 		{
 			return GetDataset(data, null, null);
 		}
@@ -673,11 +673,11 @@ LOOP_break: ;
 		/// The Dataset which is an efficient encoding of the information
 		/// in a List of Datums
 		/// </returns>
-		public virtual Dataset<string, string> GetDataset(ICollection<IList<IN>> data, IIndex<string> featureIndex, IIndex<string> classIndex)
+		public virtual Dataset<string, string> GetDataset(ICollection<IList<In>> data, IIndex<string> featureIndex, IIndex<string> classIndex)
 		{
 			MakeAnswerArraysAndTagIndex(data);
 			int size = 0;
-			foreach (IList<IN> doc in data)
+			foreach (IList<In> doc in data)
 			{
 				size += doc.Count;
 			}
@@ -695,7 +695,7 @@ LOOP_break: ;
 			{
 				train = new Dataset<string, string>(size);
 			}
-			foreach (IList<IN> doc_1 in data)
+			foreach (IList<In> doc_1 in data)
 			{
 				if (flags.useReverse)
 				{
@@ -731,20 +731,20 @@ LOOP_break: ;
 			return train;
 		}
 
-		public virtual Dataset<string, string> GetBiasedDataset(ObjectBank<IList<IN>> data, IIndex<string> featureIndex, IIndex<string> classIndex)
+		public virtual Dataset<string, string> GetBiasedDataset(ObjectBank<IList<In>> data, IIndex<string> featureIndex, IIndex<string> classIndex)
 		{
 			MakeAnswerArraysAndTagIndex(data);
 			IIndex<string> origFeatIndex = new HashIndex<string>(featureIndex.ObjectsList());
 			// mg2009: TODO: check
 			int size = 0;
-			foreach (IList<IN> doc in data)
+			foreach (IList<In> doc in data)
 			{
 				size += doc.Count;
 			}
 			log.Info("Making Dataset ... ");
 			System.Console.Error.Flush();
 			Dataset<string, string> train = new Dataset<string, string>(size, featureIndex, classIndex);
-			foreach (IList<IN> doc_1 in data)
+			foreach (IList<In> doc_1 in data)
 			{
 				if (flags.useReverse)
 				{
@@ -808,7 +808,7 @@ LOOP_break: ;
 		/// The Dataset which is an efficient encoding of the information
 		/// in a List of Datums
 		/// </returns>
-		public virtual Dataset<string, string> GetDataset(ObjectBank<IList<IN>> data, Dataset<string, string> origDataset)
+		public virtual Dataset<string, string> GetDataset(ObjectBank<IList<In>> data, Dataset<string, string> origDataset)
 		{
 			if (origDataset == null)
 			{
@@ -1307,7 +1307,7 @@ LOOP_break: ;
 		/// which indexes known answer classes.
 		/// </summary>
 		/// <param name="docs">The training data: A List of List of CoreLabel</param>
-		private void MakeAnswerArraysAndTagIndex(ICollection<IList<IN>> docs)
+		private void MakeAnswerArraysAndTagIndex(ICollection<IList<In>> docs)
 		{
 			if (answerArrays == null)
 			{
@@ -1317,7 +1317,7 @@ LOOP_break: ;
 			{
 				classIndex = new HashIndex<string>();
 			}
-			foreach (IList<IN> doc in docs)
+			foreach (IList<In> doc in docs)
 			{
 				if (flags.useReverse)
 				{
@@ -1352,11 +1352,11 @@ LOOP_break: ;
 		/// <param name="loc">The position in the info list to focus feature creation on</param>
 		/// <param name="featureFactories">The factory that constructs features out of the item</param>
 		/// <returns>A Datum (BasicDatum) representing this data instance</returns>
-		public virtual IDatum<string, string> MakeDatum(IList<IN> info, int loc, IList<FeatureFactory<IN>> featureFactories)
+		public virtual IDatum<string, string> MakeDatum(IList<In> info, int loc, IList<FeatureFactory<In>> featureFactories)
 		{
-			PaddedList<IN> pInfo = new PaddedList<IN>(info, pad);
+			PaddedList<In> pInfo = new PaddedList<In>(info, pad);
 			ICollection<string> features = new List<string>();
-			foreach (FeatureFactory<IN> featureFactory in featureFactories)
+			foreach (FeatureFactory<In> featureFactory in featureFactories)
 			{
 				IList<Clique> cliques = featureFactory.GetCliques();
 				foreach (Clique c in cliques)
@@ -1514,11 +1514,11 @@ LOOP_break: ;
 
 		public virtual void TrainSemiSup()
 		{
-			IDocumentReaderAndWriter<IN> readerAndWriter = MakeReaderAndWriter();
+			IDocumentReaderAndWriter<In> readerAndWriter = MakeReaderAndWriter();
 			string filename = flags.trainFile;
 			string biasedFilename = flags.biasedTrainFile;
-			ObjectBank<IList<IN>> data = MakeObjectBankFromFile(filename, readerAndWriter);
-			ObjectBank<IList<IN>> biasedData = MakeObjectBankFromFile(biasedFilename, readerAndWriter);
+			ObjectBank<IList<In>> data = MakeObjectBankFromFile(filename, readerAndWriter);
+			ObjectBank<IList<In>> biasedData = MakeObjectBankFromFile(biasedFilename, readerAndWriter);
 			IIndex<string> featureIndex = new HashIndex<string>();
 			IIndex<string> classIndex = new HashIndex<string>();
 			Dataset<string, string> dataset = GetDataset(data, featureIndex, classIndex);
@@ -1572,7 +1572,7 @@ LOOP_break: ;
 			return ((LinearClassifier<string, string>)classifier).Weights();
 		}
 
-		public override IList<IN> ClassifyWithGlobalInformation(IList<IN> tokenSeq, ICoreMap doc, ICoreMap sent)
+		public override IList<In> ClassifyWithGlobalInformation(IList<In> tokenSeq, ICoreMap doc, ICoreMap sent)
 		{
 			return Classify(tokenSeq);
 		}
@@ -1810,7 +1810,7 @@ LOOP_break: ;
 		private static int lastPos = -1;
 
 		// TODO: Looks like CMMClassifier still isn't threadsafe!
-		public virtual ICounter<string> ScoresOf(IList<IN> lineInfos, int pos)
+		public virtual ICounter<string> ScoresOf(IList<In> lineInfos, int pos)
 		{
 			//     if (pos != lastPos) {
 			//       log.info(pos+".");
@@ -1837,7 +1837,7 @@ LOOP_break: ;
 		/// <see cref="Edu.Stanford.Nlp.Ling.CoreLabel"/>
 		/// s.
 		/// </param>
-		public override Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<IN> document)
+		public override Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<In> document)
 		{
 			//ClassicCounter<String> c = scoresOf(document, 0);
 			throw new NotSupportedException();

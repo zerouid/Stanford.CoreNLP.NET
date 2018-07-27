@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -9,6 +9,6 @@ namespace Edu.Stanford.Nlp.IE
 	public interface IPriorModelFactory<In>
 		where In : ICoreMap
 	{
-		IListeningSequenceModel GetInstance(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<IN> document, Pair<double[][], double[][]> entityMatrices, SeqClassifierFlags flags);
+		IListeningSequenceModel GetInstance(string backgroundSymbol, IIndex<string> classIndex, IIndex<string> tagIndex, IList<In> document, Pair<double[][], double[][]> entityMatrices, SeqClassifierFlags flags);
 	}
 }

@@ -20,7 +20,7 @@
 //Licensing: java-nlp-support@lists.stanford.edu
 //http://www-nlp.stanford.edu/software/tagger.shtml
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Tagger.Maxent
 {

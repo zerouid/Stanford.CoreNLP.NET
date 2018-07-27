@@ -3,8 +3,8 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Objectbank;
 using Edu.Stanford.Nlp.Process;
 using Edu.Stanford.Nlp.Util;
-using Java.Util.Regex;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -23,18 +23,18 @@ namespace Edu.Stanford.Nlp.Sequences
 	/// </remarks>
 	/// <author>Jenny Finkel</author>
 	[System.Serializable]
-	public class ObjectBankWrapper<In> : ObjectBank<IList<IN>>
+	public class ObjectBankWrapper<In> : ObjectBank<IList<In>>
 		where In : ICoreMap
 	{
 		private const long serialVersionUID = -3838331732026362075L;
 
 		private readonly SeqClassifierFlags flags;
 
-		private readonly ObjectBank<IList<IN>> wrapped;
+		private readonly ObjectBank<IList<In>> wrapped;
 
 		private readonly ICollection<string> knownLCWords;
 
-		public ObjectBankWrapper(SeqClassifierFlags flags, ObjectBank<IList<IN>> wrapped, ICollection<string> knownLCWords)
+		public ObjectBankWrapper(SeqClassifierFlags flags, ObjectBank<IList<In>> wrapped, ICollection<string> knownLCWords)
 			: base(null, null)
 		{
 			this.flags = flags;
@@ -42,18 +42,18 @@ namespace Edu.Stanford.Nlp.Sequences
 			this.knownLCWords = knownLCWords;
 		}
 
-		public override IEnumerator<IList<IN>> GetEnumerator()
+		public override IEnumerator<IList<In>> GetEnumerator()
 		{
 			return new ObjectBankWrapper.WrappedIterator(this, wrapped.GetEnumerator());
 		}
 
-		private class WrappedIterator : AbstractIterator<IList<IN>>
+		private class WrappedIterator : AbstractIterator<IList<In>>
 		{
-			private readonly IEnumerator<IList<IN>> wrappedIter;
+			private readonly IEnumerator<IList<In>> wrappedIter;
 
-			private IEnumerator<IList<IN>> spilloverIter;
+			private IEnumerator<IList<In>> spilloverIter;
 
-			public WrappedIterator(ObjectBankWrapper<In> _enclosing, IEnumerator<IList<IN>> wrappedIter)
+			public WrappedIterator(ObjectBankWrapper<In> _enclosing, IEnumerator<IList<In>> wrappedIter)
 			{
 				this._enclosing = _enclosing;
 				this.wrappedIter = wrappedIter;
@@ -63,8 +63,8 @@ namespace Edu.Stanford.Nlp.Sequences
 			{
 				while ((this.spilloverIter == null || !this.spilloverIter.MoveNext()) && this.wrappedIter.MoveNext())
 				{
-					IList<IN> doc = this.wrappedIter.Current;
-					IList<IList<IN>> docs = new List<IList<IN>>();
+					IList<In> doc = this.wrappedIter.Current;
+					IList<IList<In>> docs = new List<IList<In>>();
 					docs.Add(doc);
 					this._enclosing.FixDocLengths(docs);
 					this.spilloverIter = docs.GetEnumerator();
@@ -77,7 +77,7 @@ namespace Edu.Stanford.Nlp.Sequences
 				return this.wrappedIter.MoveNext() || (this.spilloverIter != null && this.spilloverIter.MoveNext());
 			}
 
-			public override IList<IN> Current
+			public override IList<In> Current
 			{
 				get
 				{
@@ -90,7 +90,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		}
 
 		// end class WrappedIterator
-		public virtual IList<IN> ProcessDocument(IList<IN> doc)
+		public virtual IList<In> ProcessDocument(IList<In> doc)
 		{
 			if (flags.mergeTags)
 			{
@@ -135,7 +135,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			return word;
 		}
 
-		private void DoBasicStuff(IList<IN> doc)
+		private void DoBasicStuff(IList<In> doc)
 		{
 			int position = 0;
 			foreach (IN fl in doc)
@@ -195,13 +195,13 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// and split on sentence boundaries, but this is hard-coded to English.
 		/// </summary>
 		/// <param name="docs">The list of documents whose length might be adjusted.</param>
-		private void FixDocLengths(IList<IList<IN>> docs)
+		private void FixDocLengths(IList<IList<In>> docs)
 		{
 			int maxDocSize = flags.maxDocSize;
-			WordToSentenceProcessor<IN> wts = null;
+			WordToSentenceProcessor<In> wts = null;
 			// allocated lazily
-			IList<IList<IN>> newDocuments = new List<IList<IN>>();
-			foreach (IList<IN> document in docs)
+			IList<IList<In>> newDocuments = new List<IList<In>>();
+			foreach (IList<In> document in docs)
 			{
 				if (maxDocSize <= 0 || document.Count <= maxDocSize)
 				{
@@ -213,11 +213,11 @@ namespace Edu.Stanford.Nlp.Sequences
 				}
 				if (wts == null)
 				{
-					wts = new WordToSentenceProcessor<IN>();
+					wts = new WordToSentenceProcessor<In>();
 				}
-				IList<IList<IN>> sentences = wts.Process(document);
-				IList<IN> newDocument = new List<IN>();
-				foreach (IList<IN> sentence in sentences)
+				IList<IList<In>> sentences = wts.Process(document);
+				IList<In> newDocument = new List<In>();
+				foreach (IList<In> sentence in sentences)
 				{
 					if (newDocument.Count + sentence.Count > maxDocSize)
 					{
@@ -225,7 +225,7 @@ namespace Edu.Stanford.Nlp.Sequences
 						{
 							newDocuments.Add(newDocument);
 						}
-						newDocument = new List<IN>();
+						newDocument = new List<In>();
 					}
 					Sharpen.Collections.AddAll(newDocument, sentence);
 				}
@@ -238,7 +238,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			Sharpen.Collections.AddAll(docs, newDocuments);
 		}
 
-		private void IobTags(IList<IN> doc)
+		private void IobTags(IList<In> doc)
 		{
 			string lastTag = string.Empty;
 			foreach (IN wi in doc)
@@ -284,7 +284,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// IO encoding as just "PERS".
 		/// </summary>
 		/// <param name="doc">The document for which the AnswerAnnotation will be changed (in place)</param>
-		private void MergeTags(IList<IN> doc)
+		private void MergeTags(IList<In> doc)
 		{
 			foreach (IN wi in doc)
 			{
@@ -309,7 +309,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		// These are implemented in terms of iterator(), and hence they will correctly use the WrappedIterator.
 		// Forwarding these methods to the wrapped ObjectBank would be wrong, as then wrapper processing doesn't happen.
 		// all the other crap from ObjectBank
-		public override bool Add(IList<IN> o)
+		public override bool Add(IList<In> o)
 		{
 			return wrapped.Add(o);
 		}

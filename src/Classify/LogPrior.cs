@@ -1,6 +1,6 @@
 using System;
 using Edu.Stanford.Nlp.Math;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -159,7 +159,7 @@ namespace Edu.Stanford.Nlp.Classify
 			double[] sigmaSqM = new double[C.Length];
 			for (int i = 0; i < C.Length; i++)
 			{
-				sigmaSqM[i] = 1. / C[i];
+				sigmaSqM[i] = 1.0 / C[i];
 			}
 			this.sigmaSqM = sigmaSqM;
 			SetSigmaSquaredM(sigmaSqM);

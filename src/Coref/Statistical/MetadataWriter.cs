@@ -6,9 +6,6 @@ using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Java.Util.Stream;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Coref.Statistical
 {

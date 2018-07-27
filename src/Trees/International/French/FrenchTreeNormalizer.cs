@@ -4,9 +4,9 @@ using Edu.Stanford.Nlp.International.Morph;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees.International.French
 {
@@ -41,8 +41,6 @@ namespace Edu.Stanford.Nlp.Trees.International.French
 			{
 				this.serialVersionUID = -22673346831392110L;
 			}
-
-			private const long serialVersionUID;
 
 			public bool Test(Tree tree)
 			{

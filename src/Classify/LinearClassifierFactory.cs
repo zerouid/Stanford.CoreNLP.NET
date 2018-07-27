@@ -33,9 +33,6 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util.Function;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -245,13 +242,13 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_188 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -6439748445540743949L;
 			public _IFactory_188(IMinimizer<IDiffFunction> min)
 			{
 				this.min = min;
-				this.serialVersionUID = -6439748445540743949L;
+				this.serialVersionUID = serialVersionUID;
 			}
 
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -373,14 +370,14 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_280 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -9108222058357693242L;
+
 			public _IFactory_280(LinearClassifierFactory<L, F> _enclosing, bool useRobust)
 			{
 				this._enclosing = _enclosing;
 				this.useRobust = useRobust;
-				this.serialVersionUID = -9108222058357693242L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -404,15 +401,14 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_294 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -7760753348350678588L;
 			public _IFactory_294(LinearClassifierFactory<L, F> _enclosing, double initialSMDGain, int stochasticBatchSize)
 			{
 				this._enclosing = _enclosing;
 				this.initialSMDGain = initialSMDGain;
 				this.stochasticBatchSize = stochasticBatchSize;
-				this.serialVersionUID = -7760753348350678588L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -443,6 +439,8 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_313 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = 6860437108371914482L;
+
 			public _IFactory_313(LinearClassifierFactory<L, F> _enclosing, double initialSMDGain, int stochasticBatchSize, StochasticCalculateMethods stochasticMethod, int passes)
 			{
 				this._enclosing = _enclosing;
@@ -450,10 +448,8 @@ namespace Edu.Stanford.Nlp.Classify
 				this.stochasticBatchSize = stochasticBatchSize;
 				this.stochasticMethod = stochasticMethod;
 				this.passes = passes;
-				this.serialVersionUID = 6860437108371914482L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -488,15 +484,15 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_331 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = 2564615420955196299L;
+
 			public _IFactory_331(LinearClassifierFactory<L, F> _enclosing, double gainSGD, int stochasticBatchSize)
 			{
 				this._enclosing = _enclosing;
 				this.gainSGD = gainSGD;
 				this.stochasticBatchSize = stochasticBatchSize;
-				this.serialVersionUID = 2564615420955196299L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -527,16 +523,17 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_349 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -5319225231759162616L;
+
 			public _IFactory_349(LinearClassifierFactory<L, F> _enclosing, double sigma, int SGDPasses, int tuneSampleSize)
 			{
 				this._enclosing = _enclosing;
 				this.sigma = sigma;
 				this.SGDPasses = SGDPasses;
 				this.tuneSampleSize = tuneSampleSize;
-				this.serialVersionUID = -5319225231759162616L;
+				this.serialVersionUID = serialVersionUID;
 			}
 
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -564,16 +561,16 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_363 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -3042400543337763144L;
+
 			public _IFactory_363(LinearClassifierFactory<L, F> _enclosing, double sigma, int SGDPasses, int tuneSampleSize)
 			{
 				this._enclosing = _enclosing;
 				this.sigma = sigma;
 				this.SGDPasses = SGDPasses;
 				this.tuneSampleSize = tuneSampleSize;
-				this.serialVersionUID = -3042400543337763144L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -603,6 +600,8 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_381 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = 5823852936137599566L;
+
 			public _IFactory_381(LinearClassifierFactory<L, F> _enclosing, double SGDGain, int batchSize, int sgdPasses, int qnPasses, int hessSamples, int QNMem, bool outputToFile)
 			{
 				this._enclosing = _enclosing;
@@ -613,10 +612,8 @@ namespace Edu.Stanford.Nlp.Classify
 				this.hessSamples = hessSamples;
 				this.QNMem = QNMem;
 				this.outputToFile = outputToFile;
-				this.serialVersionUID = 5823852936137599566L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{
@@ -700,13 +697,13 @@ namespace Edu.Stanford.Nlp.Classify
 
 		private sealed class _IFactory_440 : IFactory<IMinimizer<IDiffFunction>>
 		{
+			private const long serialVersionUID = -561168861131879990L;
+
 			public _IFactory_440(LinearClassifierFactory<L, F> _enclosing)
 			{
 				this._enclosing = _enclosing;
-				this.serialVersionUID = -561168861131879990L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public IMinimizer<IDiffFunction> Create()
 			{

@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using Org.Ejml.Simple;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Neural
 {

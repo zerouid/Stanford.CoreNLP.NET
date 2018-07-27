@@ -37,14 +37,14 @@ using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Regex;
-using Java.Util.Stream;
-using Java.Util.Zip;
-using Sharpen;
+
+
+
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -148,7 +148,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 	/// <author>Jenny Finkel</author>
 	/// <author>Sonal Gupta (made the class generic)</author>
 	/// <author>Mengqiu Wang (LOP implementation and non-linear CRF implementation)</author>
-	public class CRFClassifier<In> : AbstractSequenceClassifier<IN>
+	public class CRFClassifier<In> : AbstractSequenceClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -212,7 +212,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		}
 
 		/// <summary>Makes a copy of the crf classifier</summary>
-		public CRFClassifier(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<IN> crf)
+		public CRFClassifier(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<In> crf)
 			: base(crf.flags)
 		{
 			// TODO(mengqiu) need to move the embedding lookup and capitalization features into a FeatureFactory
@@ -349,7 +349,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// </summary>
 		/// <param name="crf">Other CRF whose weights to combine into this CRF</param>
 		/// <param name="weight">Amount to scale the other CRF's weights by</param>
-		private void CombineWeights(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<IN> crf, double weight)
+		private void CombineWeights(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<In> crf, double weight)
 		{
 			int numFeatures = featureIndex.Size();
 			int oldNumFeatures = weights.Length;
@@ -420,7 +420,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// <summary>Combines weighted crf with this crf.</summary>
 		/// <param name="crf">Other CRF whose weights to combine into this CRF</param>
 		/// <param name="weight">Amount to scale the other CRF's weights by</param>
-		public virtual void Combine(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<IN> crf, double weight)
+		public virtual void Combine(Edu.Stanford.Nlp.IE.Crf.CRFClassifier<In> crf, double weight)
 		{
 			Timing timer = new Timing();
 			// Check the CRFClassifiers are compatible
@@ -508,7 +508,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// data, the second element is an int[] representing the labels, and
 		/// the third element is a double[][][] representing the feature values (optionally null)
 		/// </returns>
-		public virtual Triple<int[][][], int[], double[][][]> DocumentToDataAndLabels(IList<IN> document)
+		public virtual Triple<int[][][], int[], double[][][]> DocumentToDataAndLabels(IList<In> document)
 		{
 			int docSize = document.Count;
 			// first index is position in the document also the index of the
@@ -615,16 +615,16 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		}
 
 		/// <exception cref="System.Exception"/>
-		public virtual void PrintLabelInformation(string testFile, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void PrintLabelInformation(string testFile, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
-			foreach (IList<IN> document in documents)
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
+			foreach (IList<In> document in documents)
 			{
 				PrintLabelValue(document);
 			}
 		}
 
-		public virtual void PrintLabelValue(IList<IN> document)
+		public virtual void PrintLabelValue(IList<In> document)
 		{
 			if (flags.useReverse)
 			{
@@ -701,7 +701,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// the third element is a double[][][][] representing the feature values
 		/// which could be optionally left as null.
 		/// </returns>
-		public virtual Triple<int[][][][], int[][], double[][][][]> DocumentsToDataAndLabels(ICollection<IList<IN>> documents)
+		public virtual Triple<int[][][][], int[][], double[][][][]> DocumentsToDataAndLabels(ICollection<IList<In>> documents)
 		{
 			// first index is the number of the document
 			// second index is position in the document also the index of the
@@ -721,7 +721,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			// int[][] labels = new int[documentsSize][];
 			IList<int[]> labels = new List<int[]>();
 			int numDatums = 0;
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				Triple<int[][][], int[], double[][][]> docTriple = DocumentToDataAndLabels(doc);
 				data.Add(docTriple.First());
@@ -758,11 +758,11 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// an int[][][] representing the data and the second element is an
 		/// int[] representing the labels.
 		/// </returns>
-		public virtual IList<Triple<int[][][], int[], double[][][]>> DocumentsToDataAndLabelsList(ICollection<IList<IN>> documents)
+		public virtual IList<Triple<int[][][], int[], double[][][]>> DocumentsToDataAndLabelsList(ICollection<IList<In>> documents)
 		{
 			int numDatums = 0;
 			IList<Triple<int[][][], int[], double[][][]>> docList = new List<Triple<int[][][], int[], double[][][]>>();
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				Triple<int[][][], int[], double[][][]> docTriple = DocumentToDataAndLabels(doc);
 				docList.Add(docTriple);
@@ -818,7 +818,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// <c>List&lt;CoreLabel&gt;</c>
 		/// .
 		/// </param>
-		protected internal virtual void MakeAnswerArraysAndTagIndex(ICollection<IList<IN>> ob)
+		protected internal virtual void MakeAnswerArraysAndTagIndex(ICollection<IList<In>> ob)
 		{
 			bool useFeatureCountThresh = flags.featureCountThresh > 1;
 			ICollection<string>[] featureIndices = new HashSet[windowSize];
@@ -855,7 +855,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			{
 				this.labelDictionary = new LabelDictionary();
 			}
-			foreach (IList<IN> doc in ob)
+			foreach (IList<In> doc in ob)
 			{
 				if (flags.useReverse)
 				{
@@ -1128,10 +1128,10 @@ OUTER_break: ;
 		/// <param name="loc">The position to build a datum at</param>
 		/// <param name="featureFactories">The FeatureFactories to use to extract features</param>
 		/// <returns>The constructed CRFDatum</returns>
-		public virtual CRFDatum<IList<string>, CRFLabel> MakeDatum(IList<IN> info, int loc, IList<FeatureFactory<IN>> featureFactories)
+		public virtual CRFDatum<IList<string>, CRFLabel> MakeDatum(IList<In> info, int loc, IList<FeatureFactory<In>> featureFactories)
 		{
 			// pad.set(CoreAnnotations.AnswerAnnotation.class, flags.backgroundSymbol); // cdm: isn't this unnecessary, as this is how it's initialized in AbstractSequenceClassifier.reinit?
-			PaddedList<IN> pInfo = new PaddedList<IN>(info, pad);
+			PaddedList<In> pInfo = new PaddedList<In>(info, pad);
 			List<IList<string>> features = new List<IList<string>>();
 			IList<double[]> featureVals = new List<double[]>();
 			// for (int i = 0; i < windowSize; i++) {
@@ -1160,7 +1160,7 @@ OUTER_break: ;
 				{
 					foreach (Clique c in windowCliques)
 					{
-						foreach (FeatureFactory<IN> featureFactory in featureFactories)
+						foreach (FeatureFactory<In> featureFactory in featureFactories)
 						{
 							Sharpen.Collections.AddAll(featuresC, featureFactory.GetCliqueFeatures(pInfo, loc, c));
 						}
@@ -1182,7 +1182,7 @@ OUTER_break: ;
 			return d;
 		}
 
-		private double[] MakeDatumUsingEmbedding(IList<IN> info, int loc, IList<FeatureFactory<IN>> featureFactories, PaddedList<IN> pInfo, IList<string> featuresC, IList<Clique> windowCliques)
+		private double[] MakeDatumUsingEmbedding(IList<In> info, int loc, IList<FeatureFactory<In>> featureFactories, PaddedList<In> pInfo, IList<string> featuresC, IList<Clique> windowCliques)
 		{
 			double[] featureValArr;
 			IList<double[]> embeddingList = new List<double[]>();
@@ -1278,7 +1278,7 @@ OUTER_break: ;
 				int additionalFeatureCount = 0;
 				foreach (Clique c in windowCliques)
 				{
-					foreach (FeatureFactory<IN> featureFactory in featureFactories)
+					foreach (FeatureFactory<In> featureFactory in featureFactories)
 					{
 						ICollection<string> fCol = featureFactory.GetCliqueFeatures(pInfo, loc, c);
 						//todo useless copy because of typing reasons
@@ -1305,19 +1305,19 @@ OUTER_break: ;
 			return featureValArr;
 		}
 
-		public override void DumpFeatures(ICollection<IList<IN>> docs)
+		public override void DumpFeatures(ICollection<IList<In>> docs)
 		{
 			if (flags.exportFeatures != null)
 			{
 				Timing timer = new Timing();
-				CRFFeatureExporter<IN> featureExporter = new CRFFeatureExporter<IN>(this);
+				CRFFeatureExporter<In> featureExporter = new CRFFeatureExporter<In>(this);
 				featureExporter.PrintFeatures(flags.exportFeatures, docs);
 				long elapsedMs = timer.Stop();
 				log.Info("Time to export features: " + Timing.ToSecondsString(elapsedMs) + " seconds");
 			}
 		}
 
-		public override IList<IN> Classify(IList<IN> document)
+		public override IList<In> Classify(IList<In> document)
 		{
 			if (flags.doGibbs)
 			{
@@ -1343,7 +1343,7 @@ OUTER_break: ;
 			}
 		}
 
-		private IList<IN> Classify(IList<IN> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
+		private IList<In> Classify(IList<In> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
 		{
 			if (flags.doGibbs)
 			{
@@ -1379,7 +1379,7 @@ OUTER_break: ;
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException"/>
-		internal virtual void ClassifyAndWriteAnswers(ICollection<IList<IN>> documents, IList<Triple<int[][][], int[], double[][][]>> documentDataAndLabels, PrintWriter printWriter, IDocumentReaderAndWriter<IN> readerAndWriter)
+		internal virtual void ClassifyAndWriteAnswers(ICollection<IList<In>> documents, IList<Triple<int[][][], int[], double[][][]>> documentDataAndLabels, PrintWriter printWriter, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			Timing timer = new Timing();
 			ICounter<string> entityTP = new ClassicCounter<string>();
@@ -1388,7 +1388,7 @@ OUTER_break: ;
 			bool resultsCounted = true;
 			int numWords = 0;
 			int numDocs = 0;
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				Classify(doc, documentDataAndLabels[numDocs]);
 				numWords += doc.Count;
@@ -1410,13 +1410,13 @@ OUTER_break: ;
 			}
 		}
 
-		public override ISequenceModel GetSequenceModel(IList<IN> doc)
+		public override ISequenceModel GetSequenceModel(IList<In> doc)
 		{
 			Triple<int[][][], int[], double[][][]> p = DocumentToDataAndLabels(doc);
 			return GetSequenceModel(p, doc);
 		}
 
-		private ISequenceModel GetSequenceModel(Triple<int[][][], int[], double[][][]> documentDataAndLabels, IList<IN> document)
+		private ISequenceModel GetSequenceModel(Triple<int[][][], int[], double[][][]> documentDataAndLabels, IList<In> document)
 		{
 			return labelDictionary == null ? new TestSequenceModel(GetCliqueTree(documentDataAndLabels)) : new TestSequenceModel(GetCliqueTree(documentDataAndLabels), labelDictionary, document);
 		}
@@ -1446,7 +1446,7 @@ OUTER_break: ;
 		/// This document is modified.
 		/// </param>
 		/// <returns>The classified document</returns>
-		public virtual IList<IN> ClassifyMaxEnt(IList<IN> document)
+		public virtual IList<In> ClassifyMaxEnt(IList<In> document)
 		{
 			if (document.IsEmpty())
 			{
@@ -1456,7 +1456,7 @@ OUTER_break: ;
 			return ClassifyMaxEnt(document, model);
 		}
 
-		private IList<IN> ClassifyMaxEnt(IList<IN> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
+		private IList<In> ClassifyMaxEnt(IList<In> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
 		{
 			if (document.IsEmpty())
 			{
@@ -1466,7 +1466,7 @@ OUTER_break: ;
 			return ClassifyMaxEnt(document, model);
 		}
 
-		private IList<IN> ClassifyMaxEnt(IList<IN> document, ISequenceModel model)
+		private IList<In> ClassifyMaxEnt(IList<In> document, ISequenceModel model)
 		{
 			if (document.IsEmpty())
 			{
@@ -1517,7 +1517,7 @@ OUTER_break: ;
 		/// <exception cref="Java.Lang.InstantiationException"/>
 		/// <exception cref="System.MemberAccessException"/>
 		/// <exception cref="System.Reflection.TargetInvocationException"/>
-		public virtual IList<IN> ClassifyGibbs(IList<IN> document)
+		public virtual IList<In> ClassifyGibbs(IList<In> document)
 		{
 			Triple<int[][][], int[], double[][][]> p = DocumentToDataAndLabels(document);
 			return ClassifyGibbs(document, p);
@@ -1530,19 +1530,19 @@ OUTER_break: ;
 		/// <exception cref="Java.Lang.InstantiationException"/>
 		/// <exception cref="System.MemberAccessException"/>
 		/// <exception cref="System.Reflection.TargetInvocationException"/>
-		public virtual IList<IN> ClassifyGibbs(IList<IN> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
+		public virtual IList<In> ClassifyGibbs(IList<In> document, Triple<int[][][], int[], double[][][]> documentDataAndLabels)
 		{
 			// log.info("Testing using Gibbs sampling.");
-			IList<IN> newDocument = document;
+			IList<In> newDocument = document;
 			// reversed if necessary
 			if (flags.useReverse)
 			{
 				Java.Util.Collections.Reverse(document);
-				newDocument = new List<IN>(document);
+				newDocument = new List<In>(document);
 				Java.Util.Collections.Reverse(document);
 			}
 			CRFCliqueTree<ICharSequence> cliqueTree = GetCliqueTree(documentDataAndLabels);
-			IPriorModelFactory<IN> pmf = (IPriorModelFactory<IN>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(flags.priorModelFactory));
+			IPriorModelFactory<In> pmf = (IPriorModelFactory<In>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(flags.priorModelFactory));
 			IListeningSequenceModel prior = pmf.GetInstance(flags.backgroundSymbol, classIndex, tagIndex, newDocument, entityMatrices, flags);
 			if (!flags.useUniformPrior)
 			{
@@ -1618,7 +1618,7 @@ OUTER_break: ;
 		/// of something that extends CoreMap.
 		/// </param>
 		/// <returns>If verboseMode is set, a Pair of Counters recording classification decisions, else null.</returns>
-		public override Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<IN> document)
+		public override Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<In> document)
 		{
 			// TODO: Probably this would really be better with 11 bins, with edge ones from 0-0.5 and 0.95-1.0, a bit like 11-point ave precision
 			int numBins = 10;
@@ -1697,11 +1697,11 @@ OUTER_break: ;
 		/// for more.
 		/// </remarks>
 		/// <param name="filename">The path to the specified file</param>
-		public virtual void PrintFirstOrderProbs(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void PrintFirstOrderProbs(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = false;
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
+			ObjectBank<IList<In>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
 			PrintFirstOrderProbsDocuments(docs);
 		}
 
@@ -1718,9 +1718,9 @@ OUTER_break: ;
 		/// <see cref="System.Collections.IList{E}"/>
 		/// of INs.
 		/// </param>
-		public virtual void PrintFirstOrderProbsDocuments(ObjectBank<IList<IN>> documents)
+		public virtual void PrintFirstOrderProbsDocuments(ObjectBank<IList<In>> documents)
 		{
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				PrintFirstOrderProbsDocument(doc);
 				System.Console.Out.WriteLine();
@@ -1729,11 +1729,11 @@ OUTER_break: ;
 
 		/// <summary>Takes the file, reads it in, and prints out the factor table at each position.</summary>
 		/// <param name="filename">The path to the specified file</param>
-		public virtual void PrintFactorTable(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void PrintFactorTable(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = false;
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
+			ObjectBank<IList<In>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
 			PrintFactorTableDocuments(docs);
 		}
 
@@ -1750,9 +1750,9 @@ OUTER_break: ;
 		/// <see cref="System.Collections.IList{E}"/>
 		/// of INs.
 		/// </param>
-		public virtual void PrintFactorTableDocuments(ObjectBank<IList<IN>> documents)
+		public virtual void PrintFactorTableDocuments(ObjectBank<IList<In>> documents)
 		{
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				PrintFactorTableDocument(doc);
 				System.Console.Out.WriteLine();
@@ -1769,13 +1769,13 @@ OUTER_break: ;
 		/// then makes a CRFCliqueTree for each document. you can then ask the clique
 		/// tree for marginals and conditional probabilities of almost anything you want.
 		/// </remarks>
-		public virtual IList<CRFCliqueTree<string>> GetCliqueTrees(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual IList<CRFCliqueTree<string>> GetCliqueTrees(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = false;
 			IList<CRFCliqueTree<string>> cts = new List<CRFCliqueTree<string>>();
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
-			foreach (IList<IN> doc in docs)
+			ObjectBank<IList<In>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
+			foreach (IList<In> doc in docs)
 			{
 				cts.Add(GetCliqueTree(doc));
 			}
@@ -1789,7 +1789,7 @@ OUTER_break: ;
 			return CRFCliqueTree.GetCalibratedCliqueTree(data, labelIndices, classIndex.Size(), classIndex, flags.backgroundSymbol, GetCliquePotentialFunctionForTest(), featureVal);
 		}
 
-		public virtual CRFCliqueTree<string> GetCliqueTree(IList<IN> document)
+		public virtual CRFCliqueTree<string> GetCliqueTree(IList<In> document)
 		{
 			Triple<int[][][], int[], double[][][]> p = DocumentToDataAndLabels(document);
 			return GetCliqueTree(p);
@@ -1810,7 +1810,7 @@ OUTER_break: ;
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// .
 		/// </param>
-		public virtual void PrintFactorTableDocument(IList<IN> document)
+		public virtual void PrintFactorTableDocument(IList<In> document)
 		{
 			CRFCliqueTree<string> cliqueTree = GetCliqueTree(document);
 			FactorTable[] factorTables = cliqueTree.GetFactorTables();
@@ -1851,7 +1851,7 @@ OUTER_break: ;
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// .
 		/// </param>
-		public virtual void PrintFirstOrderProbsDocument(IList<IN> document)
+		public virtual void PrintFirstOrderProbsDocument(IList<In> document)
 		{
 			CRFCliqueTree<string> cliqueTree = GetCliqueTree(document);
 			// for (int i = 0; i < factorTables.length; i++) {
@@ -1905,7 +1905,7 @@ OUTER_break: ;
 		/// Load auxiliary data to be used in constructing features and labels
 		/// Intended to be overridden by subclasses
 		/// </summary>
-		protected internal virtual ICollection<IList<IN>> LoadAuxiliaryData(ICollection<IList<IN>> docs, IDocumentReaderAndWriter<IN> readerAndWriter)
+		protected internal virtual ICollection<IList<In>> LoadAuxiliaryData(ICollection<IList<In>> docs, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			return docs;
 		}
@@ -1914,19 +1914,19 @@ OUTER_break: ;
 		/// <inheritDoc/>
 		/// 
 		/// </summary>
-		public override void Train(ICollection<IList<IN>> objectBankWrapper, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public override void Train(ICollection<IList<In>> objectBankWrapper, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			Timing timer = new Timing();
-			ICollection<IList<IN>> docs = new List<IList<IN>>();
-			foreach (IList<IN> doc in objectBankWrapper)
+			ICollection<IList<In>> docs = new List<IList<In>>();
+			foreach (IList<In> doc in objectBankWrapper)
 			{
 				docs.Add(doc);
 			}
 			if (flags.numOfSlices > 0)
 			{
 				log.Info("Taking " + flags.numOfSlices + " out of " + flags.totalDataSlice + " slices of data for training");
-				IList<IList<IN>> docsToShuffle = new List<IList<IN>>();
-				foreach (IList<IN> doc_1 in docs)
+				IList<IList<In>> docsToShuffle = new List<IList<In>>();
+				foreach (IList<In> doc_1 in docs)
 				{
 					docsToShuffle.Add(doc_1);
 				}
@@ -1934,7 +1934,7 @@ OUTER_break: ;
 				int cutOff = (int)(docsToShuffle.Count / (flags.totalDataSlice + 0.0) * flags.numOfSlices);
 				docs = docsToShuffle.SubList(0, cutOff);
 			}
-			ICollection<IList<IN>> totalDocs = LoadAuxiliaryData(docs, readerAndWriter);
+			ICollection<IList<In>> totalDocs = LoadAuxiliaryData(docs, readerAndWriter);
 			MakeAnswerArraysAndTagIndex(totalDocs);
 			long elapsedMs = timer.Stop();
 			log.Info("Time to convert docs to feature indices: " + Timing.ToSecondsString(elapsedMs) + " seconds");
@@ -1965,7 +1965,7 @@ OUTER_break: ;
 					}
 					if (flags.evaluateTrain)
 					{
-						CRFClassifierEvaluator<IN> crfEvaluator = new CRFClassifierEvaluator<IN>("Train set", this);
+						CRFClassifierEvaluator<In> crfEvaluator = new CRFClassifierEvaluator<In>("Train set", this);
 						IList<Triple<int[][][], int[], double[][][]>> trainDataAndLabels = new List<Triple<int[][][], int[], double[][][]>>();
 						int[][][][] data = dataAndLabelsAndFeatureVals.First();
 						int[][] labels = dataAndLabelsAndFeatureVals.Second();
@@ -1984,9 +1984,9 @@ OUTER_break: ;
 					}
 					if (flags.testFile != null)
 					{
-						CRFClassifierEvaluator<IN> crfEvaluator = new CRFClassifierEvaluator<IN>("Test set (" + flags.testFile + ")", this);
-						ObjectBank<IList<IN>> testObjBank = MakeObjectBankFromFile(flags.testFile, readerAndWriter);
-						IList<IList<IN>> testDocs = new List<IList<IN>>(testObjBank);
+						CRFClassifierEvaluator<In> crfEvaluator = new CRFClassifierEvaluator<In>("Test set (" + flags.testFile + ")", this);
+						ObjectBank<IList<In>> testObjBank = MakeObjectBankFromFile(flags.testFile, readerAndWriter);
+						IList<IList<In>> testDocs = new List<IList<In>>(testObjBank);
 						IList<Triple<int[][][], int[], double[][][]>> testDataAndLabels = DocumentsToDataAndLabelsList(testDocs);
 						crfEvaluator.SetTestData(testDocs, testDataAndLabels);
 						if (!flags.evalCmd.IsEmpty())
@@ -2000,8 +2000,8 @@ OUTER_break: ;
 						string[] testFiles = flags.testFiles.Split(",");
 						foreach (string testFile in testFiles)
 						{
-							CRFClassifierEvaluator<IN> crfEvaluator = new CRFClassifierEvaluator<IN>("Test set (" + testFile + ')', this);
-							ObjectBank<IList<IN>> testObjBank = MakeObjectBankFromFile(testFile, readerAndWriter);
+							CRFClassifierEvaluator<In> crfEvaluator = new CRFClassifierEvaluator<In>("Test set (" + testFile + ')', this);
+							ObjectBank<IList<In>> testObjBank = MakeObjectBankFromFile(testFile, readerAndWriter);
 							IList<Triple<int[][][], int[], double[][][]>> testDataAndLabels = DocumentsToDataAndLabelsList(testObjBank);
 							crfEvaluator.SetTestData(testObjBank, testDataAndLabels);
 							if (!flags.evalCmd.IsEmpty())
@@ -2434,7 +2434,7 @@ OUTER_break: ;
 		/// document number, position number, and a List of Object labels.
 		/// </summary>
 		/// <returns>A new CRFDatum</returns>
-		protected internal virtual IList<CRFDatum<ICollection<string>, ICharSequence>> ExtractDatumSequence(int[][][] allData, int beginPosition, int endPosition, IList<IN> labeledWordInfos)
+		protected internal virtual IList<CRFDatum<ICollection<string>, ICharSequence>> ExtractDatumSequence(int[][][] allData, int beginPosition, int endPosition, IList<In> labeledWordInfos)
 		{
 			IList<CRFDatum<ICollection<string>, ICharSequence>> result = new List<CRFDatum<ICollection<string>, ICharSequence>>();
 			int beginContext = beginPosition - windowSize + 1;
@@ -2750,7 +2750,7 @@ OUTER_break: ;
 			featureFactories = Generics.NewArrayList();
 			for (int ff = 1; ff < featureFactoryName.Length - 1; ++ff)
 			{
-				FeatureFactory<IN> featureFactory = (FeatureFactory<IN>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(featureFactoryName[1]));
+				FeatureFactory<In> featureFactory = (FeatureFactory<In>)System.Activator.CreateInstance(Sharpen.Runtime.GetType(featureFactoryName[1]));
 				featureFactory.Init(flags);
 				featureFactories.Add(featureFactory);
 			}
@@ -2868,7 +2868,7 @@ OUTER_break: ;
 				}
 			}
 			pw.Printf("<featureFactory>");
-			foreach (FeatureFactory<IN> featureFactory in featureFactories)
+			foreach (FeatureFactory<In> featureFactory in featureFactories)
 			{
 				pw.Printf(" %s ", featureFactory.GetType().FullName);
 			}
@@ -3072,7 +3072,7 @@ OUTER_break: ;
 				// objects doesn't seem to work.  The resulting classifier
 				// doesn't have the lexicon (distsim object) correctly saved.  So now custom write the list
 				oos.WriteObject(featureFactories.Count);
-				foreach (FeatureFactory<IN> ff in featureFactories)
+				foreach (FeatureFactory<In> ff in featureFactories)
 				{
 					oos.WriteObject(ff);
 				}
@@ -3142,7 +3142,7 @@ OUTER_break: ;
 				if (featureFactory is FeatureFactory)
 				{
 					featureFactories = Generics.NewArrayList();
-					featureFactories.Add((FeatureFactory<IN>)featureFactory);
+					featureFactories.Add((FeatureFactory<In>)featureFactory);
 				}
 				else
 				{
@@ -3160,7 +3160,7 @@ OUTER_break: ;
 								throw new RuntimeIOException("Should have FeatureFactory but got " + featureFactory.GetType());
 							}
 							//        System.err.println("FF #" + i + ": " + ((NERFeatureFactory) featureFactory).describeDistsimLexicon()); // XXXX
-							featureFactories.Add((FeatureFactory<IN>)featureFactory);
+							featureFactories.Add((FeatureFactory<In>)featureFactory);
 						}
 					}
 				}
@@ -3411,7 +3411,7 @@ OUTER_break: ;
 			}
 		}
 
-		public override IList<IN> ClassifyWithGlobalInformation(IList<IN> tokenSeq, ICoreMap doc, ICoreMap sent)
+		public override IList<In> ClassifyWithGlobalInformation(IList<In> tokenSeq, ICoreMap doc, ICoreMap sent)
 		{
 			return Classify(tokenSeq);
 		}

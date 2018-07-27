@@ -22,9 +22,9 @@
 //    parser-support@lists.stanford.edu
 //    https://nlp.stanford.edu/software/lex-parser.html
 using Edu.Stanford.Nlp.Util;
-using Java.Awt.Event;
-using Javax.Swing;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Parser.UI
 {

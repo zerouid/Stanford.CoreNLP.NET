@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
-using Java.Lang;
-using Java.Time;
-using Java.Util;
+
+
+
 using Org.Joda.Time;
 using Org.Joda.Time.Chrono;
 using Org.Joda.Time.Field;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Time
 {
@@ -44,13 +44,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DurationFieldType_69 : DurationFieldType
 		{
+			private const long serialVersionUID = -8167713675442491871L;
+
 			public _DurationFieldType_69(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -8167713675442491871L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			// static methods only
 			// Standard ISO fields
@@ -67,13 +67,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DurationFieldType_77 : DurationFieldType
 		{
+			private const long serialVersionUID = -8167713675442491872L;
+
 			public _DurationFieldType_77(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -8167713675442491872L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationField GetField(Chronology chronology)
 			{
@@ -85,13 +85,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DurationFieldType_85 : DurationFieldType
 		{
+			private const long serialVersionUID = -4594189766036833410L;
+
 			public _DurationFieldType_85(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -4594189766036833410L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationField GetField(Chronology chronology)
 			{
@@ -103,13 +103,12 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DurationFieldType_93 : DurationFieldType
 		{
+			private const long serialVersionUID = -7268694266711862790L;
 			public _DurationFieldType_93(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -7268694266711862790L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationField GetField(Chronology chronology)
 			{
@@ -121,13 +120,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DateTimeFieldType_102 : DateTimeFieldType
 		{
+			private const long serialVersionUID = -5677872459807379123L;
+
 			public _DateTimeFieldType_102(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -5677872459807379123L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			// DateTimeFields
 			public override DurationFieldType GetDurationType()
@@ -150,13 +149,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DateTimeFieldType_118 : DateTimeFieldType
 		{
+			private const long serialVersionUID = -5677872459807379123L;
+
 			public _DateTimeFieldType_118(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -5677872459807379123L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationFieldType GetDurationType()
 			{
@@ -178,13 +177,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DateTimeFieldType_134 : DateTimeFieldType
 		{
+			private const long serialVersionUID = -5677872459807379123L;
+
 			public _DateTimeFieldType_134(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -5677872459807379123L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationFieldType GetDurationType()
 			{
@@ -206,13 +205,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DateTimeFieldType_150 : DateTimeFieldType
 		{
+			private const long serialVersionUID= -5677872459807379123L;
+
 			public _DateTimeFieldType_150(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = -5677872459807379123L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationFieldType GetDurationType()
 			{
@@ -234,13 +233,13 @@ namespace Edu.Stanford.Nlp.Time
 
 		private sealed class _DateTimeFieldType_166 : DateTimeFieldType
 		{
+			private const long serialVersionUID = 8676056306203579438L;
+
 			public _DateTimeFieldType_166(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = 8676056306203579438L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			public override DurationFieldType GetDurationType()
 			{
@@ -265,10 +264,10 @@ namespace Edu.Stanford.Nlp.Time
 			public _DateTimeFieldType_182(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = 4301444712229535664L;
+				this.serialVersionUID = serialVersionUID;
 			}
 
-			private const long serialVersionUID;
+			private const long serialVersionUID  = 4301444712229535664L;
 
 			public override DurationFieldType GetDurationType()
 			{
@@ -293,10 +292,10 @@ namespace Edu.Stanford.Nlp.Time
 			public _DateTimeFieldType_198(string baseArg1)
 				: base(baseArg1)
 			{
-				this.serialVersionUID = 4301444712229535664L;
+				this.serialVersionUID = serialVersionUID;
 			}
 
-			private const long serialVersionUID;
+			private const long serialVersionUID = 4301444712229535664L;
 
 			public override DurationFieldType GetDurationType()
 			{

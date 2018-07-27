@@ -9,11 +9,11 @@ using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Stream;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -45,7 +45,7 @@ namespace Edu.Stanford.Nlp.IE
 	/// </remarks>
 	/// <author>Chris Cox</author>
 	/// <author>Mihai Surdeanu</author>
-	public class ClassifierCombiner<In> : AbstractSequenceClassifier<IN>
+	public class ClassifierCombiner<In> : AbstractSequenceClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -53,7 +53,7 @@ namespace Edu.Stanford.Nlp.IE
 
 		private const bool Debug = false;
 
-		private IList<AbstractSequenceClassifier<IN>> baseClassifiers;
+		private IList<AbstractSequenceClassifier<In>> baseClassifiers;
 
 		/// <summary>NORMAL means that if one classifier uses PERSON, later classifiers can't also add PERSON, for example.</summary>
 		/// <remarks>
@@ -180,11 +180,11 @@ namespace Edu.Stanford.Nlp.IE
 		/// <summary>Combines a series of base classifiers.</summary>
 		/// <param name="classifiers">The base classifiers</param>
 		[SafeVarargs]
-		public ClassifierCombiner(params AbstractSequenceClassifier<IN>[] classifiers)
+		public ClassifierCombiner(params AbstractSequenceClassifier<In>[] classifiers)
 			: base(new Properties())
 		{
 			this.combinationMode = DefaultCombinationMode;
-			baseClassifiers = new List<AbstractSequenceClassifier<IN>>(Arrays.AsList(classifiers));
+			baseClassifiers = new List<AbstractSequenceClassifier<In>>(Arrays.AsList(classifiers));
 			flags.backgroundSymbol = baseClassifiers[0].flags.backgroundSymbol;
 			this.initProps = new Properties();
 		}
@@ -230,14 +230,14 @@ namespace Edu.Stanford.Nlp.IE
 			// read in the base classifiers
 			int numClassifiers = ois.ReadInt();
 			// set up the list of base classifiers
-			this.baseClassifiers = new List<AbstractSequenceClassifier<IN>>();
+			this.baseClassifiers = new List<AbstractSequenceClassifier<In>>();
 			int i = 0;
 			while (i < numClassifiers)
 			{
 				try
 				{
 					log.Info("loading CRF...");
-					CRFClassifier<IN> newCRF = ErasureUtils.UncheckedCast(CRFClassifier.GetClassifier(ois, props));
+					CRFClassifier<In> newCRF = ErasureUtils.UncheckedCast(CRFClassifier.GetClassifier(ois, props));
 					baseClassifiers.Add(newCRF);
 					i++;
 				}
@@ -302,15 +302,15 @@ namespace Edu.Stanford.Nlp.IE
 		/// <exception cref="System.IO.IOException"/>
 		private void LoadClassifiers(Properties props, IList<string> paths)
 		{
-			baseClassifiers = new List<AbstractSequenceClassifier<IN>>();
+			baseClassifiers = new List<AbstractSequenceClassifier<In>>();
 			if (PropertiesUtils.GetBool(props, "ner.usePresetNERTags", false))
 			{
-				AbstractSequenceClassifier<IN> presetASC = new PresetSequenceClassifier(props);
+				AbstractSequenceClassifier<In> presetASC = new PresetSequenceClassifier(props);
 				baseClassifiers.Add(presetASC);
 			}
 			foreach (string path in paths)
 			{
-				AbstractSequenceClassifier<IN> cls = LoadClassifierFromPath(props, path);
+				AbstractSequenceClassifier<In> cls = LoadClassifierFromPath(props, path);
 				baseClassifiers.Add(cls);
 			}
 			if (baseClassifiers.Count > 0)
@@ -372,7 +372,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// A List of IN with the combined annotations.  (This is an
 		/// updating of baseDocuments.get(0), not a new List.)
 		/// </returns>
-		private IList<IN> MergeDocuments(IList<IList<IN>> baseDocuments)
+		private IList<In> MergeDocuments(IList<IList<In>> baseDocuments)
 		{
 			// we should only get here if there is something to merge
 			System.Diagnostics.Debug.Assert((!baseClassifiers.IsEmpty() && !baseDocuments.IsEmpty()));
@@ -403,7 +403,7 @@ namespace Edu.Stanford.Nlp.IE
 			// incrementally merge each additional model with the main model (i.e., baseDocuments.get(0))
 			// this keeps adding labels from the additional models to mainDocument
 			// hence, when all is done, mainDocument contains the labels of all base models
-			IList<IN> mainDocument = baseDocuments[0];
+			IList<In> mainDocument = baseDocuments[0];
 			for (int i_1 = 1; i_1 < baseDocuments.Count; i_1++)
 			{
 				MergeTwoDocuments(mainDocument, baseDocuments[i_1], baseLabels[i_1], background);
@@ -489,16 +489,16 @@ namespace Edu.Stanford.Nlp.IE
 		/// </summary>
 		/// <param name="tokens">A List of IN</param>
 		/// <returns>The passed in parameters, which will have the AnswerAnnotation field added/overwritten</returns>
-		public override IList<IN> Classify(IList<IN> tokens)
+		public override IList<In> Classify(IList<In> tokens)
 		{
 			if (baseClassifiers.IsEmpty())
 			{
 				return tokens;
 			}
-			IList<IList<IN>> baseOutputs = new List<IList<IN>>();
+			IList<IList<In>> baseOutputs = new List<IList<In>>();
 			// the first base model works in place, modifying the original tokens
-			IList<IN> output = baseClassifiers[0].ClassifySentence(tokens);
-			// classify(List<IN>) is supposed to work in place, so add AnswerAnnotation to tokens!
+			IList<In> output = baseClassifiers[0].ClassifySentence(tokens);
+			// classify(List<In>) is supposed to work in place, so add AnswerAnnotation to tokens!
 			for (int i = 0; i < sz; i++)
 			{
 				tokens[i].Set(typeof(CoreAnnotations.AnswerAnnotation), output[i].Get(typeof(CoreAnnotations.AnswerAnnotation)));
@@ -513,11 +513,11 @@ namespace Edu.Stanford.Nlp.IE
 				baseOutputs.Add(output);
 			}
 			System.Diagnostics.Debug.Assert((baseOutputs.Count == baseClassifiers.Count));
-			IList<IN> finalAnswer = MergeDocuments(baseOutputs);
+			IList<In> finalAnswer = MergeDocuments(baseOutputs);
 			return finalAnswer;
 		}
 
-		public override void Train(ICollection<IList<IN>> docs, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public override void Train(ICollection<IList<In>> docs, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			throw new NotSupportedException();
 		}
@@ -566,7 +566,7 @@ namespace Edu.Stanford.Nlp.IE
 				oos.WriteInt(numClassifiers);
 				// go through baseClassifiers and write each one to disk with CRFClassifier's serialize method
 				log.Info(string.Empty);
-				foreach (AbstractSequenceClassifier<IN> asc in baseClassifiers)
+				foreach (AbstractSequenceClassifier<In> asc in baseClassifiers)
 				{
 					//CRFClassifier crfc = (CRFClassifier) asc;
 					//log.info("Serializing a base classifier...");
@@ -587,7 +587,7 @@ namespace Edu.Stanford.Nlp.IE
 			throw new NotSupportedException();
 		}
 
-		public override IList<IN> ClassifyWithGlobalInformation(IList<IN> tokenSeq, ICoreMap doc, ICoreMap sent)
+		public override IList<In> ClassifyWithGlobalInformation(IList<In> tokenSeq, ICoreMap doc, ICoreMap sent)
 		{
 			return Classify(tokenSeq);
 		}

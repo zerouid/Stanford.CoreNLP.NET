@@ -29,35 +29,35 @@ using Edu.Stanford.Nlp.Objectbank;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
 	/// <summary>Subclass of CRFClassifier that performs dropout feature-noising training.</summary>
 	/// <author>Mengqiu Wang</author>
-	public class CRFClassifierWithDropout<In> : CRFClassifier<IN>
+	public class CRFClassifierWithDropout<In> : CRFClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierWithDropout));
 
-		private IList<IList<IN>> unsupDocs;
+		private IList<IList<In>> unsupDocs;
 
 		public CRFClassifierWithDropout(SeqClassifierFlags flags)
 			: base(flags)
 		{
 		}
 
-		protected internal override ICollection<IList<IN>> LoadAuxiliaryData(ICollection<IList<IN>> docs, IDocumentReaderAndWriter<IN> readerAndWriter)
+		protected internal override ICollection<IList<In>> LoadAuxiliaryData(ICollection<IList<In>> docs, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			if (flags.unsupDropoutFile != null)
 			{
 				log.Info("Reading unsupervised dropout data from file: " + flags.unsupDropoutFile);
 				Timing timer = new Timing();
 				timer.Start();
-				unsupDocs = new List<IList<IN>>();
-				ObjectBank<IList<IN>> unsupObjBank = MakeObjectBankFromFile(flags.unsupDropoutFile, readerAndWriter);
-				foreach (IList<IN> doc in unsupObjBank)
+				unsupDocs = new List<IList<In>>();
+				ObjectBank<IList<In>> unsupObjBank = MakeObjectBankFromFile(flags.unsupDropoutFile, readerAndWriter);
+				foreach (IList<In> doc in unsupObjBank)
 				{
 					foreach (IN tok in doc)
 					{
@@ -71,7 +71,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			}
 			if (unsupDocs != null && flags.doFeatureDiscovery)
 			{
-				IList<IList<IN>> totalDocs = new List<IList<IN>>();
+				IList<IList<In>> totalDocs = new List<IList<In>>();
 				Sharpen.Collections.AddAll(totalDocs, docs);
 				Sharpen.Collections.AddAll(totalDocs, unsupDocs);
 				return totalDocs;

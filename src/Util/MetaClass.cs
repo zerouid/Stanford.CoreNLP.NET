@@ -6,18 +6,18 @@ using System.Reflection;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Trees;
-using Java.IO;
-using Java.Lang;
-using Java.Lang.Reflect;
-using Java.Math;
-using Java.Util;
-using Sharpen;
+
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Util
 {
-	/// <summary>A meta class using Java's reflection library.</summary>
+	/// <summary>A meta class 
 	/// <remarks>
-	/// A meta class using Java's reflection library. Can be used to create a single
+	/// A meta class 
 	/// instance, or a factory, where each Class from the factory share their
 	/// constructor parameters.
 	/// </remarks>

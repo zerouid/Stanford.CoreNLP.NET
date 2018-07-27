@@ -5,10 +5,10 @@ using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -33,9 +33,9 @@ namespace Edu.Stanford.Nlp.IE.Crf
 
 		private static readonly string eol = Runtime.LineSeparator();
 
-		private CRFClassifier<IN> classifier;
+		private CRFClassifier<In> classifier;
 
-		public CRFFeatureExporter(CRFClassifier<IN> classifier)
+		public CRFFeatureExporter(CRFClassifier<In> classifier)
 		{
 			this.classifier = classifier;
 		}
@@ -83,7 +83,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// like a sentence or a paragraph)
 		/// </param>
 		/// <returns>String representation of features</returns>
-		private string GetFeatureString(IList<IN> document)
+		private string GetFeatureString(IList<In> document)
 		{
 			int docSize = document.Count;
 			if (classifier.flags.useReverse)
@@ -183,12 +183,12 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// </remarks>
 		/// <param name="exportFile">file to export the features to</param>
 		/// <param name="documents">input collection of documents</param>
-		public virtual void PrintFeatures(string exportFile, ICollection<IList<IN>> documents)
+		public virtual void PrintFeatures(string exportFile, ICollection<IList<In>> documents)
 		{
 			try
 			{
 				PrintWriter pw = IOUtils.GetPrintWriter(exportFile);
-				foreach (IList<IN> doc in documents)
+				foreach (IList<In> doc in documents)
 				{
 					string str = GetFeatureString(doc);
 					pw.Println(str);

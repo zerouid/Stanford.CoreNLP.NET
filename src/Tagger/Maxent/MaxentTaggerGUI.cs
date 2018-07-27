@@ -25,11 +25,11 @@
 //    Licensing: java-nlp-support@lists.stanford.edu
 //    http://www-nlp.stanford.edu/software/tagger.shtml
 using System;
-using Java.Awt;
-using Java.Awt.Event;
-using Java.Lang;
-using Javax.Swing;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Tagger.Maxent
 {

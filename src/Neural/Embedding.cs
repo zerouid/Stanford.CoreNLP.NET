@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util.Regex;
+
 using Org.Ejml.Simple;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Neural
 {

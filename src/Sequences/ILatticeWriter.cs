@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Fsm;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -22,6 +22,6 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// <see cref="Java.IO.PrintWriter"/>
 		/// .
 		/// </summary>
-		void PrintLattice(DFSA<T, S> tagLattice, IList<IN> doc, PrintWriter @out);
+		void PrintLattice(DFSA<T, S> tagLattice, IList<In> doc, PrintWriter @out);
 	}
 }

@@ -1,6 +1,5 @@
-using Java.IO;
-using Java.Util.Regex;
-using Sharpen;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Edu.Stanford.Nlp.IO
 {
@@ -14,21 +13,21 @@ namespace Edu.Stanford.Nlp.IO
 
 		public static IFileFilter ConjunctionFileFilter(IFileFilter a, IFileFilter b)
 		{
-			return new FileFilters.ConjunctionFileFilter(a, b);
+			return new FileFilters.ConjunctionFileFilterImpl(a, b);
 		}
 
 		public static IFileFilter NegationFileFilter(IFileFilter a)
 		{
-			return new FileFilters.NegationFileFilter(a);
+			return new FileFilters.NegationFileFilterImpl(a);
 		}
 
 		public static IFileFilter FindRegexFileFilter(string regex)
 		{
-			return new FileFilters.FindRegexFileFilter(regex);
+			return new FileFilters.FindRegexFileFilterImpl(regex);
 		}
 
 		/// <summary>Implements a conjunction file filter.</summary>
-		private class ConjunctionFileFilter : IFileFilter
+		private class ConjunctionFileFilterImpl : IFileFilter
 		{
 			private readonly IFileFilter f1;
 
@@ -37,7 +36,7 @@ namespace Edu.Stanford.Nlp.IO
 			/// <summary>Sets up file filter.</summary>
 			/// <param name="a">One file filter</param>
 			/// <param name="b">The other file filter</param>
-			public ConjunctionFileFilter(IFileFilter a, IFileFilter b)
+			public ConjunctionFileFilterImpl(IFileFilter a, IFileFilter b)
 			{
 				f1 = a;
 				f2 = b;
@@ -46,20 +45,20 @@ namespace Edu.Stanford.Nlp.IO
 			/// <summary>Checks whether a file satisfies the selection filter.</summary>
 			/// <param name="file">The file</param>
 			/// <returns>true if the file is acceptable</returns>
-			public virtual bool Accept(File file)
+			public virtual bool Accept(FileInfo file)
 			{
 				return f1.Accept(file) && f2.Accept(file);
 			}
 		}
 
 		/// <summary>Implements a negation file filter.</summary>
-		private class NegationFileFilter : IFileFilter
+		private class NegationFileFilterImpl : IFileFilter
 		{
 			private readonly IFileFilter f1;
 
 			/// <summary>Sets up file filter.</summary>
 			/// <param name="a">A file filter</param>
-			public NegationFileFilter(IFileFilter a)
+			public NegationFileFilterImpl(IFileFilter a)
 			{
 				f1 = a;
 			}
@@ -67,30 +66,30 @@ namespace Edu.Stanford.Nlp.IO
 			/// <summary>Checks whether a file satisfies the selection filter.</summary>
 			/// <param name="file">The file</param>
 			/// <returns>true if the file is acceptable</returns>
-			public virtual bool Accept(File file)
+			public virtual bool Accept(FileInfo file)
 			{
 				return !f1.Accept(file);
 			}
 		}
 
 		/// <summary>Implements a conjunction file filter.</summary>
-		private class FindRegexFileFilter : IFileFilter
+		private class FindRegexFileFilterImpl : IFileFilter
 		{
-			private readonly Pattern p;
+			private readonly Regex p;
 
 			/// <summary>Sets up file filter.</summary>
 			/// <param name="regex">The pattern to match (as find()</param>
-			public FindRegexFileFilter(string regex)
+			public FindRegexFileFilterImpl(string regex)
 			{
-				p = Pattern.Compile(regex);
+				p = new Regex(regex, RegexOptions.Compiled);
 			}
 
 			/// <summary>Checks whether a file satisfies the selection filter.</summary>
 			/// <param name="file">The file</param>
 			/// <returns>true if the file is acceptable</returns>
-			public virtual bool Accept(File file)
+			public virtual bool Accept(FileInfo file)
 			{
-				return p.Matcher(file.GetName()).Find();
+				return p.IsMatch(file.Name);
 			}
 		}
 	}

@@ -6,10 +6,10 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Process;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -35,7 +35,7 @@ namespace Edu.Stanford.Nlp.Sequences
 	/// <author>Christopher Manning (new output options organization)</author>
 	/// <author>Sonal Gupta (made the class generic)</author>
 	[System.Serializable]
-	public class PlainTextDocumentReaderAndWriter<In> : IDocumentReaderAndWriter<IN>
+	public class PlainTextDocumentReaderAndWriter<In> : IDocumentReaderAndWriter<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -97,11 +97,11 @@ namespace Edu.Stanford.Nlp.Sequences
 
 		private static readonly Pattern sgml = Pattern.Compile("<[^>]*>");
 
-		private readonly WordToSentenceProcessor<IN> wts = new WordToSentenceProcessor<IN>(WordToSentenceProcessor.NewlineIsSentenceBreak.Always);
+		private readonly WordToSentenceProcessor<In> wts = new WordToSentenceProcessor<In>(WordToSentenceProcessor.NewlineIsSentenceBreak.Always);
 
 		private SeqClassifierFlags flags;
 
-		private ITokenizerFactory<IN> tokenizerFactory;
+		private ITokenizerFactory<In> tokenizerFactory;
 
 		/// <summary>Construct a PlainTextDocumentReaderAndWriter.</summary>
 		/// <remarks>
@@ -121,7 +121,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			{
 				options = options + ',' + flags.tokenizerOptions;
 			}
-			ITokenizerFactory<IN> factory;
+			ITokenizerFactory<In> factory;
 			if (flags.tokenizerFactory != null)
 			{
 				try
@@ -142,18 +142,18 @@ namespace Edu.Stanford.Nlp.Sequences
 			Init(flags, factory);
 		}
 
-		public virtual void Init(SeqClassifierFlags flags, ITokenizerFactory<IN> tokenizerFactory)
+		public virtual void Init(SeqClassifierFlags flags, ITokenizerFactory<In> tokenizerFactory)
 		{
 			this.flags = flags;
 			this.tokenizerFactory = tokenizerFactory;
 		}
 
 		// todo: give options for document splitting. A line or the whole file or sentence splitting as now
-		public virtual IEnumerator<IList<IN>> GetIterator(Reader r)
+		public virtual IEnumerator<IList<In>> GetIterator(Reader r)
 		{
-			ITokenizer<IN> tokenizer = tokenizerFactory.GetTokenizer(r);
+			ITokenizer<In> tokenizer = tokenizerFactory.GetTokenizer(r);
 			// PTBTokenizer.newPTBTokenizer(r, false, true);
-			IList<IN> words = new List<IN>();
+			IList<In> words = new List<In>();
 			IN previous = null;
 			StringBuilder prepend = new StringBuilder();
 			/*
@@ -189,10 +189,10 @@ namespace Edu.Stanford.Nlp.Sequences
 					previous = w;
 				}
 			}
-			IList<IList<IN>> sentences = wts.Process(words);
+			IList<IList<In>> sentences = wts.Process(words);
 			string after_1 = string.Empty;
 			IN last = null;
-			foreach (IList<IN> sentence in sentences)
+			foreach (IList<In> sentence in sentences)
 			{
 				int pos = 0;
 				foreach (IN w in sentence)
@@ -224,7 +224,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// </remarks>
 		/// <param name="list">List of tokens with classifier answers</param>
 		/// <param name="out">Where to print the output to</param>
-		public virtual void PrintAnswers(IList<IN> list, PrintWriter @out)
+		public virtual void PrintAnswers(IList<In> list, PrintWriter @out)
 		{
 			string style = null;
 			if (flags != null)
@@ -239,7 +239,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			PrintAnswers(list, @out, outputStyle, PlainTextDocumentReaderAndWriter.OutputStyle.DefaultToPreserveSpacing(style));
 		}
 
-		public virtual string GetAnswers(IList<IN> l, PlainTextDocumentReaderAndWriter.OutputStyle outputStyle, bool preserveSpacing)
+		public virtual string GetAnswers(IList<In> l, PlainTextDocumentReaderAndWriter.OutputStyle outputStyle, bool preserveSpacing)
 		{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
@@ -248,7 +248,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			return sw.ToString();
 		}
 
-		public virtual void PrintAnswers(IList<IN> l, PrintWriter @out, PlainTextDocumentReaderAndWriter.OutputStyle outputStyle, bool preserveSpacing)
+		public virtual void PrintAnswers(IList<In> l, PrintWriter @out, PlainTextDocumentReaderAndWriter.OutputStyle outputStyle, bool preserveSpacing)
 		{
 			switch (outputStyle)
 			{
@@ -324,7 +324,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private static void PrintAnswersTokenizedText<In>(IList<IN> l, PrintWriter @out)
+		private static void PrintAnswersTokenizedText<In>(IList<In> l, PrintWriter @out)
 			where In : ICoreMap
 		{
 			foreach (IN wi in l)
@@ -338,7 +338,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		}
 
 		// put a single newline at the end [added 20091024].
-		private static void PrintAnswersAsIsText<In>(IList<IN> l, PrintWriter @out)
+		private static void PrintAnswersAsIsText<In>(IList<In> l, PrintWriter @out)
 			where In : ICoreMap
 		{
 			foreach (IN wi in l)
@@ -351,7 +351,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private static void PrintAnswersTokenizedTextTsv<In>(IList<IN> l, PrintWriter @out)
+		private static void PrintAnswersTokenizedTextTsv<In>(IList<In> l, PrintWriter @out)
 			where In : ICoreMap
 		{
 			foreach (IN wi in l)
@@ -364,7 +364,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		}
 
 		// put a single newline at the end [added 20091024].
-		private static void PrintAnswersAsIsTextTsv<In>(IList<IN> l, PrintWriter @out)
+		private static void PrintAnswersAsIsTextTsv<In>(IList<In> l, PrintWriter @out)
 			where In : ICoreMap
 		{
 			foreach (IN wi in l)
@@ -377,7 +377,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private void PrintAnswersAsIsTextTabbed(IList<IN> l, PrintWriter @out)
+		private void PrintAnswersAsIsTextTabbed(IList<In> l, PrintWriter @out)
 		{
 			string background = flags.backgroundSymbol;
 			string lastEntityType = null;
@@ -433,7 +433,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			@out.Println();
 		}
 
-		private void PrintAnswersTokenizedTextTabbed(IList<IN> l, PrintWriter @out)
+		private void PrintAnswersTokenizedTextTabbed(IList<In> l, PrintWriter @out)
 		{
 			string background = flags.backgroundSymbol;
 			string lastEntityType = null;
@@ -484,7 +484,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			@out.Println();
 		}
 
-		private static void PrintAnswersXML<In>(IList<IN> doc, PrintWriter @out)
+		private static void PrintAnswersXML<In>(IList<In> doc, PrintWriter @out)
 			where In : ICoreMap
 		{
 			int num = 0;
@@ -505,7 +505,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private static void PrintAnswersTokenizedXML<In>(IList<IN> doc, PrintWriter @out)
+		private static void PrintAnswersTokenizedXML<In>(IList<In> doc, PrintWriter @out)
 			where In : ICoreMap
 		{
 			int num = 0;
@@ -522,11 +522,11 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private void PrintAnswersInlineXML(IList<IN> doc, PrintWriter @out)
+		private void PrintAnswersInlineXML(IList<In> doc, PrintWriter @out)
 		{
 			string background = flags.backgroundSymbol;
 			string prevTag = background;
-			for (IEnumerator<IN> wordIter = doc.GetEnumerator(); wordIter.MoveNext(); )
+			for (IEnumerator<In> wordIter = doc.GetEnumerator(); wordIter.MoveNext(); )
 			{
 				IN wi = wordIter.Current;
 				string tag = StringUtils.GetNotNullString(wi.Get(typeof(CoreAnnotations.AnswerAnnotation)));
@@ -586,12 +586,12 @@ namespace Edu.Stanford.Nlp.Sequences
 			}
 		}
 
-		private void PrintAnswersTokenizedInlineXML(IList<IN> doc, PrintWriter @out)
+		private void PrintAnswersTokenizedInlineXML(IList<In> doc, PrintWriter @out)
 		{
 			string background = flags.backgroundSymbol;
 			string prevTag = background;
 			bool first = true;
-			for (IEnumerator<IN> wordIter = doc.GetEnumerator(); wordIter.MoveNext(); )
+			for (IEnumerator<In> wordIter = doc.GetEnumerator(); wordIter.MoveNext(); )
 			{
 				IN wi = wordIter.Current;
 				string tag = StringUtils.GetNotNullString(wi.Get(typeof(CoreAnnotations.AnswerAnnotation)));

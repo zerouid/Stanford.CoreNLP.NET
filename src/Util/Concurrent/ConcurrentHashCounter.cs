@@ -4,9 +4,9 @@ using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Concurrent;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Util.Concurrent
 {
@@ -56,8 +56,6 @@ namespace Edu.Stanford.Nlp.Util.Concurrent
 			{
 				this.serialVersionUID = 6076144467752914760L;
 			}
-
-			private const long serialVersionUID;
 
 			public ICounter<E> Create()
 			{

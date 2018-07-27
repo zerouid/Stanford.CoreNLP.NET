@@ -2,7 +2,7 @@
 /* JavaCCOptions: */
 using System;
 using System.Text;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Semgraph.Semgrex
 {

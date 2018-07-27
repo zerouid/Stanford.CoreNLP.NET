@@ -6,10 +6,10 @@
 *
 * Version: http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/jsr166e/extra/AtomicDouble.java?revision=1.19
 */
-using Java.IO;
-using Java.Lang;
-using Java.Util.Concurrent.Atomic;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Util.Concurrent
 {

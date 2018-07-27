@@ -6,9 +6,9 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Trees.International.French;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.International.French.Scripts
 {

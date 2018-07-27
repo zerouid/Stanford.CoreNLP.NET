@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees.Tregex
 {
@@ -318,8 +318,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -8311913236233762612L;
 			}
 
-			private const long serialVersionUID;
-
 			// used in TregexParser
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -357,8 +355,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = 164629344977943816L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return t1 == t2;
@@ -379,8 +375,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 3409941930361386114L;
 			}
-
-			private const long serialVersionUID;
 
 			/* this is a "dummy" relation that allows you to segment patterns. */
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
@@ -403,8 +397,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -2580199434621268260L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -468,8 +460,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = 6140614010121387690L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.Dominates.Satisfies(t2, t1, root, matcher);
@@ -513,8 +503,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 9140193735607580808L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -575,8 +563,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = 8919710375433372537L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.ParentOf.Satisfies(t2, t1, root, matcher);
@@ -615,8 +601,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -9065012389549976867L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -686,8 +670,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 3390147676937292768L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -760,8 +742,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -5948063114149496983L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Edu.Stanford.Nlp.Trees.Trees.RightEdge(t2, root) <= Edu.Stanford.Nlp.Trees.Trees.LeftEdge(t1, root);
@@ -830,8 +810,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -2895075562891296830L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -904,8 +882,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -7352081789429366726L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				if (t1.IsLeaf())
@@ -961,8 +937,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -1405509785337859888L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1021,8 +995,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = 3103412865783190437L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.HasLeftmostDescendant.Satisfies(t2, t1, root, matcher);
@@ -1073,8 +1045,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -2000255467314675477L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.HasRightmostDescendant.Satisfies(t2, t1, root, matcher);
@@ -1124,8 +1094,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -3776688096782419004L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1195,8 +1163,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -4516161080140406862L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1272,8 +1238,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -5880626025192328694L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.LeftSisterOf.Satisfies(t2, t1, root, matcher);
@@ -1330,8 +1294,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 7745237994722126917L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1400,8 +1362,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -6555264189937531019L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return Relation.ImmediateLeftSisterOf.Satisfies(t2, t1, root, matcher);
@@ -1453,8 +1413,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = 1719812660770087879L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return t2.Children().Length == 1 && t2.FirstChild() == t1;
@@ -1501,8 +1459,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 				this.serialVersionUID = -8776487500849294279L;
 			}
 
-			private const long serialVersionUID;
-
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
 				return t1.Children().Length == 1 && t1.FirstChild() == t2;
@@ -1541,8 +1497,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = -742912038636163403L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1617,8 +1571,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 4364021807752979404L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{
@@ -1698,8 +1650,6 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			{
 				this.serialVersionUID = 98745298745198245L;
 			}
-
-			private const long serialVersionUID;
 
 			internal override bool Satisfies(Tree t1, Tree t2, Tree root, TregexMatcher matcher)
 			{

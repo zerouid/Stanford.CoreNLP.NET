@@ -31,10 +31,10 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util;
-using Java.Util.Zip;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -44,7 +44,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 	/// for implementing the nonlinear architecture in [Wang and Manning IJCNLP-2013 Effect of Nonlinear ...].
 	/// </summary>
 	/// <author>Mengqiu Wang</author>
-	public class CRFClassifierNonlinear<In> : CRFClassifier<IN>
+	public class CRFClassifierNonlinear<In> : CRFClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -76,7 +76,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		{
 		}
 
-		public override Triple<int[][][], int[], double[][][]> DocumentToDataAndLabels(IList<IN> document)
+		public override Triple<int[][][], int[], double[][][]> DocumentToDataAndLabels(IList<In> document)
 		{
 			Triple<int[][][], int[], double[][][]> result = base.DocumentToDataAndLabels(document);
 			int[][][] data = result.First();

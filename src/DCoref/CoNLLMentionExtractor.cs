@@ -32,9 +32,6 @@ using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Semgraph;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Java.Util.Logging;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Dcoref
 {

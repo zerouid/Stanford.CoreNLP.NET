@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -15,7 +15,7 @@ namespace Edu.Stanford.Nlp.IE
 	/// in the Finkel et al. ACL 2005 paper.
 	/// </remarks>
 	/// <author>Jenny Finkel</author>
-	public class EmpiricalNERPrior<In> : EntityCachingAbstractSequencePrior<IN>
+	public class EmpiricalNERPrior<In> : EntityCachingAbstractSequencePrior<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -29,7 +29,7 @@ namespace Edu.Stanford.Nlp.IE
 
 		protected internal const string Misc = "MISC";
 
-		public EmpiricalNERPrior(string backgroundSymbol, IIndex<string> classIndex, IList<IN> doc)
+		public EmpiricalNERPrior(string backgroundSymbol, IIndex<string> classIndex, IList<In> doc)
 			: base(backgroundSymbol, classIndex, doc)
 		{
 		}

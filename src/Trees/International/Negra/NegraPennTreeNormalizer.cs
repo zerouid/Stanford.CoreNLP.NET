@@ -3,9 +3,9 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees.International.Negra
 {
@@ -59,8 +59,6 @@ namespace Edu.Stanford.Nlp.Trees.International.Negra
 				this.serialVersionUID = -606371737889816130L;
 			}
 
-			private const long serialVersionUID;
-
 			public bool Test(Tree t)
 			{
 				Tree[] kids = t.Children();
@@ -79,8 +77,6 @@ namespace Edu.Stanford.Nlp.Trees.International.Negra
 			{
 				this.serialVersionUID = -606371737889816130L;
 			}
-
-			private const long serialVersionUID;
 
 			public bool Test(Tree t)
 			{

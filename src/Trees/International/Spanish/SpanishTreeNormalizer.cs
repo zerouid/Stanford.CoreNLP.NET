@@ -7,11 +7,11 @@ using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Trees.Tregex;
 using Edu.Stanford.Nlp.Trees.Tregex.Tsurgeon;
 using Edu.Stanford.Nlp.Util;
-using Java.Lang;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Trees.International.Spanish
 {

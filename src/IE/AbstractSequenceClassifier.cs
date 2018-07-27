@@ -36,15 +36,15 @@ using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Concurrent;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Text;
-using Java.Util;
-using Java.Util.Concurrent.Atomic;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Java.Util.Zip;
-using Sharpen;
+
+
+
+
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -90,11 +90,11 @@ namespace Edu.Stanford.Nlp.IE
 		public IIndex<string> classIndex;
 
 		/// <summary>Support multiple feature factories (NERFeatureFactory, EmbeddingFeatureFactory) - Thang Sep 13, 2013.</summary>
-		public IList<FeatureFactory<IN>> featureFactories;
+		public IList<FeatureFactory<In>> featureFactories;
 
 		protected internal IN pad;
 
-		private ICoreTokenFactory<IN> tokenFactory;
+		private ICoreTokenFactory<In> tokenFactory;
 
 		public int windowSize;
 
@@ -115,7 +115,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="AbstractSequenceClassifier{IN}.DefaultReaderAndWriter()"/>
 		/// method.
 		/// </remarks>
-		private IDocumentReaderAndWriter<IN> defaultReaderAndWriter;
+		private IDocumentReaderAndWriter<In> defaultReaderAndWriter;
 
 		// = null;
 		// = null;
@@ -129,7 +129,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// is suitable for reading CoNLL-style TSV files.
 		/// </remarks>
 		/// <returns>The default DocumentReaderAndWriter</returns>
-		public virtual IDocumentReaderAndWriter<IN> DefaultReaderAndWriter()
+		public virtual IDocumentReaderAndWriter<In> DefaultReaderAndWriter()
 		{
 			lock (this)
 			{
@@ -148,7 +148,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="AbstractSequenceClassifier{IN}.PlainTextReaderAndWriter()"/>
 		/// method.
 		/// </remarks>
-		private IDocumentReaderAndWriter<IN> plainTextReaderAndWriter;
+		private IDocumentReaderAndWriter<In> plainTextReaderAndWriter;
 
 		/// <summary>
 		/// This is the default DocumentReaderAndWriter used for reading text files for runtime
@@ -166,7 +166,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// Synchronized for safe lazy initialization.
 		/// </remarks>
 		/// <returns>The default plain text DocumentReaderAndWriter</returns>
-		public virtual IDocumentReaderAndWriter<IN> PlainTextReaderAndWriter()
+		public virtual IDocumentReaderAndWriter<In> PlainTextReaderAndWriter()
 		{
 			lock (this)
 			{
@@ -207,7 +207,7 @@ namespace Edu.Stanford.Nlp.IE
 			this.featureFactories = Generics.NewArrayList();
 			if (flags.featureFactory != null)
 			{
-				FeatureFactory<IN> factory = new MetaClass(flags.featureFactory).CreateInstance(flags.featureFactoryArgs);
+				FeatureFactory<In> factory = new MetaClass(flags.featureFactory).CreateInstance(flags.featureFactoryArgs);
 				// for compatibility
 				featureFactories.Add(factory);
 			}
@@ -215,13 +215,13 @@ namespace Edu.Stanford.Nlp.IE
 			{
 				for (int i = 0; i < flags.featureFactories.Length; i++)
 				{
-					FeatureFactory<IN> indFeatureFactory = new MetaClass(flags.featureFactories[i]).CreateInstance(flags.featureFactoriesArgs[i]);
+					FeatureFactory<In> indFeatureFactory = new MetaClass(flags.featureFactories[i]).CreateInstance(flags.featureFactoriesArgs[i]);
 					this.featureFactories.Add(indFeatureFactory);
 				}
 			}
 			if (flags.tokenFactory == null)
 			{
-				tokenFactory = (ICoreTokenFactory<IN>)new CoreLabelTokenFactory();
+				tokenFactory = (ICoreTokenFactory<In>)new CoreLabelTokenFactory();
 			}
 			else
 			{
@@ -285,9 +285,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// initialize it with the CRFClassifier's flags.
 		/// </remarks>
 		/// <returns>The appropriate ReaderAndWriter for training/testing this classifier</returns>
-		public virtual IDocumentReaderAndWriter<IN> MakeReaderAndWriter()
+		public virtual IDocumentReaderAndWriter<In> MakeReaderAndWriter()
 		{
-			IDocumentReaderAndWriter<IN> readerAndWriter;
+			IDocumentReaderAndWriter<In> readerAndWriter;
 			try
 			{
 				readerAndWriter = ReflectionLoading.LoadByReflection(flags.readerAndWriter);
@@ -312,7 +312,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// edu.stanford.nlp.wordseg.Sighan2005DocumentReaderAndWriter for
 		/// the Chinese Segmenter.
 		/// </remarks>
-		public virtual IDocumentReaderAndWriter<IN> MakePlainTextReaderAndWriter()
+		public virtual IDocumentReaderAndWriter<In> MakePlainTextReaderAndWriter()
 		{
 			string readerClassName = flags.plainTextDocumentReaderAndWriter;
 			// We set this default here if needed because there may be models
@@ -321,7 +321,7 @@ namespace Edu.Stanford.Nlp.IE
 			{
 				readerClassName = SeqClassifierFlags.DefaultPlainTextReader;
 			}
-			IDocumentReaderAndWriter<IN> readerAndWriter;
+			IDocumentReaderAndWriter<In> readerAndWriter;
 			try
 			{
 				readerAndWriter = ReflectionLoading.LoadByReflection(readerClassName);
@@ -360,20 +360,20 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="Edu.Stanford.Nlp.Ling.CoreAnnotations.AnswerAnnotation"/>
 		/// field.
 		/// </returns>
-		public virtual IList<IN> ClassifySentence<_T0>(IList<_T0> tokenSequence)
+		public virtual IList<In> ClassifySentence<_T0>(IList<_T0> tokenSequence)
 			where _T0 : IHasWord
 		{
-			IList<IN> document = PreprocessTokens(tokenSequence);
+			IList<In> document = PreprocessTokens(tokenSequence);
 			Classify(document);
 			return document;
 		}
 
-		private IList<IN> PreprocessTokens<_T0>(IList<_T0> tokenSequence)
+		private IList<In> PreprocessTokens<_T0>(IList<_T0> tokenSequence)
 			where _T0 : IHasWord
 		{
 			// log.info("knownLCWords.size is " + knownLCWords.size() + "; knownLCWords.maxSize is " + knownLCWords.getMaxSize() +
 			//                   ", prior to NER for " + getClass().toString());
-			IList<IN> document = new List<IN>();
+			IList<In> document = new List<In>();
 			int i = 0;
 			foreach (IHasWord word in tokenSequence)
 			{
@@ -398,7 +398,7 @@ namespace Edu.Stanford.Nlp.IE
 				i++;
 			}
 			// TODO get rid of ObjectBankWrapper
-			ObjectBankWrapper<IN> wrapper = new ObjectBankWrapper<IN>(flags, null, knownLCWords);
+			ObjectBankWrapper<In> wrapper = new ObjectBankWrapper<In>(flags, null, knownLCWords);
 			wrapper.ProcessDocument(document);
 			// log.info("Size of knownLCWords is " + knownLCWords.size() + ", after NER for " + getClass().toString());
 			return document;
@@ -414,27 +414,27 @@ namespace Edu.Stanford.Nlp.IE
 		/// The classified List of IN, where the classifier output for
 		/// each token is stored in its "answer" field.
 		/// </returns>
-		public virtual IList<IN> ClassifySentenceWithGlobalInformation<_T0>(IList<_T0> tokenSequence, ICoreMap doc, ICoreMap sentence)
+		public virtual IList<In> ClassifySentenceWithGlobalInformation<_T0>(IList<_T0> tokenSequence, ICoreMap doc, ICoreMap sentence)
 			where _T0 : IHasWord
 		{
-			IList<IN> document = PreprocessTokens(tokenSequence);
+			IList<In> document = PreprocessTokens(tokenSequence);
 			ClassifyWithGlobalInformation(document, doc, sentence);
 			return document;
 		}
 
-		public virtual ISequenceModel GetSequenceModel(IList<IN> doc)
+		public virtual ISequenceModel GetSequenceModel(IList<In> doc)
 		{
 			throw new NotSupportedException();
 		}
 
-		public virtual ISampler<IList<IN>> GetSampler(IList<IN> input)
+		public virtual ISampler<IList<In>> GetSampler(IList<In> input)
 		{
 			return new _ISampler_352(this, input);
 		}
 
-		private sealed class _ISampler_352 : ISampler<IList<IN>>
+		private sealed class _ISampler_352 : ISampler<IList<In>>
 		{
-			public _ISampler_352(AbstractSequenceClassifier<In> _enclosing, IList<IN> input)
+			public _ISampler_352(AbstractSequenceClassifier<In> _enclosing, IList<In> input)
 			{
 				this._enclosing = _enclosing;
 				this.input = input;
@@ -446,10 +446,10 @@ namespace Edu.Stanford.Nlp.IE
 
 			internal SequenceSampler sampler;
 
-			public IList<IN> DrawSample()
+			public IList<In> DrawSample()
 			{
 				int[] sampleArray = this.sampler.BestSequence(this.model);
-				IList<IN> sample = new List<IN>();
+				IList<In> sample = new List<In>();
 				int i = 0;
 				foreach (IN word in input)
 				{
@@ -462,7 +462,7 @@ namespace Edu.Stanford.Nlp.IE
 
 			private readonly AbstractSequenceClassifier<In> _enclosing;
 
-			private readonly IList<IN> input;
+			private readonly IList<In> input;
 		}
 
 		/// <summary>Takes a list of tokens and provides the K best sequence labelings of these tokens with their scores.</summary>
@@ -473,23 +473,23 @@ namespace Edu.Stanford.Nlp.IE
 		/// A Counter where each key is a List of tokens with labels written in the answerField and its value
 		/// is the score (conditional probability) assigned to this labeling of the sequence.
 		/// </returns>
-		public virtual ICounter<IList<IN>> ClassifyKBest(IList<IN> doc, Type answerField, int k)
+		public virtual ICounter<IList<In>> ClassifyKBest(IList<In> doc, Type answerField, int k)
 		{
 			if (doc.IsEmpty())
 			{
-				return new ClassicCounter<IList<IN>>();
+				return new ClassicCounter<IList<In>>();
 			}
 			// TODO get rid of ObjectBankWrapper
 			// i'm sorry that this is so hideous - JRF
-			ObjectBankWrapper<IN> obw = new ObjectBankWrapper<IN>(flags, null, knownLCWords);
+			ObjectBankWrapper<In> obw = new ObjectBankWrapper<In>(flags, null, knownLCWords);
 			doc = obw.ProcessDocument(doc);
 			ISequenceModel model = GetSequenceModel(doc);
 			KBestSequenceFinder tagInference = new KBestSequenceFinder();
 			ICounter<int[]> bestSequences = tagInference.KBestSequences(model, k);
-			ICounter<IList<IN>> kBest = new ClassicCounter<IList<IN>>();
+			ICounter<IList<In>> kBest = new ClassicCounter<IList<In>>();
 			foreach (int[] seq in bestSequences.KeySet())
 			{
-				IList<IN> kth = new List<IN>();
+				IList<In> kth = new List<In>();
 				int pos = model.LeftWindow();
 				foreach (IN fi in doc)
 				{
@@ -507,14 +507,14 @@ namespace Edu.Stanford.Nlp.IE
 			return kBest;
 		}
 
-		private DFSA<string, int> GetViterbiSearchGraph(IList<IN> doc, Type answerField)
+		private DFSA<string, int> GetViterbiSearchGraph(IList<In> doc, Type answerField)
 		{
 			if (doc.IsEmpty())
 			{
 				return new DFSA<string, int>(null);
 			}
 			// TODO get rid of ObjectBankWrapper
-			ObjectBankWrapper<IN> obw = new ObjectBankWrapper<IN>(flags, null, knownLCWords);
+			ObjectBankWrapper<In> obw = new ObjectBankWrapper<In>(flags, null, knownLCWords);
 			doc = obw.ProcessDocument(doc);
 			ISequenceModel model = GetSequenceModel(doc);
 			return ViterbiSearchGraphBuilder.GetGraph(model, classIndex);
@@ -534,9 +534,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// ).
 		/// </returns>
-		public virtual IList<IList<IN>> Classify(string str)
+		public virtual IList<IList<In>> Classify(string str)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromString(str, PlainTextReaderAndWriter());
+			ObjectBank<IList<In>> documents = MakeObjectBankFromString(str, PlainTextReaderAndWriter());
 			return ClassifyObjectBank(documents);
 		}
 
@@ -554,9 +554,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// ).
 		/// </returns>
-		public virtual IList<IList<IN>> ClassifyRaw(string str, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual IList<IList<In>> ClassifyRaw(string str, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromString(str, readerAndWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromString(str, readerAndWriter);
 			return ClassifyObjectBank(documents);
 		}
 
@@ -567,9 +567,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="System.Collections.IList{E}"/>
 		/// of classified List of IN.
 		/// </returns>
-		public virtual IList<IList<IN>> ClassifyFile(string filename)
+		public virtual IList<IList<In>> ClassifyFile(string filename)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(filename, PlainTextReaderAndWriter());
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(filename, PlainTextReaderAndWriter());
 			return ClassifyObjectBank(documents);
 		}
 
@@ -583,13 +583,13 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// ).
 		/// </returns>
-		private IList<IList<IN>> ClassifyObjectBank(ObjectBank<IList<IN>> documents)
+		private IList<IList<In>> ClassifyObjectBank(ObjectBank<IList<In>> documents)
 		{
-			IList<IList<IN>> result = new List<IList<IN>>();
-			foreach (IList<IN> document in documents)
+			IList<IList<In>> result = new List<IList<In>>();
+			foreach (IList<In> document in documents)
 			{
 				Classify(document);
-				IList<IN> sentence = new List<IN>();
+				IList<In> sentence = new List<In>();
 				foreach (IN wi in document)
 				{
 					// TaggedWord word = new TaggedWord(wi.word(), wi.answer());
@@ -667,16 +667,16 @@ namespace Edu.Stanford.Nlp.IE
 		public virtual string ClassifyToString(string sentences, string outputFormat, bool preserveSpacing)
 		{
 			PlainTextDocumentReaderAndWriter.OutputStyle outFormat = PlainTextDocumentReaderAndWriter.OutputStyle.FromShortName(outputFormat);
-			IDocumentReaderAndWriter<IN> textDocumentReaderAndWriter = PlainTextReaderAndWriter();
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromString(sentences, textDocumentReaderAndWriter);
+			IDocumentReaderAndWriter<In> textDocumentReaderAndWriter = PlainTextReaderAndWriter();
+			ObjectBank<IList<In>> documents = MakeObjectBankFromString(sentences, textDocumentReaderAndWriter);
 			StringBuilder sb = new StringBuilder();
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
-				IList<IN> docOutput = Classify(doc);
+				IList<In> docOutput = Classify(doc);
 				if (textDocumentReaderAndWriter is PlainTextDocumentReaderAndWriter)
 				{
 					// TODO: implement this particular method and its options in the other documentReaderAndWriters
-					sb.Append(((PlainTextDocumentReaderAndWriter<IN>)textDocumentReaderAndWriter).GetAnswers(docOutput, outFormat, preserveSpacing));
+					sb.Append(((PlainTextDocumentReaderAndWriter<In>)textDocumentReaderAndWriter).GetAnswers(docOutput, outFormat, preserveSpacing));
 				}
 				else
 				{
@@ -765,9 +765,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// </returns>
 		public virtual IList<Triple<string, int, int>> ClassifyToCharacterOffsets(string sentences)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromString(sentences, PlainTextReaderAndWriter());
+			ObjectBank<IList<In>> documents = MakeObjectBankFromString(sentences, PlainTextReaderAndWriter());
 			IList<Triple<string, int, int>> entities = new List<Triple<string, int, int>>();
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				string prevEntityType = flags.backgroundSymbol;
 				Triple<string, int, int> prevEntity = null;
@@ -828,12 +828,12 @@ namespace Edu.Stanford.Nlp.IE
 			return SegmentString(sentence, DefaultReaderAndWriter());
 		}
 
-		public virtual IList<string> SegmentString(string sentence, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual IList<string> SegmentString(string sentence, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromString(sentence, readerAndWriter);
+			ObjectBank<IList<In>> docs = MakeObjectBankFromString(sentence, readerAndWriter);
 			StringWriter stringWriter = new StringWriter();
 			PrintWriter stringPrintWriter = new PrintWriter(stringWriter);
-			foreach (IList<IN> doc in docs)
+			foreach (IList<In> doc in docs)
 			{
 				Classify(doc);
 				readerAndWriter.PrintAnswers(doc, stringPrintWriter);
@@ -853,7 +853,7 @@ namespace Edu.Stanford.Nlp.IE
 		*         extends {@link CoreMap} where each {@link List} refers to a
 		*         document/sentence.
 		*/
-		// public ObjectBank<List<IN>> test() {
+		// public ObjectBank<List<In>> test() {
 		// return test(flags.testFile);
 		// }
 		/// <summary>
@@ -889,7 +889,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// notation or not) or something like "1" vs. "0" on whether to
 		/// begin a new token here or not (in word segmentation).
 		/// </returns>
-		public abstract IList<IN> Classify(IList<IN> document);
+		public abstract IList<In> Classify(IList<In> document);
 
 		// todo [cdm 2017]: Check that our own NER code doesn't call this method wrongly anywhere.
 		/// <summary>
@@ -911,7 +911,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <param name="document"/>
 		/// <param name="sentence"/>
 		/// <returns>Classified version of the input tokenSequence</returns>
-		public abstract IList<IN> ClassifyWithGlobalInformation(IList<IN> tokenSequence, ICoreMap document, ICoreMap sentence);
+		public abstract IList<In> ClassifyWithGlobalInformation(IList<In> tokenSequence, ICoreMap document, ICoreMap sentence);
 
 		/// <summary>Classification is finished for the document.</summary>
 		/// <remarks>
@@ -954,21 +954,21 @@ namespace Edu.Stanford.Nlp.IE
 			Train(filename, DefaultReaderAndWriter());
 		}
 
-		public virtual void Train(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void Train(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = true;
 			Train(MakeObjectBankFromFile(filename, readerAndWriter), readerAndWriter);
 		}
 
-		public virtual void Train(string baseTrainDir, string trainFiles, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void Train(string baseTrainDir, string trainFiles, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = true;
 			Train(MakeObjectBankFromFiles(baseTrainDir, trainFiles, readerAndWriter), readerAndWriter);
 		}
 
-		public virtual void Train(string[] trainFileList, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void Train(string[] trainFileList, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = true;
@@ -981,7 +981,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// Note that the Collection can be (and usually is) an ObjectBank.
 		/// </remarks>
 		/// <param name="docs">An ObjectBank or a collection of sequences of IN</param>
-		public virtual void Train(ICollection<IList<IN>> docs)
+		public virtual void Train(ICollection<IList<In>> docs)
 		{
 			Train(docs, DefaultReaderAndWriter());
 		}
@@ -993,7 +993,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// </remarks>
 		/// <param name="docs">An ObjectBank or a collection of sequences of IN</param>
 		/// <param name="readerAndWriter">A DocumentReaderAndWriter to use when loading test files</param>
-		public abstract void Train(ICollection<IList<IN>> docs, IDocumentReaderAndWriter<IN> readerAndWriter);
+		public abstract void Train(ICollection<IList<In>> docs, IDocumentReaderAndWriter<In> readerAndWriter);
 
 		/// <summary>Reads a String into an ObjectBank object.</summary>
 		/// <remarks>
@@ -1005,7 +1005,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// </remarks>
 		/// <param name="string">The String which will be the content of the ObjectBank</param>
 		/// <returns>The ObjectBank</returns>
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromString(string @string, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromString(string @string, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			if (flags.announceObjectBankEntries)
 			{
@@ -1019,24 +1019,24 @@ namespace Edu.Stanford.Nlp.IE
 					log.Info("Getting data from " + @string + " (" + flags.inputEncoding + " encoding)");
 				}
 			}
-			// return new ObjectBank<List<IN>>(new
+			// return new ObjectBank<List<In>>(new
 			// ResettableReaderIteratorFactory(string), readerAndWriter);
 			// TODO
-			return new ObjectBankWrapper<IN>(flags, new ObjectBank<IList<IN>>(new ResettableReaderIteratorFactory(@string), readerAndWriter), knownLCWords);
+			return new ObjectBankWrapper<In>(flags, new ObjectBank<IList<In>>(new ResettableReaderIteratorFactory(@string), readerAndWriter), knownLCWords);
 		}
 
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromFile(string filename)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromFile(string filename)
 		{
 			return MakeObjectBankFromFile(filename, DefaultReaderAndWriter());
 		}
 
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromFile(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromFile(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			string[] fileAsArray = new string[] { filename };
 			return MakeObjectBankFromFiles(fileAsArray, readerAndWriter);
 		}
 
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromFiles(string[] trainFileList, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromFiles(string[] trainFileList, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// try{
 			ICollection<File> files = new List<File>();
@@ -1047,15 +1047,15 @@ namespace Edu.Stanford.Nlp.IE
 			}
 			// System.err.printf("trainFileList contains %d file%s in encoding %s.%n", files.size(), files.size() == 1 ? "": "s", flags.inputEncoding);
 			// TODO get rid of ObjectBankWrapper
-			// return new ObjectBank<List<IN>>(new
+			// return new ObjectBank<List<In>>(new
 			// ResettableReaderIteratorFactory(files), readerAndWriter);
-			return new ObjectBankWrapper<IN>(flags, new ObjectBank<IList<IN>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
+			return new ObjectBankWrapper<In>(flags, new ObjectBank<IList<In>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
 		}
 
 		// } catch (IOException e) {
 		// throw new RuntimeException(e);
 		// }
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromFiles(string baseDir, string filePattern, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromFiles(string baseDir, string filePattern, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			File path = new File(baseDir);
 			IFileFilter filter = new RegExFileFilter(Pattern.Compile(filePattern));
@@ -1076,24 +1076,24 @@ namespace Edu.Stanford.Nlp.IE
 			{
 				throw new Exception("No matching files: " + baseDir + '\t' + filePattern);
 			}
-			// return new ObjectBank<List<IN>>(new
+			// return new ObjectBank<List<In>>(new
 			// ResettableReaderIteratorFactory(files, flags.inputEncoding),
 			// readerAndWriter);
 			// TODO get rid of ObjectBankWrapper
-			return new ObjectBankWrapper<IN>(flags, new ObjectBank<IList<IN>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
+			return new ObjectBankWrapper<In>(flags, new ObjectBank<IList<In>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
 		}
 
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromFiles(ICollection<File> files, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromFiles(ICollection<File> files, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			if (files.IsEmpty())
 			{
 				throw new Exception("Attempt to make ObjectBank with empty file list");
 			}
-			// return new ObjectBank<List<IN>>(new
+			// return new ObjectBank<List<In>>(new
 			// ResettableReaderIteratorFactory(files, flags.inputEncoding),
 			// readerAndWriter);
 			// TODO get rid of ObjectBankWrapper
-			return new ObjectBankWrapper<IN>(flags, new ObjectBank<IList<IN>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
+			return new ObjectBankWrapper<In>(flags, new ObjectBank<IList<In>>(new ResettableReaderIteratorFactory(files, flags.inputEncoding), readerAndWriter), knownLCWords);
 		}
 
 		/// <summary>
@@ -1118,16 +1118,16 @@ namespace Edu.Stanford.Nlp.IE
 		/// data to the word shape classifier
 		/// </param>
 		/// <returns>The list of documents</returns>
-		public virtual ObjectBank<IList<IN>> MakeObjectBankFromReader(BufferedReader @in, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual ObjectBank<IList<In>> MakeObjectBankFromReader(BufferedReader @in, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			if (flags.announceObjectBankEntries)
 			{
 				log.Info("Reading data using " + readerAndWriter.GetType());
 			}
 			// TODO get rid of ObjectBankWrapper
-			// return new ObjectBank<List<IN>>(new ResettableReaderIteratorFactory(in),
+			// return new ObjectBank<List<In>>(new ResettableReaderIteratorFactory(in),
 			// readerAndWriter);
-			return new ObjectBankWrapper<IN>(flags, new ObjectBank<IList<IN>>(new ResettableReaderIteratorFactory(@in), readerAndWriter), knownLCWords);
+			return new ObjectBankWrapper<In>(flags, new ObjectBank<IList<In>>(new ResettableReaderIteratorFactory(@in), readerAndWriter), knownLCWords);
 		}
 
 		/// <summary>
@@ -1135,11 +1135,11 @@ namespace Edu.Stanford.Nlp.IE
 		/// label at each point.
 		/// </summary>
 		/// <param name="filename">The path to the specified file</param>
-		public virtual void PrintProbs(string filename, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void PrintProbs(string filename, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			// only for the OCR data does this matter
 			// flags.ocrTrain = false;
-			ObjectBank<IList<IN>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
+			ObjectBank<IList<In>> docs = MakeObjectBankFromFile(filename, readerAndWriter);
 			PrintProbsDocuments(docs);
 		}
 
@@ -1148,9 +1148,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// label at each point.
 		/// </summary>
 		/// <param name="testFiles">A Collection of files</param>
-		public virtual void PrintProbs(ICollection<File> testFiles, IDocumentReaderAndWriter<IN> readerWriter)
+		public virtual void PrintProbs(ICollection<File> testFiles, IDocumentReaderAndWriter<In> readerWriter)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFiles(testFiles, readerWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFiles(testFiles, readerWriter);
 			PrintProbsDocuments(documents);
 		}
 
@@ -1169,12 +1169,12 @@ namespace Edu.Stanford.Nlp.IE
 		/// <see cref="Edu.Stanford.Nlp.Util.ICoreMap"/>
 		/// .
 		/// </param>
-		public virtual void PrintProbsDocuments(ObjectBank<IList<IN>> documents)
+		public virtual void PrintProbsDocuments(ObjectBank<IList<In>> documents)
 		{
 			ICounter<int> calibration = new ClassicCounter<int>();
 			ICounter<int> correctByBin = new ClassicCounter<int>();
 			TwoDimensionalCounter<int, string> calibratedTokens = new TwoDimensionalCounter<int, string>();
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> triple = PrintProbsDocument(doc);
 				if (triple != null)
@@ -1221,28 +1221,28 @@ namespace Edu.Stanford.Nlp.IE
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public virtual void ClassifyStdin(IDocumentReaderAndWriter<IN> readerWriter)
+		public virtual void ClassifyStdin(IDocumentReaderAndWriter<In> readerWriter)
 		{
 			BufferedReader @is = IOUtils.ReaderFromStdin(flags.inputEncoding);
 			for (string line; (line = @is.ReadLine()) != null; )
 			{
-				ICollection<IList<IN>> documents = MakeObjectBankFromString(line, readerWriter);
+				ICollection<IList<In>> documents = MakeObjectBankFromString(line, readerWriter);
 				if (flags.keepEmptySentences && documents.IsEmpty())
 				{
-					documents = Java.Util.Collections.SingletonList<IList<IN>>(Java.Util.Collections.EmptyList<IN>());
+					documents = Java.Util.Collections.SingletonList<IList<In>>(Java.Util.Collections.EmptyList<In>());
 				}
 				ClassifyAndWriteAnswers(documents, readerWriter, false);
 			}
 		}
 
-		public virtual Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<IN> document)
+		public virtual Triple<ICounter<int>, ICounter<int>, TwoDimensionalCounter<int, string>> PrintProbsDocument(IList<In> document)
 		{
 			throw new NotSupportedException("Not implemented for this class.");
 		}
 
 		/// <summary>Does nothing by default.</summary>
 		/// <remarks>Does nothing by default.  Subclasses can override if necessary.</remarks>
-		public virtual void DumpFeatures(ICollection<IList<IN>> documents)
+		public virtual void DumpFeatures(ICollection<IList<In>> documents)
 		{
 		}
 
@@ -1293,9 +1293,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// <param name="outputScores">Whether to calculate and then log performance scores (P/R/F1)</param>
 		/// <returns>A Triple of P/R/F1 if outputScores is true, else null</returns>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string testFile, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string testFile, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(testFile, readerWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(testFile, readerWriter);
 			return ClassifyAndWriteAnswers(documents, readerWriter, outputScores);
 		}
 
@@ -1306,17 +1306,17 @@ namespace Edu.Stanford.Nlp.IE
 		/// character encoding, otherwise in the system default character encoding.
 		/// </summary>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string testFile, OutputStream outStream, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string testFile, OutputStream outStream, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(testFile, readerWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(testFile, readerWriter);
 			PrintWriter pw = IOUtils.EncodedOutputStreamPrintWriter(outStream, flags.outputEncoding, true);
 			return ClassifyAndWriteAnswers(documents, pw, readerWriter, outputScores);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string baseDir, string filePattern, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(string baseDir, string filePattern, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFiles(baseDir, filePattern, readerWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFiles(baseDir, filePattern, readerWriter);
 			return ClassifyAndWriteAnswers(documents, readerWriter, outputScores);
 		}
 
@@ -1333,14 +1333,14 @@ namespace Edu.Stanford.Nlp.IE
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public virtual void ClassifyFilesAndWriteAnswers(ICollection<File> testFiles, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual void ClassifyFilesAndWriteAnswers(ICollection<File> testFiles, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFiles(testFiles, readerWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFiles(testFiles, readerWriter);
 			ClassifyAndWriteAnswers(documents, readerWriter, outputScores);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(ICollection<IList<IN>> documents, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(ICollection<IList<In>> documents, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
 			return ClassifyAndWriteAnswers(documents, IOUtils.EncodedOutputStreamPrintWriter(System.Console.Out, flags.outputEncoding, true), readerWriter, outputScores);
 		}
@@ -1356,7 +1356,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// on a 0-100 scale like percentages.
 		/// </returns>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(ICollection<IList<IN>> documents, PrintWriter printWriter, IDocumentReaderAndWriter<IN> readerWriter, bool outputScores)
+		public virtual Triple<double, double, double> ClassifyAndWriteAnswers(ICollection<IList<In>> documents, PrintWriter printWriter, IDocumentReaderAndWriter<In> readerWriter, bool outputScores)
 		{
 			if (flags.exportFeatures != null)
 			{
@@ -1370,13 +1370,13 @@ namespace Edu.Stanford.Nlp.IE
 			int numWords = 0;
 			int numDocs = 0;
 			AtomicInteger threadCompletionCounter = new AtomicInteger(0);
-			IThreadsafeProcessor<IList<IN>, IList<IN>> threadProcessor = new _IThreadsafeProcessor_1169(this, threadCompletionCounter);
-			MulticoreWrapper<IList<IN>, IList<IN>> wrapper = null;
+			IThreadsafeProcessor<IList<In>, IList<In>> threadProcessor = new _IThreadsafeProcessor_1169(this, threadCompletionCounter);
+			MulticoreWrapper<IList<In>, IList<In>> wrapper = null;
 			if (flags.multiThreadClassifier != 0)
 			{
-				wrapper = new MulticoreWrapper<IList<IN>, IList<IN>>(flags.multiThreadClassifier, threadProcessor);
+				wrapper = new MulticoreWrapper<IList<In>, IList<In>>(flags.multiThreadClassifier, threadProcessor);
 			}
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				numWords += doc.Count;
 				numDocs++;
@@ -1385,14 +1385,14 @@ namespace Edu.Stanford.Nlp.IE
 					wrapper.Put(doc);
 					while (wrapper.Peek())
 					{
-						IList<IN> results = wrapper.Poll();
+						IList<In> results = wrapper.Poll();
 						WriteAnswers(results, printWriter, readerWriter);
 						resultsCounted = resultsCounted && CountResults(results, entityTP, entityFP, entityFN);
 					}
 				}
 				else
 				{
-					IList<IN> results = threadProcessor.Process(doc);
+					IList<In> results = threadProcessor.Process(doc);
 					WriteAnswers(results, printWriter, readerWriter);
 					resultsCounted = resultsCounted && CountResults(results, entityTP, entityFP, entityFN);
 				}
@@ -1402,7 +1402,7 @@ namespace Edu.Stanford.Nlp.IE
 				wrapper.Join();
 				while (wrapper.Peek())
 				{
-					IList<IN> results = wrapper.Poll();
+					IList<In> results = wrapper.Poll();
 					WriteAnswers(results, printWriter, readerWriter);
 					resultsCounted = resultsCounted && CountResults(results, entityTP, entityFP, entityFN);
 				}
@@ -1422,7 +1422,7 @@ namespace Edu.Stanford.Nlp.IE
 			}
 		}
 
-		private sealed class _IThreadsafeProcessor_1169 : IThreadsafeProcessor<IList<IN>, IList<IN>>
+		private sealed class _IThreadsafeProcessor_1169 : IThreadsafeProcessor<IList<In>, IList<In>>
 		{
 			public _IThreadsafeProcessor_1169(AbstractSequenceClassifier<In> _enclosing, AtomicInteger threadCompletionCounter)
 			{
@@ -1430,7 +1430,7 @@ namespace Edu.Stanford.Nlp.IE
 				this.threadCompletionCounter = threadCompletionCounter;
 			}
 
-			public IList<IN> Process(IList<IN> doc)
+			public IList<In> Process(IList<In> doc)
 			{
 				doc = this._enclosing.Classify(doc);
 				int completedNo = threadCompletionCounter.IncrementAndGet();
@@ -1441,7 +1441,7 @@ namespace Edu.Stanford.Nlp.IE
 				return doc;
 			}
 
-			public IThreadsafeProcessor<IList<IN>, IList<IN>> NewInstance()
+			public IThreadsafeProcessor<IList<In>, IList<In>> NewInstance()
 			{
 				return this;
 			}
@@ -1464,9 +1464,9 @@ namespace Edu.Stanford.Nlp.IE
 		/// <param name="k">How many best to print</param>
 		/// <param name="readerAndWriter">Class to be used for printing answers</param>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual void ClassifyAndWriteAnswersKBest(string testFile, int k, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void ClassifyAndWriteAnswersKBest(string testFile, int k, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
 			PrintWriter pw = IOUtils.EncodedOutputStreamPrintWriter(System.Console.Out, flags.outputEncoding, true);
 			ClassifyAndWriteAnswersKBest(documents, k, pw, readerAndWriter);
 			pw.Flush();
@@ -1483,18 +1483,18 @@ namespace Edu.Stanford.Nlp.IE
 		/// </remarks>
 		/// <param name="documents">The ObjectBank to test on.</param>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual void ClassifyAndWriteAnswersKBest(ObjectBank<IList<IN>> documents, int k, PrintWriter printWriter, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void ClassifyAndWriteAnswersKBest(ObjectBank<IList<In>> documents, int k, PrintWriter printWriter, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			Timing timer = new Timing();
 			int numWords = 0;
 			int numSentences = 0;
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
-				ICounter<IList<IN>> kBest = ClassifyKBest(doc, typeof(CoreAnnotations.AnswerAnnotation), k);
+				ICounter<IList<In>> kBest = ClassifyKBest(doc, typeof(CoreAnnotations.AnswerAnnotation), k);
 				numWords += doc.Count;
-				IList<IList<IN>> sorted = Counters.ToSortedList(kBest);
+				IList<IList<In>> sorted = Counters.ToSortedList(kBest);
 				int n = 1;
-				foreach (IList<IN> l in sorted)
+				foreach (IList<In> l in sorted)
 				{
 					printWriter.Println("<sentence id=" + numSentences + " k=" + n + " logProb=" + kBest.GetCount(l) + " prob=" + Math.Exp(kBest.GetCount(l)) + '>');
 					WriteAnswers(l, printWriter, readerAndWriter);
@@ -1516,13 +1516,13 @@ namespace Edu.Stanford.Nlp.IE
 		/// </summary>
 		/// <param name="testFile">The file to test on.</param>
 		/// <exception cref="System.IO.IOException"/>
-		public virtual void ClassifyAndWriteViterbiSearchGraph(string testFile, string searchGraphPrefix, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void ClassifyAndWriteViterbiSearchGraph(string testFile, string searchGraphPrefix, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			Timing timer = new Timing();
-			ObjectBank<IList<IN>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
+			ObjectBank<IList<In>> documents = MakeObjectBankFromFile(testFile, readerAndWriter);
 			int numWords = 0;
 			int numSentences = 0;
-			foreach (IList<IN> doc in documents)
+			foreach (IList<In> doc in documents)
 			{
 				DFSA<string, int> tagLattice = GetViterbiSearchGraph(doc, typeof(CoreAnnotations.AnswerAnnotation));
 				numWords += doc.Count;
@@ -1551,7 +1551,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <param name="doc">Documents to write out</param>
 		/// <param name="printWriter">Writer to use for output</param>
 		/// <exception cref="System.IO.IOException">If an IO problem</exception>
-		public virtual void WriteAnswers(IList<IN> doc, PrintWriter printWriter, IDocumentReaderAndWriter<IN> readerAndWriter)
+		public virtual void WriteAnswers(IList<In> doc, PrintWriter printWriter, IDocumentReaderAndWriter<In> readerAndWriter)
 		{
 			if (flags.lowerNewgeneThreshold)
 			{
@@ -1566,7 +1566,7 @@ namespace Edu.Stanford.Nlp.IE
 		}
 
 		/// <summary>Count results using a method appropriate for the tag scheme being used.</summary>
-		public virtual bool CountResults(IList<IN> doc, ICounter<string> entityTP, ICounter<string> entityFP, ICounter<string> entityFN)
+		public virtual bool CountResults(IList<In> doc, ICounter<string> entityTP, ICounter<string> entityFP, ICounter<string> entityFN)
 		{
 			string bg = (flags.evaluateBackground ? null : flags.backgroundSymbol);
 			if (flags.sighanPostProcessing)

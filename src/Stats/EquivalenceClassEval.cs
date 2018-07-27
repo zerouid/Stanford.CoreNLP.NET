@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Java.Text;
-using Java.Util;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Stats
 {
@@ -72,7 +72,7 @@ namespace Edu.Stanford.Nlp.Stats
 
 		internal IEquivalenceClasser<IN, OUT> eq;
 
-		internal EquivalenceClassEval.Eval.CollectionContainsChecker<IN> checker;
+		internal EquivalenceClassEval.Eval.CollectionContainsChecker<In> checker;
 
 		internal string summaryName;
 
@@ -102,7 +102,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// Specifies an EquivalenceClassEval using the Eval.EqualityChecker argument as equality criterion
 		/// and grouping all items into a single equivalence class for reporting statistics.
 		/// </summary>
-		public EquivalenceClassEval(EquivalenceClassEval.IEqualityChecker<IN> e)
+		public EquivalenceClassEval(EquivalenceClassEval.IEqualityChecker<In> e)
 			: this(Edu.Stanford.Nlp.Stats.EquivalenceClassEval.NullEquivalenceClasser<IN, OUT>(), e)
 		{
 		}
@@ -114,7 +114,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// and grouping all items according to the EquivalenceClasser argument.
 		/// </summary>
 		public EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, string name)
-			: this(eq, Edu.Stanford.Nlp.Stats.EquivalenceClassEval.DefaultChecker<IN>(), name)
+			: this(eq, Edu.Stanford.Nlp.Stats.EquivalenceClassEval.DefaultChecker<In>(), name)
 		{
 		}
 
@@ -122,7 +122,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// Specifies an EquivalenceClassEval using the Eval.EqualityChecker argument as equality criterion
 		/// and grouping all items according to the EquivalenceClasser argument.
 		/// </summary>
-		public EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.IEqualityChecker<IN> e)
+		public EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.IEqualityChecker<In> e)
 			: this(eq, e, string.Empty)
 		{
 		}
@@ -131,12 +131,12 @@ namespace Edu.Stanford.Nlp.Stats
 		/// Specifies an EquivalenceClassEval using the Eval.EqualityChecker argument as equality criterion
 		/// and grouping all items according to the EquivalenceClasser argument.
 		/// </summary>
-		public EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.IEqualityChecker<IN> e, string summaryName)
-			: this(eq, new EquivalenceClassEval.Eval.CollectionContainsChecker<IN>(e), summaryName)
+		public EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.IEqualityChecker<In> e, string summaryName)
+			: this(eq, new EquivalenceClassEval.Eval.CollectionContainsChecker<In>(e), summaryName)
 		{
 		}
 
-		internal EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.Eval.CollectionContainsChecker<IN> checker, string summaryName)
+		internal EquivalenceClassEval(IEquivalenceClasser<IN, OUT> eq, EquivalenceClassEval.Eval.CollectionContainsChecker<In> checker, string summaryName)
 		{
 			{
 				//Eval eval = new Eval();
@@ -195,7 +195,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// s to the tabulated statistics of
 		/// the evaluation.
 		/// </summary>
-		public virtual void Eval(ICollection<IN> guesses, ICollection<IN> golds)
+		public virtual void Eval(ICollection<In> guesses, ICollection<In> golds)
 		{
 			Eval(guesses, golds, new PrintWriter(System.Console.Out, true));
 		}
@@ -207,7 +207,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// <see cref="Java.IO.PrintWriter"/>
 		/// to print eval stats
 		/// </param>
-		public virtual void Eval(ICollection<IN> guesses, ICollection<IN> golds, PrintWriter pw)
+		public virtual void Eval(ICollection<In> guesses, ICollection<In> golds, PrintWriter pw)
 		{
 			if (verbose)
 			{
@@ -229,14 +229,14 @@ namespace Edu.Stanford.Nlp.Stats
 			Counters.AddInPlace(goldCorrect, previousGoldCorrect);
 		}
 
-		internal virtual Pair<ClassicCounter<OUT>, ClassicCounter<OUT>> EvalPrecision(ICollection<IN> guesses, ICollection<IN> golds)
+		internal virtual Pair<ClassicCounter<OUT>, ClassicCounter<OUT>> EvalPrecision(ICollection<In> guesses, ICollection<In> golds)
 		{
-			ICollection<IN> internalGuesses = null;
-			ICollection<IN> internalGolds = null;
+			ICollection<In> internalGuesses = null;
+			ICollection<In> internalGolds = null;
 			if (bagEval)
 			{
-				internalGuesses = new List<IN>(guesses.Count);
-				internalGolds = new List<IN>(golds.Count);
+				internalGuesses = new List<In>(guesses.Count);
+				internalGolds = new List<In>(golds.Count);
 			}
 			else
 			{
@@ -726,7 +726,7 @@ namespace Edu.Stanford.Nlp.Stats
 
 			internal IEquivalenceClasser<IN, OUT> eq1;
 
-			internal EquivalenceClassEval.Eval.CollectionContainsChecker<IN> checker1;
+			internal EquivalenceClassEval.Eval.CollectionContainsChecker<In> checker1;
 
 			internal string summaryName1;
 

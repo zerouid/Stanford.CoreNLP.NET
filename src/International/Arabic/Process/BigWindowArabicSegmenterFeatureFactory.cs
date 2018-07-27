@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.International.Arabic.Process
 {
@@ -13,7 +13,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 	/// <author>Spence Green</author>
 	/// <?/>
 	[System.Serializable]
-	public class BigWindowArabicSegmenterFeatureFactory<In> : ArabicSegmenterFeatureFactory<IN>
+	public class BigWindowArabicSegmenterFeatureFactory<In> : ArabicSegmenterFeatureFactory<In>
 		where In : CoreLabel
 	{
 		private const long serialVersionUID = 6864940988019110930L;
@@ -23,7 +23,7 @@ namespace Edu.Stanford.Nlp.International.Arabic.Process
 			base.Init(flags);
 		}
 
-		protected internal override ICollection<string> FeaturesC(PaddedList<IN> cInfo, int loc)
+		protected internal override ICollection<string> FeaturesC(PaddedList<In> cInfo, int loc)
 		{
 			ICollection<string> features = base.FeaturesC(cInfo, loc);
 			CoreLabel n3 = cInfo[loc + 3];

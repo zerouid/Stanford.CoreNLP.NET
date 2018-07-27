@@ -27,14 +27,14 @@ using System;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
 	/// <summary>Subclass of CRFClassifier for modeling noisy label</summary>
 	/// <author>Mengqiu Wang</author>
-	public class CRFClassifierNoisyLabel<In> : CRFClassifier<IN>
+	public class CRFClassifierNoisyLabel<In> : CRFClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>

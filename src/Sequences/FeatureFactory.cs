@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Sequences
 {
@@ -109,7 +109,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		/// of the features
 		/// calculated for the word at the specified position in info.
 		/// </returns>
-		public abstract ICollection<string> GetCliqueFeatures(PaddedList<IN> info, int position, Clique clique);
+		public abstract ICollection<string> GetCliqueFeatures(PaddedList<In> info, int position, Clique clique);
 
 		/// <summary>
 		/// Makes more complete feature names out of partial feature names, by

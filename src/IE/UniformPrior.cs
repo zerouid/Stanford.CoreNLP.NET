@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.IE
 {
@@ -24,9 +24,9 @@ namespace Edu.Stanford.Nlp.IE
 
 		protected internal readonly IIndex<string> classIndex;
 
-		protected internal readonly IList<IN> doc;
+		protected internal readonly IList<In> doc;
 
-		public UniformPrior(string backgroundSymbol, IIndex<string> classIndex, IList<IN> doc)
+		public UniformPrior(string backgroundSymbol, IIndex<string> classIndex, IList<In> doc)
 		{
 			this.classIndex = classIndex;
 			this.backgroundSymbol = classIndex.IndexOf(backgroundSymbol);

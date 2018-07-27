@@ -4,9 +4,9 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -38,7 +38,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 	/// </remarks>
 	/// <author>Michel Galley</author>
 	/// <author>Sonal Gupta (made the class generic)</author>
-	public class CRFBiasedClassifier<In> : CRFClassifier<IN>
+	public class CRFBiasedClassifier<In> : CRFClassifier<In>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
@@ -58,10 +58,10 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		{
 		}
 
-		public override CRFDatum<IList<string>, CRFLabel> MakeDatum(IList<IN> info, int loc, IList<FeatureFactory<IN>> featureFactories)
+		public override CRFDatum<IList<string>, CRFLabel> MakeDatum(IList<In> info, int loc, IList<FeatureFactory<In>> featureFactories)
 		{
 			pad.Set(typeof(CoreAnnotations.AnswerAnnotation), flags.backgroundSymbol);
-			PaddedList<IN> pInfo = new PaddedList<IN>(info, pad);
+			PaddedList<In> pInfo = new PaddedList<In>(info, pad);
 			IList<IList<string>> features = new List<IList<string>>();
 			ICollection<Clique> done = Generics.NewHashSet();
 			for (int i = 0; i < windowSize; i++)
@@ -72,7 +72,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 				Sharpen.Collections.AddAll(done, windowCliques);
 				foreach (Clique c in windowCliques)
 				{
-					foreach (FeatureFactory<IN> featureFactory in featureFactories)
+					foreach (FeatureFactory<In> featureFactory in featureFactories)
 					{
 						Sharpen.Collections.AddAll(featuresC, featureFactory.GetCliqueFeatures(pInfo, loc, c));
 					}
@@ -119,21 +119,21 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			weights[fi][cindex] = weight;
 		}
 
-		public override IList<IN> Classify(IList<IN> document)
+		public override IList<In> Classify(IList<In> document)
 		{
 			testTime = true;
-			IList<IN> l = base.Classify(document);
+			IList<In> l = base.Classify(document);
 			testTime = false;
 			return l;
 		}
 
 		internal class CRFBiasedClassifierOptimizer : IDoubleUnaryOperator
 		{
-			private readonly CRFBiasedClassifier<IN> crf;
+			private readonly CRFBiasedClassifier<In> crf;
 
 			private readonly IDoubleUnaryOperator evalFunction;
 
-			internal CRFBiasedClassifierOptimizer(CRFBiasedClassifier<In> _enclosing, CRFBiasedClassifier<IN> c, IDoubleUnaryOperator e)
+			internal CRFBiasedClassifierOptimizer(CRFBiasedClassifier<In> _enclosing, CRFBiasedClassifier<In> c, IDoubleUnaryOperator e)
 			{
 				this._enclosing = _enclosing;
 				this.crf = c;
@@ -157,7 +157,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// (class of index 0), and is thus only useful for binary classification
 		/// problems.
 		/// </remarks>
-		public virtual void AdjustBias(IList<IList<IN>> develData, IDoubleUnaryOperator evalFunction, double low, double high)
+		public virtual void AdjustBias(IList<IList<In>> develData, IDoubleUnaryOperator evalFunction, double low, double high)
 		{
 			ILineSearcher ls = new GoldenSectionLineSearch(true, 1e-2, low, high);
 			CRFBiasedClassifier.CRFBiasedClassifierOptimizer optimizer = new CRFBiasedClassifier.CRFBiasedClassifierOptimizer(this, this, evalFunction);

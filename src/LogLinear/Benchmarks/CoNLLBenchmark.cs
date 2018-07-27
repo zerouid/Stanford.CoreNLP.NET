@@ -3,10 +3,10 @@ using Edu.Stanford.Nlp.Loglinear.Inference;
 using Edu.Stanford.Nlp.Loglinear.Learning;
 using Edu.Stanford.Nlp.Loglinear.Model;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util;
-using Java.Util.Zip;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Loglinear.Benchmarks
 {
@@ -89,11 +89,11 @@ namespace Edu.Stanford.Nlp.Loglinear.Benchmarks
 					if (nerGuesses[i_1].Equals(sentence_1.ner[i_1]))
 					{
 						correct++;
-						correctChunk[nerGuesses[i_1]] = correctChunk.GetOrDefault(nerGuesses[i_1], 0.) + 1;
+						correctChunk[nerGuesses[i_1]] = correctChunk.GetOrDefault(nerGuesses[i_1], 0.0) + 1;
 					}
 					total++;
-					foundCorrect[sentence_1.ner[i_1]] = foundCorrect.GetOrDefault(sentence_1.ner[i_1], 0.) + 1;
-					foundGuessed[nerGuesses[i_1]] = foundGuessed.GetOrDefault(nerGuesses[i_1], 0.) + 1;
+					foundCorrect[sentence_1.ner[i_1]] = foundCorrect.GetOrDefault(sentence_1.ner[i_1], 0.0) + 1;
+					foundGuessed[nerGuesses[i_1]] = foundGuessed.GetOrDefault(nerGuesses[i_1], 0.0) + 1;
 				}
 			}
 			log.Info("\nSystem results:\n");

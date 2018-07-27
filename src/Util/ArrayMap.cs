@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Java.Util;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Util
 {
@@ -144,8 +144,6 @@ namespace Edu.Stanford.Nlp.Util
 				this._enclosing = _enclosing;
 				this.serialVersionUID = 2746535724049192751L;
 			}
-
-			private const long serialVersionUID;
 
 			public override bool Remove(object o)
 			{

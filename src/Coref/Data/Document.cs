@@ -29,7 +29,7 @@ using Edu.Stanford.Nlp.Coref.Docreader;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Coref.Data
 {

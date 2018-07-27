@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Dcoref
 {

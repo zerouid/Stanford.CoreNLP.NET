@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Java.Util;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Objectbank
 {
@@ -190,7 +190,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return new Edu.Stanford.Nlp.Objectbank.ObjectBank<X>(rif, ifrf);
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<string> GetLineIterator(File file)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<string> GetLineIterator(FileInfo file)
 		{
 			return GetLineIterator(Java.Util.Collections.Singleton(file), new IdentityFunction<string>());
 		}

@@ -1,7 +1,5 @@
 using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Optimization;
-using Java.Util;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -51,6 +49,7 @@ namespace Edu.Stanford.Nlp.Classify
 			double[][] x2 = new double[numFeatures][];
 			for (int i = 0; i < numFeatures; i++)
 			{
+				x2[i] = new double[numClasses];
 				for (int j = 0; j < numClasses; j++)
 				{
 					x2[i][j] = x[IndexOf(i, j)];

@@ -30,14 +30,14 @@ using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Lang.Reflect;
-using Java.Text;
-using Java.Util;
-using Java.Util.Function;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
+
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Stats
 {
@@ -3243,13 +3243,13 @@ namespace Edu.Stanford.Nlp.Stats
 
 			private sealed class _IFactory_2740 : IFactory<ICounter<E>>
 			{
+				private const long serialVersionUID = -4063129407369590522L;
+
 				public _IFactory_2740(Type type)
 				{
 					this.type = type;
-					this.serialVersionUID = -4063129407369590522L;
+					this.serialVersionUID = serialVersionUID;
 				}
-
-				private const long serialVersionUID;
 
 				public ICounter<E> Create()
 				{

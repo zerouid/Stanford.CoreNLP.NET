@@ -5,9 +5,9 @@ using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Patterns;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Util;
-using Java.Util.Concurrent.Atomic;
+
+
+
 using Org.Apache.Lucene.Analysis;
 using Org.Apache.Lucene.Analysis.Core;
 using Org.Apache.Lucene.Document;
@@ -15,7 +15,7 @@ using Org.Apache.Lucene.Index;
 using Org.Apache.Lucene.Search;
 using Org.Apache.Lucene.Store;
 using Org.Apache.Lucene.Util;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Patterns.Surface
 {

@@ -5,10 +5,10 @@ using Edu.Stanford.Nlp.Parser.Lexparser;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.IO;
-using Java.Lang;
-using Java.Util.Function;
-using Sharpen;
+
+
+
+
 
 namespace Edu.Stanford.Nlp.Parser.Metrics
 {
@@ -51,13 +51,12 @@ namespace Edu.Stanford.Nlp.Parser.Metrics
 
 		private sealed class _IPredicate_58 : IPredicate<IDependency<ILabel, ILabel, object>>
 		{
+			private const long serialVersionUID = 649358302237611081L;
 			public _IPredicate_58(UnlabeledAttachmentEval _enclosing)
 			{
 				this._enclosing = _enclosing;
-				this.serialVersionUID = 649358302237611081L;
+				this.serialVersionUID = serialVersionUID;
 			}
-
-			private const long serialVersionUID;
 
 			// Semantics of this method are weird. If accept() returns true, then the dependent is
 			// *not* a punctuation item. This filter thus accepts everything except punctuation

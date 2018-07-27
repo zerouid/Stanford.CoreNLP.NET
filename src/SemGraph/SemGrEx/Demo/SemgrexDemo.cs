@@ -3,7 +3,7 @@ using Edu.Stanford.Nlp.Semgraph;
 using Edu.Stanford.Nlp.Semgraph.Semgrex;
 using Edu.Stanford.Nlp.Trees;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Semgraph.Semgrex.Demo
 {

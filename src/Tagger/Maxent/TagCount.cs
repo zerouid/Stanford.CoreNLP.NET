@@ -4,8 +4,8 @@ using System.IO;
 using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Tagger.Maxent
 {

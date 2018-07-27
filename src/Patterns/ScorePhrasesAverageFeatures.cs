@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Patterns
 {

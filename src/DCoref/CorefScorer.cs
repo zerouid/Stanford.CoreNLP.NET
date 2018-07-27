@@ -1,7 +1,4 @@
 using System;
-using Java.Text;
-using Java.Util.Logging;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Dcoref
 {

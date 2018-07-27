@@ -1,7 +1,7 @@
 using System;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util.Logging;
-using Sharpen;
+
 
 namespace Edu.Stanford.Nlp.Wordseg
 {

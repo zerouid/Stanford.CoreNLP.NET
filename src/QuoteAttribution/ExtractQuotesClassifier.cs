@@ -8,8 +8,8 @@ using Edu.Stanford.Nlp.Pipeline;
 using Edu.Stanford.Nlp.Quoteattribution.Sieves;
 using Edu.Stanford.Nlp.Quoteattribution.Sieves.Training;
 using Edu.Stanford.Nlp.Util;
-using Java.IO;
-using Sharpen;
+
+
 
 namespace Edu.Stanford.Nlp.Quoteattribution
 {

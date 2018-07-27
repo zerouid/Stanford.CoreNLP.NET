@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Util;
-using Java.Util;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Util;
-using Java.Lang.Ref;
-using Sharpen;
 
 namespace Edu.Stanford.Nlp.Classify
 {
@@ -18,7 +16,7 @@ namespace Edu.Stanford.Nlp.Classify
 	/// <?/>
 	/// <?/>
 	[System.Serializable]
-	public abstract class AbstractLinearClassifierFactory<L, F> : IClassifierFactory<L, F, IClassifier<L, F>>
+	public abstract class AbstractLinearClassifierFactory<L, F> : IClassifierFactory<L, F, LinearClassifier<L, F>>
 	{
 		private const long serialVersionUID = 1L;
 
@@ -92,13 +90,13 @@ namespace Edu.Stanford.Nlp.Classify
 		/// objects to train the classifier on
 		/// </param>
 		/// <returns>A Classifier trained on a collection of Datum</returns>
-		public virtual LinearClassifier<L, F> TrainClassifier<_T0>(Reference<_T0> @ref)
+		public virtual LinearClassifier<L, F> TrainClassifier<_T0>(ref _T0 @ref)
 			where _T0 : ICollection<IDatum<L, F>>
 		{
 			ICollection<IDatum<L, F>> examples = @ref.Get();
 			return TrainClassifier(examples);
 		}
-
+		
 		/// <summary>
 		/// Trains a
 		/// <see cref="IClassifier{L, F}"/>

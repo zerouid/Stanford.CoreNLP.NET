@@ -4,9 +4,9 @@ using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Ling.Tokensregex;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-using Java.Util;
-using Java.Util.Regex;
-using Sharpen;
+
+
+
 
 namespace Edu.Stanford.Nlp.Process
 {
@@ -59,7 +59,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// <author>Teg Grenager (grenager@stanford.edu)</author>
 	/// <author>Sarah Spikes (sdspikes@cs.stanford.edu) (Templatization)</author>
 	/// <?/>
-	public class WordToSentenceProcessor<In> : IListProcessor<IN, IList<IN>>
+	public class WordToSentenceProcessor<In> : IListProcessor<IN, IList<In>>
 	{
 		/// <summary>A logger for this class</summary>
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Process.WordToSentenceProcessor));
@@ -95,7 +95,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Regex for multi token sequences that qualify as sentence-final tokens.
 		/// (i.e. use if you want to sentence split on 2 or more newlines)
 		/// </remarks>
-		private readonly SequencePattern<IN> sentenceBoundaryMultiTokenPattern;
+		private readonly SequencePattern<In> sentenceBoundaryMultiTokenPattern;
 
 		/// <summary>
 		/// Regex for tokens (Strings) that qualify as tokens that can follow
@@ -264,15 +264,15 @@ namespace Edu.Stanford.Nlp.Process
 		/// <param name="words">A list of already tokenized words (must implement HasWord or be a String).</param>
 		/// <returns>A list of sentences.</returns>
 		/// <seealso cref="WordToSentenceProcessor{IN}.WordToSentenceProcessor(string, string, Java.Util.ISet{E}, Java.Util.ISet{E}, string, NewlineIsSentenceBreak, Edu.Stanford.Nlp.Ling.Tokensregex.SequencePattern{T}, Java.Util.ISet{E}, bool, bool)"/>
-		public virtual IList<IList<IN>> Process<_T0>(IList<_T0> words)
+		public virtual IList<IList<In>> Process<_T0>(IList<_T0> words)
 			where _T0 : IN
 		{
 			// todo [cdm 2016]: Should really sort out generics here so don't need to have extra list copying
 			if (isOneSentence)
 			{
 				// put all the words in one sentence
-				IList<IList<IN>> sentences = Generics.NewArrayList();
-				sentences.Add(new List<IN>(words));
+				IList<IList<In>> sentences = Generics.NewArrayList();
+				sentences.Add(new List<In>(words));
 				return sentences;
 			}
 			else
@@ -299,7 +299,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// <param name="words">A list of already tokenized words (must implement HasWord or be a String).</param>
 		/// <returns>A list of sentences.</returns>
 		/// <seealso cref="WordToSentenceProcessor{IN}.WordToSentenceProcessor(string, string, Java.Util.ISet{E}, Java.Util.ISet{E}, string, NewlineIsSentenceBreak, Edu.Stanford.Nlp.Ling.Tokensregex.SequencePattern{T}, Java.Util.ISet{E}, bool, bool)"/>
-		private IList<IList<IN>> WordsToSentences<_T0>(IList<_T0> words)
+		private IList<IList<In>> WordsToSentences<_T0>(IList<_T0> words)
 			where _T0 : IN
 		{
 			IdentityHashMap<object, bool> isSentenceBoundary = null;
@@ -309,10 +309,10 @@ namespace Edu.Stanford.Nlp.Process
 				// Do initial pass using TokensRegex to identify multi token patterns that need to be matched
 				// and add the last token of a match to our table of sentence boundary tokens.
 				isSentenceBoundary = new IdentityHashMap<object, bool>();
-				SequenceMatcher<IN> matcher = sentenceBoundaryMultiTokenPattern.GetMatcher(words);
+				SequenceMatcher<In> matcher = sentenceBoundaryMultiTokenPattern.GetMatcher(words);
 				while (matcher.Find())
 				{
-					IList<IN> nodes = matcher.GroupNodes();
+					IList<In> nodes = matcher.GroupNodes();
 					if (nodes != null && !nodes.IsEmpty())
 					{
 						isSentenceBoundary[nodes[nodes.Count - 1]] = true;
@@ -320,9 +320,9 @@ namespace Edu.Stanford.Nlp.Process
 				}
 			}
 			// Split tokens into sentences!!!
-			IList<IList<IN>> sentences = Generics.NewArrayList();
-			IList<IN> currentSentence = new List<IN>();
-			IList<IN> lastSentence = null;
+			IList<IList<In>> sentences = Generics.NewArrayList();
+			IList<In> currentSentence = new List<In>();
+			IList<In> lastSentence = null;
 			bool insideRegion = false;
 			bool inWaitForForcedEnd = false;
 			bool lastTokenWasNewline = false;
@@ -502,7 +502,7 @@ namespace Edu.Stanford.Nlp.Process
 					// adds this sentence now that it's complete
 					lastSentenceEndForced = ((lastSentence == null || lastSentence.IsEmpty()) && lastSentenceEndForced) || newSentForced;
 					lastSentence = currentSentence;
-					currentSentence = new List<IN>();
+					currentSentence = new List<In>();
 				}
 				else
 				{
@@ -523,9 +523,9 @@ namespace Edu.Stanford.Nlp.Process
 			return sentences;
 		}
 
-		public virtual IDocument<L, F, IList<IN>> ProcessDocument<L, F>(IDocument<L, F, IN> @in)
+		public virtual IDocument<L, F, IList<In>> ProcessDocument<L, F>(IDocument<L, F, IN> @in)
 		{
-			IDocument<L, F, IList<IN>> doc = @in.BlankDocument();
+			IDocument<L, F, IList<In>> doc = @in.BlankDocument();
 			Sharpen.Collections.AddAll(doc, Process(@in));
 			return doc;
 		}
@@ -657,7 +657,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="newlineIsSentenceBreak">Strategy for counting line ends (boundaryToDiscard) as sentence ends.</param>
 		public WordToSentenceProcessor(string boundaryTokenRegex, string boundaryFollowersRegex, ICollection<string> boundaryToDiscard, ICollection<string> xmlBreakElementsToDiscard, WordToSentenceProcessor.NewlineIsSentenceBreak newlineIsSentenceBreak
-			, SequencePattern<IN> sentenceBoundaryMultiTokenPattern, ICollection<string> tokenRegexesToDiscard)
+			, SequencePattern<In> sentenceBoundaryMultiTokenPattern, ICollection<string> tokenRegexesToDiscard)
 			: this(boundaryTokenRegex == null ? DefaultBoundaryRegex : boundaryTokenRegex, boundaryFollowersRegex == null ? DefaultBoundaryFollowersRegex : boundaryFollowersRegex, boundaryToDiscard == null || boundaryToDiscard.IsEmpty() ? DefaultSentenceBoundariesToDiscard
 				 : boundaryToDiscard, xmlBreakElementsToDiscard == null ? Java.Util.Collections.EmptySet() : xmlBreakElementsToDiscard, null, newlineIsSentenceBreak, sentenceBoundaryMultiTokenPattern, tokenRegexesToDiscard, false, false)
 		{
@@ -719,7 +719,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// strict one-sentence-per-line mode.
 		/// </param>
 		public WordToSentenceProcessor(string boundaryTokenRegex, string boundaryFollowersRegex, ICollection<string> boundariesToDiscard, ICollection<string> xmlBreakElementsToDiscard, string regionElementRegex, WordToSentenceProcessor.NewlineIsSentenceBreak
-			 newlineIsSentenceBreak, SequencePattern<IN> sentenceBoundaryMultiTokenPattern, ICollection<string> tokenRegexesToDiscard, bool isOneSentence, bool allowEmptySentences)
+			 newlineIsSentenceBreak, SequencePattern<In> sentenceBoundaryMultiTokenPattern, ICollection<string> tokenRegexesToDiscard, bool isOneSentence, bool allowEmptySentences)
 		{
 			/* ---------- Constructors --------- */
 			sentenceBoundaryTokenPattern = Pattern.Compile(boundaryTokenRegex);

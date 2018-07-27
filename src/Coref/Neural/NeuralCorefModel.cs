@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Edu.Stanford.Nlp.Neural;
-using Org.Ejml.Simple;
-using Sharpen;
+using MathNet.Numerics;
+
 
 namespace Edu.Stanford.Nlp.Coref.Neural
 {
