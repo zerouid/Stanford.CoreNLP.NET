@@ -475,7 +475,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 		/// <summary>Load Stanford Processor: skip unnecessary annotator</summary>
 		protected internal static StanfordCoreNLP LoadStanfordProcessor(Properties props)
 		{
-			bool replicateCoNLL = bool.ParseBoolean(props.GetProperty(Constants.ReplicateconllProp, "false"));
+			bool replicateCoNLL = bool.Parse(props.GetProperty(Constants.ReplicateconllProp, "false"));
 			Properties pipelineProps = new Properties(props);
 			StringBuilder annoSb = new StringBuilder(string.Empty);
 			if (!Constants.UseGoldPos && !replicateCoNLL)

@@ -908,7 +908,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex.Types
 
 		public static readonly IValueFunction MapValuesFunction = new _TypeCheckedFunction_580("MAP_VALUES", ParamInfoList);
 
-		private static readonly ValueFunctions.ParamInfo ParamInfoFunction = new ValueFunctions.ParamInfo("FUNCTION", Expressions.TypeFunction, typeof(IFunction), false);
+		private static readonly ValueFunctions.ParamInfo ParamInfoFunction = new ValueFunctions.ParamInfo("FUNCTION", Expressions.TypeFunction, typeof(Func), false);
 
 		private sealed class _TypeCheckedFunction_599 : ValueFunctions.TypeCheckedFunction
 		{
@@ -926,7 +926,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex.Types
 					return null;
 				}
 				IList list = (IList)@in[0].Get();
-				IFunction func = (IFunction)@in[1].Get();
+				Func func = (Func)@in[1].Get();
 				IList<object> res = new List<object>(list.Count);
 				foreach (object elem in list)
 				{

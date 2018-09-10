@@ -752,7 +752,7 @@ namespace Edu.Stanford.Nlp.Util.Logging
 				}
 			}
 			//--Channels.Debug
-			bool debug = bool.ParseBoolean(Get(props, "log.channels.debug", "true", used));
+			bool debug = bool.Parse(Get(props, "log.channels.debug", "true", used));
 			if (!debug)
 			{
 				chain.Add(RedwoodConfiguration.Handlers.hideDebug);

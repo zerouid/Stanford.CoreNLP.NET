@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Semgraph
 			try
 			{
 				SemanticGraph graph = SemanticGraph.ValueOf("[ate subj>Bill]");
-				IFunction<IndexedWord, string> transformNode = null;
+				Func<IndexedWord, string> transformNode = null;
 				string pat = SemanticGraphUtils.SemgrexFromGraphOrderedNodes(graph, null, null, transformNode);
 				NUnit.Framework.Assert.AreEqual("{word: ate; tag: null; ner: null}=ate  >subj=E1 {word: bill; tag: null; ner: null}=Bill", pat.Trim());
 			}

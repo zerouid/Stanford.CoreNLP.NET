@@ -72,9 +72,9 @@ namespace Edu.Stanford.Nlp.Parser.Dvparser
 
 		internal const string EndWord = "*END*";
 
-		private static readonly IFunction<SimpleMatrix, DenseMatrix64F> convertSimpleMatrix = null;
+		private static readonly Func<SimpleMatrix, DenseMatrix64F> convertSimpleMatrix = null;
 
-		private static readonly IFunction<DenseMatrix64F, SimpleMatrix> convertDenseMatrix = null;
+		private static readonly Func<DenseMatrix64F, SimpleMatrix> convertDenseMatrix = null;
 
 		// Maps from basic category to the matrix transformation matrices for
 		// binary nodes and unary nodes.

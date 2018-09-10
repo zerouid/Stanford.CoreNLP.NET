@@ -35,7 +35,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			return factory.GetIterator(r);
 		}
 
-		internal class MUCDocumentParser : IFunction<string, IList<CoreLabel>>
+		internal class MUCDocumentParser : Func<string, IList<CoreLabel>>
 		{
 			private static readonly Pattern sgml = Pattern.Compile("<([^>\\s]*)[^>]*>");
 

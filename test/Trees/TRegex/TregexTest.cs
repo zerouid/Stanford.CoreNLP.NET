@@ -492,14 +492,14 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		[NUnit.Framework.Test]
 		public virtual void TestCategoryFunctions()
 		{
-			IFunction<string, string> fooCategory = new _IFunction_584();
+			Func<string, string> fooCategory = new _IFunction_584();
 			TregexPatternCompiler fooCompiler = new TregexPatternCompiler(fooCategory);
 			TregexPattern fooTregex = fooCompiler.Compile("@foo > bar");
 			RunTest(fooTregex, "(bar (foo 0))", "(foo 0)");
 			RunTest(fooTregex, "(bar (bar 0))", "(bar 0)");
 			RunTest(fooTregex, "(foo (foo 0))");
 			RunTest(fooTregex, "(foo (bar 0))");
-			IFunction<string, string> barCategory = new _IFunction_603();
+			Func<string, string> barCategory = new _IFunction_603();
 			TregexPatternCompiler barCompiler = new TregexPatternCompiler(barCategory);
 			TregexPattern barTregex = barCompiler.Compile("@bar > foo");
 			RunTest(barTregex, "(bar (foo 0))");
@@ -515,7 +515,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			RunTest(fooTregex, "(foo (bar 0))");
 		}
 
-		private sealed class _IFunction_584 : IFunction<string, string>
+		private sealed class _IFunction_584 : Func<string, string>
 		{
 			public _IFunction_584()
 			{
@@ -535,7 +535,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			}
 		}
 
-		private sealed class _IFunction_603 : IFunction<string, string>
+		private sealed class _IFunction_603 : Func<string, string>
 		{
 			public _IFunction_603()
 			{
@@ -558,7 +558,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		[NUnit.Framework.Test]
 		public virtual void TestCategoryDisjunction()
 		{
-			IFunction<string, string> abCategory = new _IFunction_632();
+			Func<string, string> abCategory = new _IFunction_632();
 			TregexPatternCompiler abCompiler = new TregexPatternCompiler(abCategory);
 			TregexPattern aaaTregex = abCompiler.Compile("foo > @aaa");
 			RunTest(aaaTregex, "(aaa (foo 0))", "(foo 0)");
@@ -580,7 +580,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 			RunTest(bothTregex, "(ccc (foo 0))");
 		}
 
-		private sealed class _IFunction_632 : IFunction<string, string>
+		private sealed class _IFunction_632 : Func<string, string>
 		{
 			public _IFunction_632()
 			{

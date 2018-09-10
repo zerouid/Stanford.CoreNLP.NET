@@ -36,7 +36,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <version>1.0</version>
 	/// <since>1.0</since>
 	public abstract class StochasticMinimizer<T> : IMinimizer<T>, IHasEvaluators
-		where T : IFunction
+		where T : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(StochasticMinimizer));
@@ -144,14 +144,14 @@ namespace Edu.Stanford.Nlp.Optimization
 			}
 		}
 
-		public abstract Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest);
+		public abstract Pair<int, double> Tune(Func function, double[] initial, long msPerTest);
 
-		public virtual double TuneDouble(IFunction function, double[] initial, long msPerTest, StochasticMinimizer.IPropertySetter<double> ps, double lower, double upper)
+		public virtual double TuneDouble(Func function, double[] initial, long msPerTest, StochasticMinimizer.IPropertySetter<double> ps, double lower, double upper)
 		{
 			return this.TuneDouble(function, initial, msPerTest, ps, lower, upper, 1e-3 * System.Math.Abs(upper - lower));
 		}
 
-		public virtual double TuneDouble(IFunction function, double[] initial, long msPerTest, StochasticMinimizer.IPropertySetter<double> ps, double lower, double upper, double Tol)
+		public virtual double TuneDouble(Func function, double[] initial, long msPerTest, StochasticMinimizer.IPropertySetter<double> ps, double lower, double upper, double Tol)
 		{
 			double[] xtest = new double[initial.Length];
 			this.maxTime = msPerTest;
@@ -277,7 +277,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			private readonly StochasticMinimizer<T> _enclosing;
 		}
 
-		public virtual double TuneGain(IFunction function, double[] initial, long msPerTest, double lower, double upper)
+		public virtual double TuneGain(Func function, double[] initial, long msPerTest, double lower, double upper)
 		{
 			return TuneDouble(function, initial, msPerTest, new StochasticMinimizer.SetGain(this, this), lower, upper);
 		}
@@ -288,7 +288,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		// batch size so long as any minute improvement in the function value is
 		// obtained, whereas the whole point of using a small batch is to get speed
 		// at the cost of small losses.]
-		public virtual int TuneBatch(IFunction function, double[] initial, long msPerTest, int bStart)
+		public virtual int TuneBatch(Func function, double[] initial, long msPerTest, int bStart)
 		{
 			double[] xTest = new double[initial.Length];
 			int bOpt = 0;
@@ -342,7 +342,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return bOpt;
 		}
 
-		public virtual Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest, IList<int> batchSizes, IList<double> gains)
+		public virtual Pair<int, double> Tune(Func function, double[] initial, long msPerTest, IList<int> batchSizes, IList<double> gains)
 		{
 			double[] xtest = new double[initial.Length];
 			int bOpt = 0;
@@ -395,12 +395,12 @@ namespace Edu.Stanford.Nlp.Optimization
 			}
 		}
 
-		public virtual double[] Minimize(IFunction function, double functionTolerance, double[] initial)
+		public virtual double[] Minimize(Func function, double functionTolerance, double[] initial)
 		{
 			return Minimize(function, functionTolerance, initial, -1);
 		}
 
-		public virtual double[] Minimize(IFunction function, double functionTolerance, double[] initial, int maxIterations)
+		public virtual double[] Minimize(Func function, double functionTolerance, double[] initial, int maxIterations)
 		{
 			// check for stochastic derivatives
 			if (!(function is AbstractStochasticCachingDiffFunction))

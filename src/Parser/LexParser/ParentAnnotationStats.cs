@@ -497,7 +497,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 						if (args[i].Equals("-cutOff") && i + 1 < args.Length)
 						{
 							useCutOff = true;
-							cutOff = double.ParseDouble(args[i + 1]);
+							cutOff = double.Parse(args[i + 1]);
 							i += 2;
 						}
 						else

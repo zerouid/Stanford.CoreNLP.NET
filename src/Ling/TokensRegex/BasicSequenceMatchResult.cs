@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 
 		internal object[] matchedResults;
 
-		internal IFunction<IList<T>, string> nodesToStringConverter;
+		internal Func<IList<T>, string> nodesToStringConverter;
 
 		internal SequencePattern.VarGroupBindings varGroupBindings;
 

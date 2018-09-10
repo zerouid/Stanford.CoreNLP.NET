@@ -39,7 +39,7 @@ namespace Edu.Stanford.Nlp.Trees.UD
 		/// <summary>Comparator for putting multiword tokens before regular tokens.</summary>
 		private static readonly IComparator<IndexedWord> byType = null;
 
-		private class SentenceProcessor : IFunction<string, SemanticGraph>
+		private class SentenceProcessor : Func<string, SemanticGraph>
 		{
 			private int lineNumberCounter = 0;
 
@@ -92,7 +92,7 @@ namespace Edu.Stanford.Nlp.Trees.UD
 				{
 					return null;
 				}
-				IFunction<string, IndexedWord> func = new CoNLLUDocumentReader.WordProcessor();
+				Func<string, IndexedWord> func = new CoNLLUDocumentReader.WordProcessor();
 				ObjectBank<IndexedWord> words = ObjectBank.GetLineIterator(new StringReader(line), func);
 				IList<IndexedWord> wordList = new List<IndexedWord>(words);
 				IList<IndexedWord> sorted = new List<IndexedWord>(wordList.Count);
@@ -181,7 +181,7 @@ namespace Edu.Stanford.Nlp.Trees.UD
 			}
 		}
 
-		private class WordProcessor : IFunction<string, IndexedWord>
+		private class WordProcessor : Func<string, IndexedWord>
 		{
 			public virtual IndexedWord Apply(string line)
 			{

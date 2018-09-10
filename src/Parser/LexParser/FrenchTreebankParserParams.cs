@@ -519,7 +519,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				{
 					string[] toks = line.Split("\t");
 					System.Diagnostics.Debug.Assert(toks.Length == 3);
-					mwCounter.SetCount(toks[0].Trim(), toks[1].Trim(), double.ParseDouble(toks[2].Trim()));
+					mwCounter.SetCount(toks[0].Trim(), toks[1].Trim(), double.Parse(toks[2].Trim()));
 				}
 				br.Close();
 				System.Console.Error.Printf("%s: Loaded %d lines from %s into MWE counter%n", this.GetType().FullName, nLines, filename);

@@ -155,7 +155,7 @@ namespace Edu.Stanford.Nlp.Trees.Treebank
 							{
 								if (param.Equals(ConfigParser.paramDT))
 								{
-									addDeterminer = bool.ParseBoolean(value);
+									addDeterminer = bool.Parse(value);
 								}
 								else
 								{
@@ -166,7 +166,7 @@ namespace Edu.Stanford.Nlp.Trees.Treebank
 									}
 									else
 									{
-										if (param.Equals(ConfigParser.paramFlat) && bool.ParseBoolean(value))
+										if (param.Equals(ConfigParser.paramFlat) && bool.Parse(value))
 										{
 											makeFlatFile = true;
 										}
@@ -186,13 +186,13 @@ namespace Edu.Stanford.Nlp.Trees.Treebank
 												{
 													if (param.Equals(ConfigParser.paramNoDashTags))
 													{
-														removeDashTags = bool.ParseBoolean(value);
+														removeDashTags = bool.Parse(value);
 													}
 													else
 													{
 														if (param.Equals(ConfigParser.paramAddRoot))
 														{
-															addRoot = bool.ParseBoolean(value);
+															addRoot = bool.Parse(value);
 														}
 														else
 														{

@@ -79,7 +79,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			}
 		}
 
-		protected internal virtual void TallyTreeIterator(IEnumerator<Tree> treeIterator, IFunction<Tree, Tree> f, double weight)
+		protected internal virtual void TallyTreeIterator(IEnumerator<Tree> treeIterator, Func<Tree, Tree> f, double weight)
 		{
 			while (treeIterator.MoveNext())
 			{
@@ -117,13 +117,13 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			return FormResult();
 		}
 
-		public virtual T Extract(IEnumerator<Tree> treeIterator, IFunction<Tree, Tree> f, double weight)
+		public virtual T Extract(IEnumerator<Tree> treeIterator, Func<Tree, Tree> f, double weight)
 		{
 			TallyTreeIterator(treeIterator, f, weight);
 			return FormResult();
 		}
 
-		public virtual T Extract(IEnumerator<Tree> iterator, IFunction<Tree, Tree> f)
+		public virtual T Extract(IEnumerator<Tree> iterator, Func<Tree, Tree> f)
 		{
 			return Extract(iterator, f, 1.0);
 		}

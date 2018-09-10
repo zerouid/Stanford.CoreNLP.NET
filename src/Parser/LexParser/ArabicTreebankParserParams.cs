@@ -54,9 +54,9 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 
 		private IHeadFinder headFinder;
 
-		private readonly IDictionary<string, Pair<TregexPattern, IFunction<TregexMatcher, string>>> annotationPatterns;
+		private readonly IDictionary<string, Pair<TregexPattern, Func<TregexMatcher, string>>> annotationPatterns;
 
-		private readonly IList<Pair<TregexPattern, IFunction<TregexMatcher, string>>> activeAnnotations;
+		private readonly IList<Pair<TregexPattern, Func<TregexMatcher, string>>> activeAnnotations;
 
 		private static readonly string[] EmptyStringArray = new string[0];
 
@@ -97,7 +97,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			optionsString = new StringBuilder();
 			optionsString.Append("ArabicTreebankParserParams\n");
 			annotationPatterns = Generics.NewHashMap();
-			activeAnnotations = new List<Pair<TregexPattern, IFunction<TregexMatcher, string>>>();
+			activeAnnotations = new List<Pair<TregexPattern, Func<TregexMatcher, string>>>();
 			headFinder = HeadFinder();
 			InitializeAnnotationPatterns();
 		}
@@ -296,7 +296,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		{
 			string baseCat = t.Value();
 			StringBuilder newCategory = new StringBuilder();
-			foreach (Pair<TregexPattern, IFunction<TregexMatcher, string>> e in activeAnnotations)
+			foreach (Pair<TregexPattern, Func<TregexMatcher, string>> e in activeAnnotations)
 			{
 				TregexMatcher m = e.First().Matcher(root);
 				if (m.MatchesAt(t))
@@ -339,131 +339,131 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				// ******************
 				// Baseline features
 				// ******************
-				annotationPatterns["-genitiveMark"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile(genitiveNodeTregexString), new ArabicTreebankParserParams.SimpleStringFunction("-genitive"));
-				annotationPatterns["-markStrictBaseNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< (__ < (__ < __))"), new ArabicTreebankParserParams.SimpleStringFunction("-base"));
+				annotationPatterns["-genitiveMark"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile(genitiveNodeTregexString), new ArabicTreebankParserParams.SimpleStringFunction("-genitive"));
+				annotationPatterns["-markStrictBaseNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< (__ < (__ < __))"), new ArabicTreebankParserParams.SimpleStringFunction("-base"));
 				// NP with no phrasal node in it
-				annotationPatterns["-markOneLevelIdafa"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NP < (__ < __)) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markOneLevelIdafa"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NP < (__ < __)) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-idafa1"));
-				annotationPatterns["-markNounNPargTakers"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS ># (@NP < @NP)"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markNounNPargTakers"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN|NNS|NNP|NNPS|DTNN|DTNNS|DTNNP|DTNNPS ># (@NP < @NP)"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-NounNParg"));
-				annotationPatterns["-markContainsVerb"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (/^[CIP]?V/ < (__ !< __))"), new ArabicTreebankParserParams.SimpleStringFunction("-withV"));
-				annotationPatterns["-splitIN"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@IN < __=word"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "word", false));
-				annotationPatterns["-splitPUNC"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PUNC < __=" + ArabicTreebankParserParams.AnnotatePunctuationFunction2.key), new ArabicTreebankParserParams.AnnotatePunctuationFunction2
+				annotationPatterns["-markContainsVerb"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (/^[CIP]?V/ < (__ !< __))"), new ArabicTreebankParserParams.SimpleStringFunction("-withV"));
+				annotationPatterns["-splitIN"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@IN < __=word"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "word", false));
+				annotationPatterns["-splitPUNC"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PUNC < __=" + ArabicTreebankParserParams.AnnotatePunctuationFunction2.key), new ArabicTreebankParserParams.AnnotatePunctuationFunction2
 					());
-				annotationPatterns["-markMasdarVP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@VP|MWVP < /VBG|VN/"), new ArabicTreebankParserParams.SimpleStringFunction("-masdar"));
-				annotationPatterns["-containsSVO"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@S < (@NP . @VP|MWVP))"), new ArabicTreebankParserParams.SimpleStringFunction("-hasSVO"));
-				annotationPatterns["-splitCC"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC|CONJ . __=term , __"), new ArabicTreebankParserParams.AddEquivalencedConjNode("-", "term"));
-				annotationPatterns["-markFem"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < /ة$/"), new ArabicTreebankParserParams.SimpleStringFunction("-fem"));
+				annotationPatterns["-markMasdarVP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@VP|MWVP < /VBG|VN/"), new ArabicTreebankParserParams.SimpleStringFunction("-masdar"));
+				annotationPatterns["-containsSVO"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@S < (@NP . @VP|MWVP))"), new ArabicTreebankParserParams.SimpleStringFunction("-hasSVO"));
+				annotationPatterns["-splitCC"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC|CONJ . __=term , __"), new ArabicTreebankParserParams.AddEquivalencedConjNode("-", "term"));
+				annotationPatterns["-markFem"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < /ة$/"), new ArabicTreebankParserParams.SimpleStringFunction("-fem"));
 				// Added for MWE experiments
-				annotationPatterns["-mwe"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ > /MW/=tag"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "tag", true));
-				annotationPatterns["-mweContainsVerb"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @MWVP"), new ArabicTreebankParserParams.SimpleStringFunction("-withV"));
+				annotationPatterns["-mwe"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ > /MW/=tag"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "tag", true));
+				annotationPatterns["-mweContainsVerb"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @MWVP"), new ArabicTreebankParserParams.SimpleStringFunction("-withV"));
 				//This version, which uses the PTB equivalence classing, results in slightly lower labeled F1
 				//than the splitPUNC feature above, which was included in the COLING2010 evaluation
-				annotationPatterns["-splitPUNC2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PUNC < __=punc"), new AbstractTreebankParserParams.AnnotatePunctuationFunction("-", "punc"));
+				annotationPatterns["-splitPUNC2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PUNC < __=punc"), new AbstractTreebankParserParams.AnnotatePunctuationFunction("-", "punc"));
 				// Label each POS with its parent
-				annotationPatterns["-tagPAar"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("!@PUNC < (__ !< __) > __=parent"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "parent", true));
+				annotationPatterns["-tagPAar"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("!@PUNC < (__ !< __) > __=parent"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "parent", true));
 				//Didn't work
-				annotationPatterns["-splitCC1"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC|CONJ < __=term"), new ArabicTreebankParserParams.AddRelativeNodeRegexFunction("-", "term", "-*([^-].*)"));
-				annotationPatterns["-splitCC2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC . __=term , __"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "term", true));
-				annotationPatterns["-idafaJJ1"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <, (@NN $+ @NP) <+(@NP) @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-idafaJJ"));
-				annotationPatterns["-idafaJJ2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <, (@NN $+ @NP) <+(@NP) @ADJP !<< @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-idafaJJ"));
-				annotationPatterns["-properBaseNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !<< @NP < /NNP/ !< @PUNC|CD"), new ArabicTreebankParserParams.SimpleStringFunction("-prop"));
-				annotationPatterns["-interrog"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << هل|ماذا|لماذا|اين|متى"), new ArabicTreebankParserParams.SimpleStringFunction("-inter"));
-				annotationPatterns["-splitPseudo"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN < مع|بعد|بين"), new ArabicTreebankParserParams.SimpleStringFunction("-pseudo"));
-				annotationPatterns["-nPseudo"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NN < مع|بعد|بين)"), new ArabicTreebankParserParams.SimpleStringFunction("-npseudo"));
-				annotationPatterns["-pseudoArg"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @NP $, (@NN < مع|بعد|بين)"), new ArabicTreebankParserParams.SimpleStringFunction("-pseudoArg"));
-				annotationPatterns["-eqL1"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (@S !< @VP|S)"), new ArabicTreebankParserParams.SimpleStringFunction("-haseq"));
-				annotationPatterns["-eqL1L2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < (@S !< @VP|S)) | < (@S !< @VP|S)"), new ArabicTreebankParserParams.SimpleStringFunction("-haseq"));
-				annotationPatterns["-fullQuote"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < ((@PUNC < \") $ (@PUNC < \"))"), new ArabicTreebankParserParams.SimpleStringFunction("-fq"));
-				annotationPatterns["-brokeQuote"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < ((@PUNC < \") !$ (@PUNC < \"))"), new ArabicTreebankParserParams.SimpleStringFunction("-bq"));
-				annotationPatterns["-splitVP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@VP <# __=term1"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "term1", true));
-				annotationPatterns["-markFemP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|ADJP < (__ < /ة$/)"), new ArabicTreebankParserParams.SimpleStringFunction("-femP"));
-				annotationPatterns["-embedSBAR"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|PP <+(@NP|PP) @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-embedSBAR"));
-				annotationPatterns["-complexVP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@VP < (@NP $ @NP)) > __"), new ArabicTreebankParserParams.SimpleStringFunction("-complexVP"));
-				annotationPatterns["-containsJJ"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) /JJ/"), new ArabicTreebankParserParams.SimpleStringFunction("-hasJJ"));
-				annotationPatterns["-markMasdarVP2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @VN|VBG"), new ArabicTreebankParserParams.SimpleStringFunction("-masdar"));
-				annotationPatterns["-coordNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|ADJP <+(@NP|ADJP) (@CC|PUNC $- __ $+ __)"), new ArabicTreebankParserParams.SimpleStringFunction("-coordNP"));
-				annotationPatterns["-coordWa"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@CC , __ < و-)"), new ArabicTreebankParserParams.SimpleStringFunction("-coordWA"));
-				annotationPatterns["-NPhasADJP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-NPhasADJP"));
-				annotationPatterns["-NPADJP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-npadj"));
-				annotationPatterns["-NPJJ"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < /JJ/"), new ArabicTreebankParserParams.SimpleStringFunction("-npjj"));
-				annotationPatterns["-NPCC"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) @CC"), new ArabicTreebankParserParams.SimpleStringFunction("-npcc"));
-				annotationPatterns["-NPCD"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @CD"), new ArabicTreebankParserParams.SimpleStringFunction("-npcd"));
-				annotationPatterns["-NPNNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < /NNP/"), new ArabicTreebankParserParams.SimpleStringFunction("-npnnp"));
-				annotationPatterns["-SVO"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@S < (@NP . @VP)"), new ArabicTreebankParserParams.SimpleStringFunction("-svo"));
-				annotationPatterns["-containsSBAR"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-hasSBAR"));
+				annotationPatterns["-splitCC1"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC|CONJ < __=term"), new ArabicTreebankParserParams.AddRelativeNodeRegexFunction("-", "term", "-*([^-].*)"));
+				annotationPatterns["-splitCC2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@CC . __=term , __"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "term", true));
+				annotationPatterns["-idafaJJ1"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <, (@NN $+ @NP) <+(@NP) @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-idafaJJ"));
+				annotationPatterns["-idafaJJ2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <, (@NN $+ @NP) <+(@NP) @ADJP !<< @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-idafaJJ"));
+				annotationPatterns["-properBaseNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !<< @NP < /NNP/ !< @PUNC|CD"), new ArabicTreebankParserParams.SimpleStringFunction("-prop"));
+				annotationPatterns["-interrog"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << هل|ماذا|لماذا|اين|متى"), new ArabicTreebankParserParams.SimpleStringFunction("-inter"));
+				annotationPatterns["-splitPseudo"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN < مع|بعد|بين"), new ArabicTreebankParserParams.SimpleStringFunction("-pseudo"));
+				annotationPatterns["-nPseudo"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NN < مع|بعد|بين)"), new ArabicTreebankParserParams.SimpleStringFunction("-npseudo"));
+				annotationPatterns["-pseudoArg"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @NP $, (@NN < مع|بعد|بين)"), new ArabicTreebankParserParams.SimpleStringFunction("-pseudoArg"));
+				annotationPatterns["-eqL1"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (@S !< @VP|S)"), new ArabicTreebankParserParams.SimpleStringFunction("-haseq"));
+				annotationPatterns["-eqL1L2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < (@S !< @VP|S)) | < (@S !< @VP|S)"), new ArabicTreebankParserParams.SimpleStringFunction("-haseq"));
+				annotationPatterns["-fullQuote"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < ((@PUNC < \") $ (@PUNC < \"))"), new ArabicTreebankParserParams.SimpleStringFunction("-fq"));
+				annotationPatterns["-brokeQuote"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < ((@PUNC < \") !$ (@PUNC < \"))"), new ArabicTreebankParserParams.SimpleStringFunction("-bq"));
+				annotationPatterns["-splitVP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@VP <# __=term1"), new ArabicTreebankParserParams.AddRelativeNodeFunction("-", "term1", true));
+				annotationPatterns["-markFemP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|ADJP < (__ < /ة$/)"), new ArabicTreebankParserParams.SimpleStringFunction("-femP"));
+				annotationPatterns["-embedSBAR"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|PP <+(@NP|PP) @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-embedSBAR"));
+				annotationPatterns["-complexVP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@VP < (@NP $ @NP)) > __"), new ArabicTreebankParserParams.SimpleStringFunction("-complexVP"));
+				annotationPatterns["-containsJJ"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) /JJ/"), new ArabicTreebankParserParams.SimpleStringFunction("-hasJJ"));
+				annotationPatterns["-markMasdarVP2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @VN|VBG"), new ArabicTreebankParserParams.SimpleStringFunction("-masdar"));
+				annotationPatterns["-coordNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP|ADJP <+(@NP|ADJP) (@CC|PUNC $- __ $+ __)"), new ArabicTreebankParserParams.SimpleStringFunction("-coordNP"));
+				annotationPatterns["-coordWa"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << (@CC , __ < و-)"), new ArabicTreebankParserParams.SimpleStringFunction("-coordWA"));
+				annotationPatterns["-NPhasADJP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-NPhasADJP"));
+				annotationPatterns["-NPADJP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @ADJP"), new ArabicTreebankParserParams.SimpleStringFunction("-npadj"));
+				annotationPatterns["-NPJJ"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < /JJ/"), new ArabicTreebankParserParams.SimpleStringFunction("-npjj"));
+				annotationPatterns["-NPCC"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP <+(@NP) @CC"), new ArabicTreebankParserParams.SimpleStringFunction("-npcc"));
+				annotationPatterns["-NPCD"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @CD"), new ArabicTreebankParserParams.SimpleStringFunction("-npcd"));
+				annotationPatterns["-NPNNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < /NNP/"), new ArabicTreebankParserParams.SimpleStringFunction("-npnnp"));
+				annotationPatterns["-SVO"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@S < (@NP . @VP)"), new ArabicTreebankParserParams.SimpleStringFunction("-svo"));
+				annotationPatterns["-containsSBAR"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-hasSBAR"));
 				//WSGDEBUG - Template
 				//annotationPatterns.put("", new Pair<TregexPattern,Function<TregexMatcher,String>>(tregexPatternCompiler.compile(""), new SimpleStringFunction("")));
 				// ************
 				// Old and unused features (in various states of repair)
 				// *************
-				annotationPatterns["-markGappedVP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("@VP > @VP $- __ $ /^(?:CC|CONJ)/ !< /^V/"), new ArabicTreebankParserParams.SimpleStringFunction("-gappedVP"));
-				annotationPatterns["-markGappedVPConjoiners"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("/^(?:CC|CONJ)/ $ (@VP > @VP $- __ !< /^V/)"), new ArabicTreebankParserParams.SimpleStringFunction("-gappedVP"));
-				annotationPatterns["-markGenitiveParent"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("@NP < (" + genitiveNodeTregexString + ')'), new ArabicTreebankParserParams.SimpleStringFunction("-genitiveParent"));
+				annotationPatterns["-markGappedVP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("@VP > @VP $- __ $ /^(?:CC|CONJ)/ !< /^V/"), new ArabicTreebankParserParams.SimpleStringFunction("-gappedVP"));
+				annotationPatterns["-markGappedVPConjoiners"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("/^(?:CC|CONJ)/ $ (@VP > @VP $- __ !< /^V/)"), new ArabicTreebankParserParams.SimpleStringFunction("-gappedVP"));
+				annotationPatterns["-markGenitiveParent"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("@NP < (" + genitiveNodeTregexString + ')'), new ArabicTreebankParserParams.SimpleStringFunction("-genitiveParent"));
 				// maSdr: this pattern is just a heuristic classification, which matches on
 				// various common maSdr pattterns, but probably also matches on a lot of other
 				// stuff.  It marks NPs with possible maSdr.
 				// Roger's old pattern:
-				annotationPatterns["-maSdrMark"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^[t\\u062a].+[y\\u064a].$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"
+				annotationPatterns["-maSdrMark"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^[t\\u062a].+[y\\u064a].$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"
 					));
 				// chris' attempt
-				annotationPatterns["-maSdrMark2"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a].+[y\\u064a].|<.{3,}|A.{3,})$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-maSdrMark2"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a].+[y\\u064a].|<.{3,}|A.{3,})$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-maSdr"));
-				annotationPatterns["-maSdrMark3"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a<A].{3,})$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"
+				annotationPatterns["-maSdrMark3"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a<A].{3,})$/ > @NN|NOUN|DTNN)"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"
 					));
-				annotationPatterns["-maSdrMark4"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a<A].{3,})$/ > (@NN|NOUN|DTNN > (@NP < @NP)))"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-maSdrMark4"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (/^(?:[t\\u062a<A].{3,})$/ > (@NN|NOUN|DTNN > (@NP < @NP)))"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-maSdr"));
-				annotationPatterns["-maSdrMark5"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (__ > (@NN|NOUN|DTNN > (@NP < @NP)))"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"));
-				annotationPatterns["-mjjMark"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@JJ|DTJJ < /^m/ $+ @PP ># @ADJP "), new ArabicTreebankParserParams.SimpleStringFunction("-mjj"));
+				annotationPatterns["-maSdrMark5"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^N/ <<# (__ > (@NN|NOUN|DTNN > (@NP < @NP)))"), new ArabicTreebankParserParams.SimpleStringFunction("-maSdr"));
+				annotationPatterns["-mjjMark"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@JJ|DTJJ < /^m/ $+ @PP ># @ADJP "), new ArabicTreebankParserParams.SimpleStringFunction("-mjj"));
 				//annotationPatterns.put(markPRDverbString,new Pair<TregexPattern,Function<TregexMatcher,String>>(TregexPattern.compile("/^V[^P]/ > VP $ /-PRD$/"),new SimpleStringFunction("-PRDverb"))); // don't need this pattern anymore, the functionality has been moved to ArabicTreeNormalizer
 				// PUNC is PUNC in either raw or Bies POS encoding
-				annotationPatterns["-markNPwithSdescendant"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ !< @S << @S [ >> @NP | == @NP ]"), new ArabicTreebankParserParams.SimpleStringFunction("-inNPdominatesS"
+				annotationPatterns["-markNPwithSdescendant"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ !< @S << @S [ >> @NP | == @NP ]"), new ArabicTreebankParserParams.SimpleStringFunction("-inNPdominatesS"
 					));
-				annotationPatterns["-markRightRecursiveNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ <<- @NP [>>- @NP | == @NP]"), new ArabicTreebankParserParams.SimpleStringFunction("-rrNP"));
-				annotationPatterns["-markBaseNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< @NP !< @VP !< @SBAR !< @ADJP !< @ADVP !< @S !< @QP !< @UCP !< @PP"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markRightRecursiveNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ <<- @NP [>>- @NP | == @NP]"), new ArabicTreebankParserParams.SimpleStringFunction("-rrNP"));
+				annotationPatterns["-markBaseNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< @NP !< @VP !< @SBAR !< @ADJP !< @ADVP !< @S !< @QP !< @UCP !< @PP"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-base"));
 				// allow only a single level of idafa as Base NP; this version works!
-				annotationPatterns["-markBaseNPplusIdafa"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markBaseNPplusIdafa"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-base"));
-				annotationPatterns["-markTwoLevelIdafa"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NP < (@NP < (__ < __)) !< (/^[^N]/ < (__ < __))) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < (__ < __))))"
+				annotationPatterns["-markTwoLevelIdafa"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (@NP < (@NP < (__ < __)) !< (/^[^N]/ < (__ < __))) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < (__ < __))))"
 					), new ArabicTreebankParserParams.SimpleStringFunction("-idafa2"));
-				annotationPatterns["-markDefiniteIdafa"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (/^(?:NN|NOUN)/ !$,, /^[^AP]/) <+(/^NP/) (@NP < /^DT/)"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markDefiniteIdafa"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (/^(?:NN|NOUN)/ !$,, /^[^AP]/) <+(/^NP/) (@NP < /^DT/)"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-defIdafa"));
-				annotationPatterns["-markDefiniteIdafa1"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (/^(?:NN|NOUN)/ !$,, /^[^AP]/) < (@NP < /^DT/) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), 
+				annotationPatterns["-markDefiniteIdafa1"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < (/^(?:NN|NOUN)/ !$,, /^[^AP]/) < (@NP < /^DT/) !< (/^[^N]/ < (__ < __)) !< (__ < (__ < (__ < __)))"), 
 					new ArabicTreebankParserParams.SimpleStringFunction("-defIdafa1"));
-				annotationPatterns["-markContainsSBAR"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-withSBAR"));
-				annotationPatterns["-markPhrasalNodesDominatedBySBAR"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < __) >> @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-domBySBAR"));
-				annotationPatterns["-markCoordinateNPs"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @CC|CONJ"), new ArabicTreebankParserParams.SimpleStringFunction("-coord"));
+				annotationPatterns["-markContainsSBAR"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ << @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-withSBAR"));
+				annotationPatterns["-markPhrasalNodesDominatedBySBAR"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < __) >> @SBAR"), new ArabicTreebankParserParams.SimpleStringFunction("-domBySBAR"));
+				annotationPatterns["-markCoordinateNPs"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @CC|CONJ"), new ArabicTreebankParserParams.SimpleStringFunction("-coord"));
 				//annotationPatterns.put("-markCopularVerbTags",new Pair<TregexPattern,Function<TregexMatcher,String>>(tregexPatternCompiler.compile("/^V/ < " + copularVerbForms),new SimpleStringFunction("-copular")));
 				//annotationPatterns.put("-markSBARVerbTags",new Pair<TregexPattern,Function<TregexMatcher,String>>(tregexPatternCompiler.compile("/^V/ < " + sbarVerbForms),new SimpleStringFunction("-SBARverb")));
-				annotationPatterns["-markNounAdjVPheads"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN|NNS|NNP|NNPS|JJ|DTJJ|DTNN|DTNNS|DTNNP|DTNNPS ># @VP"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markNounAdjVPheads"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NN|NNS|NNP|NNPS|JJ|DTJJ|DTNN|DTNNS|DTNNP|DTNNPS ># @VP"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-VHead"));
 				// a better version of the below might only mark clitic pronouns, but
 				// since most pronouns are clitics, let's try this first....
-				annotationPatterns["-markPronominalNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @PRP"), new ArabicTreebankParserParams.SimpleStringFunction("-PRP"));
+				annotationPatterns["-markPronominalNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP < @PRP"), new ArabicTreebankParserParams.SimpleStringFunction("-PRP"));
 				// try doing coordination parallelism -- there's a lot of that in Arabic (usually the same, sometimes different CC)
-				annotationPatterns["-markMultiCC"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (@CC $.. @CC)"), new ArabicTreebankParserParams.SimpleStringFunction("-multiCC"));
+				annotationPatterns["-markMultiCC"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (@CC $.. @CC)"), new ArabicTreebankParserParams.SimpleStringFunction("-multiCC"));
 				// this unfortunately didn't seem helpful for capturing CC parallelism; should try again
-				annotationPatterns["-markHasCCdaughter"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < @CC"), new ArabicTreebankParserParams.SimpleStringFunction("-CCdtr"));
-				annotationPatterns["-markAcronymNP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !<  (__ < (__ < __)) < (/^NN/ < /^.$/ $ (/^NN/ < /^.$/)) !< (__ < /../)"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markHasCCdaughter"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < @CC"), new ArabicTreebankParserParams.SimpleStringFunction("-CCdtr"));
+				annotationPatterns["-markAcronymNP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@NP !<  (__ < (__ < __)) < (/^NN/ < /^.$/ $ (/^NN/ < /^.$/)) !< (__ < /../)"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-acro"));
-				annotationPatterns["-markAcronymNN"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^NN/ < /^.$/ $ (/^NN/ < /^.$/) > (@NP !<  (__ < (__ < __)) !< (__ < /../))"), new ArabicTreebankParserParams.SimpleStringFunction
+				annotationPatterns["-markAcronymNN"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("/^NN/ < /^.$/ $ (/^NN/ < /^.$/) > (@NP !<  (__ < (__ < __)) !< (__ < /../))"), new ArabicTreebankParserParams.SimpleStringFunction
 					("-acro"));
 				//PP Specific patterns
-				annotationPatterns["-markPPwithPPdescendant"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ !< @PP << @PP [ >> @PP | == @PP ]"), new ArabicTreebankParserParams.SimpleStringFunction("-inPPdominatesPP"
+				annotationPatterns["-markPPwithPPdescendant"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ !< @PP << @PP [ >> @PP | == @PP ]"), new ArabicTreebankParserParams.SimpleStringFunction("-inPPdominatesPP"
 					));
-				annotationPatterns["-gpAnnotatePrepositions"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (__ > __=gp)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^^", "gp", false));
-				annotationPatterns["-gpEquivalencePrepositions"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (@PP >+(/^PP/) __=gp)"), new ArabicTreebankParserParams.AddEquivalencedNodeFunction("^^", "gp"
+				annotationPatterns["-gpAnnotatePrepositions"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (__ > __=gp)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^^", "gp", false));
+				annotationPatterns["-gpEquivalencePrepositions"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (@PP >+(/^PP/) __=gp)"), new ArabicTreebankParserParams.AddEquivalencedNodeFunction("^^", "gp"
 					));
-				annotationPatterns["-gpEquivalencePrepositionsVar"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (@PP >+(/^PP/) __=gp)"), new ArabicTreebankParserParams.AddEquivalencedNodeFunctionVar("^^"
+				annotationPatterns["-gpEquivalencePrepositionsVar"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(TregexPattern.Compile("/^(?:IN|PREP)$/ > (@PP >+(/^PP/) __=gp)"), new ArabicTreebankParserParams.AddEquivalencedNodeFunctionVar("^^"
 					, "gp"));
-				annotationPatterns["-markPPParent"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP=max !< @PP"), new ArabicTreebankParserParams.AddRelativeNodeRegexFunction("^^", "max", "^(\\w)"));
-				annotationPatterns["-whPP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP <- (@SBAR <, /^WH/)"), new ArabicTreebankParserParams.SimpleStringFunction("-whPP"));
+				annotationPatterns["-markPPParent"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP=max !< @PP"), new ArabicTreebankParserParams.AddRelativeNodeRegexFunction("^^", "max", "^(\\w)"));
+				annotationPatterns["-whPP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP <- (@SBAR <, /^WH/)"), new ArabicTreebankParserParams.SimpleStringFunction("-whPP"));
 				//    annotationPatterns.put("-markTmpPP", new Pair<TregexPattern,Function<TregexMatcher,String>>(tregexPatternCompiler.compile("@PP !<+(__) @PP"),new LexicalCategoryFunction("-TMP",temporalNouns)));
-				annotationPatterns["-deflateMin"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < من)"), new ArabicTreebankParserParams.SimpleStringFunction("-min"));
-				annotationPatterns["-v2MarkovIN"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@IN > (@__=p1 > @__=p2)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^", "p1", "p2", false));
-				annotationPatterns["-pleonasticMin"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP <, (IN < من) > @S"), new ArabicTreebankParserParams.SimpleStringFunction("-pleo"));
-				annotationPatterns["-v2MarkovPP"] = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP > (@__=p1 > @__=p2)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^", "p1", "p2", false));
+				annotationPatterns["-deflateMin"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("__ < (__ < من)"), new ArabicTreebankParserParams.SimpleStringFunction("-min"));
+				annotationPatterns["-v2MarkovIN"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@IN > (@__=p1 > @__=p2)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^", "p1", "p2", false));
+				annotationPatterns["-pleonasticMin"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP <, (IN < من) > @S"), new ArabicTreebankParserParams.SimpleStringFunction("-pleo"));
+				annotationPatterns["-v2MarkovPP"] = new Pair<TregexPattern, Func<TregexMatcher, string>>(tregexPatternCompiler.Compile("@PP > (@__=p1 > @__=p2)"), new ArabicTreebankParserParams.AddRelativeNodeFunction("^", "p1", "p2", false));
 			}
 			catch (TregexParseException e)
 			{
@@ -861,12 +861,12 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			activeAnnotations.Clear();
 			foreach (string key in baselineFeatures)
 			{
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> p = annotationPatterns[key];
+				Pair<TregexPattern, Func<TregexMatcher, string>> p = annotationPatterns[key];
 				activeAnnotations.Add(p);
 			}
 			foreach (string key_1 in additionalFeatures)
 			{
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> p = annotationPatterns[key_1];
+				Pair<TregexPattern, Func<TregexMatcher, string>> p = annotationPatterns[key_1];
 				activeAnnotations.Add(p);
 			}
 		}
@@ -893,7 +893,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			if (baselineFeatures.Contains(featName))
 			{
 				baselineFeatures.Remove(featName);
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> p = annotationPatterns[featName];
+				Pair<TregexPattern, Func<TregexMatcher, string>> p = annotationPatterns[featName];
 				activeAnnotations.Remove(p);
 			}
 		}
@@ -931,7 +931,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				{
 					additionalFeatures.Add(args[i]);
 				}
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> p = annotationPatterns[args[i]];
+				Pair<TregexPattern, Func<TregexMatcher, string>> p = annotationPatterns[args[i]];
 				activeAnnotations.Add(p);
 				optionsString.Append("Option " + args[i] + " added annotation pattern " + p.First() + " with annotation " + p.Second() + '\n');
 				didSomething = true;

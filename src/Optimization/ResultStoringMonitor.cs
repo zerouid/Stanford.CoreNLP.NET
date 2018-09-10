@@ -8,7 +8,7 @@ using Edu.Stanford.Nlp.Util.Logging;
 namespace Edu.Stanford.Nlp.Optimization
 {
 	/// <author>Galen Andrew</author>
-	public class ResultStoringMonitor : IFunction
+	public class ResultStoringMonitor : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Optimization.ResultStoringMonitor));

@@ -338,7 +338,7 @@ namespace Edu.Stanford.Nlp.IE.Regexp
 				{
 					try
 					{
-						priority = double.ParseDouble(split[3].Trim());
+						priority = double.Parse(split[3].Trim());
 					}
 					catch (NumberFormatException e)
 					{

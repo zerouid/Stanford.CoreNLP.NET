@@ -1064,8 +1064,8 @@ namespace Edu.Stanford.Nlp.IE
 			Matcher m2 = scorePattern.Matcher(s);
 			if (m2.Matches())
 			{
-				double d1 = double.ParseDouble(m2.Group(1));
-				double d2 = double.ParseDouble(m2.Group(2));
+				double d1 = double.Parse(m2.Group(1));
+				double d2 = double.Parse(m2.Group(2));
 				return double.ToString(d1) + " - " + double.ToString(d2);
 			}
 			// check for hyphenated word like 4-Ghz: delete final -
@@ -1081,11 +1081,11 @@ namespace Edu.Stanford.Nlp.IE
 					double d = 0.0;
 					if (m_1.Group(2) != null && !m_1.Group(2).IsEmpty())
 					{
-						d = double.ParseDouble(m_1.Group(2));
+						d = double.Parse(m_1.Group(2));
 					}
 					if (m_1.Group(3) != null && !m_1.Group(3).IsEmpty())
 					{
-						d += double.ParseDouble(m_1.Group(3));
+						d += double.Parse(m_1.Group(3));
 					}
 					if (d == 0.0 && multiplier != 1.0)
 					{

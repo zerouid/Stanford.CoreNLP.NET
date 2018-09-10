@@ -36,7 +36,7 @@ namespace Edu.Stanford.Nlp.IE
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.NERServer));
 
 		/// <summary>Debugging toggle.</summary>
-		private static readonly bool EnvDebug = Runtime.Getenv("NERSERVER_DEBUG") != null && bool.ParseBoolean(Runtime.Getenv("NERSERVER_DEBUG"));
+		private static readonly bool EnvDebug = Runtime.Getenv("NERSERVER_DEBUG") != null && bool.Parse(Runtime.Getenv("NERSERVER_DEBUG"));
 
 		private bool Debug = EnvDebug;
 

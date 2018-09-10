@@ -198,7 +198,7 @@ namespace Edu.Stanford.Nlp.IE
 			bool diskUseSUTime = ois.ReadBoolean();
 			if (props.GetProperty("ner.useSUTime") != null)
 			{
-				this.useSUTime = bool.ParseBoolean(props.GetProperty("ner.useSUTime"));
+				this.useSUTime = bool.Parse(props.GetProperty("ner.useSUTime"));
 			}
 			else
 			{
@@ -208,7 +208,7 @@ namespace Edu.Stanford.Nlp.IE
 			bool diskApplyNumericClassifiers = ois.ReadBoolean();
 			if (props.GetProperty("ner.applyNumericClassifiers") != null)
 			{
-				this.applyNumericClassifiers = bool.ParseBoolean(props.GetProperty("ner.applyNumericClassifiers"));
+				this.applyNumericClassifiers = bool.Parse(props.GetProperty("ner.applyNumericClassifiers"));
 			}
 			else
 			{

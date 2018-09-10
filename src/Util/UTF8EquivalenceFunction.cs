@@ -15,7 +15,7 @@ namespace Edu.Stanford.Nlp.Util
 	/// </remarks>
 	/// <author>John Bauer</author>
 	[System.Serializable]
-	public class UTF8EquivalenceFunction : IFunction<string, string>
+	public class UTF8EquivalenceFunction : Func<string, string>
 	{
 		public static string ReplaceAscii(string w)
 		{

@@ -168,7 +168,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return GetLineIterator(new File(filename));
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(string filename, IFunction<string, X> op)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(string filename, Func<string, X> op)
 		{
 			return GetLineIterator(new File(filename), op);
 		}
@@ -183,7 +183,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return GetLineIterator(reader, new IdentityFunction<string>());
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(Reader reader, IFunction<string, X> op)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(Reader reader, Func<string, X> op)
 		{
 			ReaderIteratorFactory rif = new ReaderIteratorFactory(reader);
 			IIteratorFromReaderFactory<X> ifrf = LineIterator.GetFactory(op);
@@ -195,7 +195,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return GetLineIterator(Java.Util.Collections.Singleton(file), new IdentityFunction<string>());
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(File file, IFunction<string, X> op)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(File file, Func<string, X> op)
 		{
 			return GetLineIterator(Java.Util.Collections.Singleton(file), op);
 		}
@@ -205,14 +205,14 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return GetLineIterator(file, new IdentityFunction<string>(), encoding);
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(File file, IFunction<string, X> op, string encoding)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X>(File file, Func<string, X> op, string encoding)
 		{
 			ReaderIteratorFactory rif = new ReaderIteratorFactory(file, encoding);
 			IIteratorFromReaderFactory<X> ifrf = LineIterator.GetFactory(op);
 			return new Edu.Stanford.Nlp.Objectbank.ObjectBank<X>(rif, ifrf);
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X, _T1>(ICollection<_T1> filesStringsAndReaders, IFunction<string, X> op)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X, _T1>(ICollection<_T1> filesStringsAndReaders, Func<string, X> op)
 		{
 			ReaderIteratorFactory rif = new ReaderIteratorFactory(filesStringsAndReaders);
 			IIteratorFromReaderFactory<X> ifrf = LineIterator.GetFactory(op);
@@ -224,7 +224,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return GetLineIterator(filesStringsAndReaders, new IdentityFunction<string>(), encoding);
 		}
 
-		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X, _T1>(ICollection<_T1> filesStringsAndReaders, IFunction<string, X> op, string encoding)
+		public static Edu.Stanford.Nlp.Objectbank.ObjectBank<X> GetLineIterator<X, _T1>(ICollection<_T1> filesStringsAndReaders, Func<string, X> op, string encoding)
 		{
 			ReaderIteratorFactory rif = new ReaderIteratorFactory(filesStringsAndReaders, encoding);
 			IIteratorFromReaderFactory<X> ifrf = LineIterator.GetFactory(op);
@@ -232,7 +232,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 		}
 
 		/// <summary>This is handy for having getLineIterator return a collection of files for feeding into another ObjectBank.</summary>
-		public class PathToFileFunction : IFunction<string, File>
+		public class PathToFileFunction : Func<string, File>
 		{
 			public virtual File Apply(string str)
 			{

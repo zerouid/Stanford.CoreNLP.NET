@@ -406,7 +406,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																	{
 																		if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-vSelSplitCutOff") && (i + 1 < args.Length))
 																		{
-																			trainOptions.selectiveSplitCutOff = double.ParseDouble(args[i + 1]);
+																			trainOptions.selectiveSplitCutOff = double.Parse(args[i + 1]);
 																			trainOptions.selectiveSplit = trainOptions.selectiveSplitCutOff > 0.0;
 																			i += 2;
 																		}
@@ -414,7 +414,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																		{
 																			if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-vSelPostSplitCutOff") && (i + 1 < args.Length))
 																			{
-																				trainOptions.selectivePostSplitCutOff = double.ParseDouble(args[i + 1]);
+																				trainOptions.selectivePostSplitCutOff = double.Parse(args[i + 1]);
 																				trainOptions.selectivePostSplit = trainOptions.selectivePostSplitCutOff > 0.0;
 																				i += 2;
 																			}
@@ -526,7 +526,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																										{
 																											if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-depWeight") && (i + 1 < args.Length))
 																											{
-																												testOptions.depWeight = double.ParseDouble(args[i + 1]);
+																												testOptions.depWeight = double.Parse(args[i + 1]);
 																												i += 2;
 																											}
 																											else
@@ -561,14 +561,14 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																															{
 																																if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-unseenSmooth") && (i + 1 < args.Length))
 																																{
-																																	testOptions.unseenSmooth = double.ParseDouble(args[i + 1]);
+																																	testOptions.unseenSmooth = double.Parse(args[i + 1]);
 																																	i += 2;
 																																}
 																																else
 																																{
 																																	if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-fractionBeforeUnseenCounting") && (i + 1 < args.Length))
 																																	{
-																																		trainOptions.fractionBeforeUnseenCounting = double.ParseDouble(args[i + 1]);
+																																		trainOptions.fractionBeforeUnseenCounting = double.Parse(args[i + 1]);
 																																		i += 2;
 																																	}
 																																	else
@@ -604,7 +604,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																					{
 																																						if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-tagSelSplitCutOff") && (i + 1 < args.Length))
 																																						{
-																																							trainOptions.tagSelectiveSplitCutOff = double.ParseDouble(args[i + 1]);
+																																							trainOptions.tagSelectiveSplitCutOff = double.Parse(args[i + 1]);
 																																							trainOptions.tagSelectiveSplit = trainOptions.tagSelectiveSplitCutOff > 0.0;
 																																							i += 2;
 																																						}
@@ -612,7 +612,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																						{
 																																							if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-tagSelPostSplitCutOff") && (i + 1 < args.Length))
 																																							{
-																																								trainOptions.tagSelectivePostSplitCutOff = double.ParseDouble(args[i + 1]);
+																																								trainOptions.tagSelectivePostSplitCutOff = double.Parse(args[i + 1]);
 																																								trainOptions.tagSelectivePostSplit = trainOptions.tagSelectivePostSplitCutOff > 0.0;
 																																								i += 2;
 																																							}
@@ -1272,7 +1272,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																							{
 																																																																																																								if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-splitRecombineRate"))
 																																																																																																								{
-																																																																																																									trainOptions.splitRecombineRate = double.ParseDouble(args[i + 1]);
+																																																																																																									trainOptions.splitRecombineRate = double.Parse(args[i + 1]);
 																																																																																																									i += 2;
 																																																																																																								}
 																																																																																																								else
@@ -1351,7 +1351,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																																		{
 																																																																																																																			if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-regCost"))
 																																																																																																																			{
-																																																																																																																				trainOptions.regCost = double.ParseDouble(args[i + 1]);
+																																																																																																																				trainOptions.regCost = double.Parse(args[i + 1]);
 																																																																																																																				i += 2;
 																																																																																																																			}
 																																																																																																																			else
@@ -1393,7 +1393,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																																								{
 																																																																																																																									if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-qnTolerance"))
 																																																																																																																									{
-																																																																																																																										trainOptions.qnTolerance = double.ParseDouble(args[i + 1]);
+																																																																																																																										trainOptions.qnTolerance = double.Parse(args[i + 1]);
 																																																																																																																										i += 2;
 																																																																																																																									}
 																																																																																																																									else
@@ -1435,14 +1435,14 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																																														{
 																																																																																																																															if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-learningRate"))
 																																																																																																																															{
-																																																																																																																																trainOptions.learningRate = double.ParseDouble(args[i + 1]);
+																																																																																																																																trainOptions.learningRate = double.Parse(args[i + 1]);
 																																																																																																																																i += 2;
 																																																																																																																															}
 																																																																																																																															else
 																																																																																																																															{
 																																																																																																																																if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-deltaMargin"))
 																																																																																																																																{
-																																																																																																																																	trainOptions.deltaMargin = double.ParseDouble(args[i + 1]);
+																																																																																																																																	trainOptions.deltaMargin = double.Parse(args[i + 1]);
 																																																																																																																																	i += 2;
 																																																																																																																																}
 																																																																																																																																else
@@ -1540,7 +1540,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																																																													{
 																																																																																																																																														if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-scalingForInit"))
 																																																																																																																																														{
-																																																																																																																																															trainOptions.scalingForInit = double.ParseDouble(args[i + 1]);
+																																																																																																																																															trainOptions.scalingForInit = double.Parse(args[i + 1]);
 																																																																																																																																															i += 2;
 																																																																																																																																														}
 																																																																																																																																														else
@@ -1554,7 +1554,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																																																																																																																															{
 																																																																																																																																																if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-baseParserWeight"))
 																																																																																																																																																{
-																																																																																																																																																	baseParserWeight = double.ParseDouble(args[i + 1]);
+																																																																																																																																																	baseParserWeight = double.Parse(args[i + 1]);
 																																																																																																																																																	i += 2;
 																																																																																																																																																}
 																																																																																																																																																else
@@ -1925,13 +1925,13 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 
 						case 2:
 						{
-							smartMutation = bool.ParseBoolean(value);
+							smartMutation = bool.Parse(value);
 							break;
 						}
 
 						case 3:
 						{
-							useUnicodeType = bool.ParseBoolean(value);
+							useUnicodeType = bool.Parse(value);
 							break;
 						}
 
@@ -1949,13 +1949,13 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 
 						case 6:
 						{
-							flexiTag = bool.ParseBoolean(value);
+							flexiTag = bool.Parse(value);
 							break;
 						}
 
 						case 7:
 						{
-							useSignatureForKnownSmoothing = bool.ParseBoolean(value);
+							useSignatureForKnownSmoothing = bool.Parse(value);
 							break;
 						}
 
@@ -2077,7 +2077,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// LexicalizedParserQuery.parse and in the training methods which
 		/// build a new parser.
 		/// </remarks>
-		public IFunction<string, string> wordFunction = null;
+		public Func<string, string> wordFunction = null;
 
 		/// <summary>
 		/// If the parser has a reranker, it looks at this many trees when
@@ -2165,39 +2165,39 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			if (line.Matches("^forceCNF.*"))
 			{
 				value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-				forceCNF = bool.ParseBoolean(value);
+				forceCNF = bool.Parse(value);
 				line = @in.ReadLine();
 			}
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			doPCFG = bool.ParseBoolean(value);
+			doPCFG = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			doDep = bool.ParseBoolean(value);
+			doDep = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			freeDependencies = bool.ParseBoolean(value);
+			freeDependencies = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			directional = bool.ParseBoolean(value);
+			directional = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			genStop = bool.ParseBoolean(value);
+			genStop = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			distance = bool.ParseBoolean(value);
+			distance = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			coarseDistance = bool.ParseBoolean(value);
+			coarseDistance = bool.Parse(value);
 			line = @in.ReadLine();
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			dcTags = bool.ParseBoolean(value);
+			dcTags = bool.Parse(value);
 			line = @in.ReadLine();
 			if (!line.Matches("^nPrune.*"))
 			{
 				throw new Exception("Expected nPrune, found: " + line);
 			}
 			value = Sharpen.Runtime.Substring(line, line.IndexOf(' ') + 1);
-			nodePrune = bool.ParseBoolean(value);
+			nodePrune = bool.Parse(value);
 			line = @in.ReadLine();
 			// get rid of last line
 			if (line.Length != 0)

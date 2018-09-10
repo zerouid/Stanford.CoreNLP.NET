@@ -28,7 +28,9 @@
 //    Licensing: java-nlp-support@lists.stanford.edu
 //    https://nlp.stanford.edu/software/classifier.html
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1241,7 +1243,7 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 			if (flags.lowercase)
 			{
-				cWord = cWord.ToLower(Locale.English);
+				cWord = cWord.ToLower(CultureInfo.GetCultureInfo("en"));
 			}
 			if (flags.useString)
 			{
@@ -1255,7 +1257,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					if (i == flags.binnedLengths.Length || len <= flags.binnedLengths[i])
 					{
-						featureName = "Len-" + ((i == 0) ? 0 : (flags.binnedLengths[i - 1] + 1)) + '-' + ((i == flags.binnedLengths.Length) ? "Inf" : int.ToString(flags.binnedLengths[i]));
+						featureName = "Len-" + ((i == 0) ? 0 : (flags.binnedLengths[i - 1] + 1)) + '-' + ((i == flags.binnedLengths.Length) ? "Inf" : flags.binnedLengths[i].ToString());
 						if (flags.binnedLengthsCounter != null)
 						{
 							flags.binnedLengthsCounter.IncrementCount(featureName, goldAns);
@@ -1272,16 +1274,15 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					val = double.Parse(cWord);
 				}
-				catch (NumberFormatException)
-				{
-				}
+				catch{}
+
 				// do nothing -- keeps value of flags.binnedValuesNaN
 				string featureName = null;
 				for (int i = 0; i <= flags.binnedValues.Length; i++)
 				{
 					if (i == flags.binnedValues.Length || val <= flags.binnedValues[i])
 					{
-						featureName = "Val-(" + ((i == 0) ? "-Inf" : double.ToString(flags.binnedValues[i - 1])) + ',' + ((i == flags.binnedValues.Length) ? "Inf" : double.ToString(flags.binnedValues[i])) + ']';
+						featureName = "Val-(" + ((i == 0) ? "-Inf" : flags.binnedValues[i - 1].ToString()) + ',' + ((i == flags.binnedValues.Length) ? "Inf" : flags.binnedValues[i].ToString()) + ']';
 						if (flags.binnedValuesCounter != null)
 						{
 							flags.binnedValuesCounter.IncrementCount(featureName, goldAns);
@@ -1298,7 +1299,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					cnts[i] = 0;
 				}
-				for (int i_1 = 0; i_1 < len; i_1++)
+				for (int i_1 = 0, len = cWord.Length; i_1 < len; i_1++)
 				{
 					char ch = cWord[i_1];
 					for (int j = 0; j < cnts.Length; j++)
@@ -1316,7 +1317,7 @@ namespace Edu.Stanford.Nlp.Classify
 					{
 						if (i_2 == flags.countCharsBins.Length || cnts[j_1] <= flags.countCharsBins[i_2])
 						{
-							featureName = "Char-" + flags.countChars[j_1] + '-' + ((i_2 == 0) ? 0 : (flags.countCharsBins[i_2 - 1] + 1)) + '-' + ((i_2 == flags.countCharsBins.Length) ? "Inf" : int.ToString(flags.countCharsBins[i_2]));
+							featureName = "Char-" + flags.countChars[j_1] + '-' + ((i_2 == 0) ? 0 : (flags.countCharsBins[i_2 - 1] + 1)) + '-' + ((i_2 == flags.countCharsBins.Length) ? "Inf" : flags.countCharsBins[i_2].ToString());
 							break;
 						}
 					}
@@ -1344,7 +1345,7 @@ namespace Edu.Stanford.Nlp.Classify
 				}
 				if (flags.showTokenization)
 				{
-					logger.Info("Tokenization: " + Arrays.ToString(bits));
+					logger.Info("Tokenization: " + string.Join(",",bits));
 				}
 				if (flags.splitWordCount)
 				{
@@ -1352,7 +1353,7 @@ namespace Edu.Stanford.Nlp.Classify
 				}
 				if (flags.logSplitWordCount)
 				{
-					AddFeature(featuresC, "LSWNUM", Math.Log(bits.Length));
+					AddFeature(featuresC, "LSWNUM", System.Math.Log(bits.Length));
 				}
 				if (flags.binnedSplitWordCounts != null)
 				{
@@ -1361,7 +1362,7 @@ namespace Edu.Stanford.Nlp.Classify
 					{
 						if (i == flags.binnedSplitWordCounts.Length || bits.Length <= flags.binnedSplitWordCounts[i])
 						{
-							featureName = "SWNUMBIN-" + ((i == 0) ? 0 : (flags.binnedSplitWordCounts[i - 1] + 1)) + '-' + ((i == flags.binnedSplitWordCounts.Length) ? "Inf" : int.ToString(flags.binnedSplitWordCounts[i]));
+							featureName = "SWNUMBIN-" + ((i == 0) ? 0 : (flags.binnedSplitWordCounts[i - 1] + 1)) + '-' + ((i == flags.binnedSplitWordCounts.Length) ? "Inf" : flags.binnedSplitWordCounts[i].ToString());
 							break;
 						}
 					}
@@ -1418,7 +1419,7 @@ namespace Edu.Stanford.Nlp.Classify
 								triple[0] = bits[i_1];
 								triple[1] = bits[j];
 								triple[2] = bits[k];
-								Arrays.Sort(triple);
+								Array.Sort(triple);
 								AddFeature(featuresC, "ASWT-" + triple[0] + '-' + triple[1] + '-' + triple[2], DefaultValue);
 							}
 						}
@@ -1431,12 +1432,12 @@ namespace Edu.Stanford.Nlp.Classify
 							sb.Append('-');
 							sb.Append(bits[j]);
 						}
-						int maxIndex = (flags.maxWordNGramLeng > 0) ? Math.Min(bits.Length, i_1 + flags.maxWordNGramLeng) : bits.Length;
+						int maxIndex = (flags.maxWordNGramLeng > 0) ? System.Math.Min(bits.Length, i_1 + flags.maxWordNGramLeng) : bits.Length;
 						for (int j_1 = i_1 + flags.minWordNGramLeng - 1; j_1 < maxIndex; j_1++)
 						{
 							if (flags.wordNGramBoundaryRegexp != null)
 							{
-								if (flags.wordNGramBoundaryPattern.Matcher(bits[j_1]).Matches())
+								if (flags.wordNGramBoundaryPattern.Match(bits[j_1]).Success)
 								{
 									break;
 								}
@@ -1552,12 +1553,12 @@ namespace Edu.Stanford.Nlp.Classify
 			// todo [cdm 2017]: Someday should generalize this to allow use of other tokenizers
 			if (ptbFactory == null)
 			{
-				ptbFactory = PTBTokenizer.Factory();
+				ptbFactory = PTBTokenizer<Word>.Factory();
 			}
 			ITokenizer<Word> tokenizer = ptbFactory.GetTokenizer(new StringReader(str));
 			IList<Word> words = tokenizer.Tokenize();
 			string[] res = new string[words.Count];
-			for (int i = 0; i < sz; i++)
+			for (int i = 0, sz = words.Count; i < sz; i++)
 			{
 				res[i] = words[i].Word();
 			}
@@ -1569,7 +1570,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// Caches a hash of word to all substring features.  Uses a <i>lot</i> of memory!
 		/// If the String space is large, you shouldn't turn this on.
 		/// </remarks>
-		private static readonly IDictionary<string, ICollection<string>> wordToSubstrings = new ConcurrentHashMap<string, ICollection<string>>();
+		private static readonly IDictionary<string, ICollection<string>> wordToSubstrings = new ConcurrentDictionary<string, ICollection<string>>();
 
 		private string Intern(string s)
 		{
@@ -1598,22 +1599,22 @@ namespace Edu.Stanford.Nlp.Classify
 			}
 			if (flags.lowercaseNGrams)
 			{
-				toNGrams = toNGrams.ToLower(Locale.English);
+				toNGrams = toNGrams.ToLower(CultureInfo.GetCultureInfo("en"));
 			}
 			if (flags.partialNGramRegexp != null)
 			{
-				Matcher m = flags.partialNGramPattern.Matcher(toNGrams);
+				Match m = flags.partialNGramPattern.Match(toNGrams);
 				// log.info("Matching |" + flags.partialNGramRegexp +
 				//                "| against |" + toNGrams + "|");
-				if (m.Find())
+				if (m.Success)
 				{
-					if (m.GroupCount() > 0)
+					if (m.Groups.Count > 0)
 					{
-						toNGrams = m.Group(1);
+						toNGrams = m.Groups[1].Value;
 					}
 					else
 					{
-						toNGrams = m.Group();
+						toNGrams = m.Value;
 					}
 				}
 			}
@@ -1633,22 +1634,22 @@ namespace Edu.Stanford.Nlp.Classify
 				int wleng = toNGrams.Length;
 				for (int i = 0; i < wleng; i++)
 				{
-					for (int j = i + flags.minNGramLeng; j <= min; j++)
+					for (int j = i + flags.minNGramLeng, min = System.Math.Min(wleng, i + flags.maxNGramLeng); j <= min; j++)
 					{
 						if (prefixSuffixNGrams)
 						{
 							if (i == 0)
 							{
-								subs.Add(Intern(strB + Sharpen.Runtime.Substring(toNGrams, i, j)));
+								subs.Add(Intern(strB + toNGrams.Substring(i, j-i)));
 							}
 							if (j == wleng)
 							{
-								subs.Add(Intern(strE + Sharpen.Runtime.Substring(toNGrams, i, j)));
+								subs.Add(Intern(strE + toNGrams.Substring(i, j-i)));
 							}
 						}
 						if (internalNGrams)
 						{
-							subs.Add(Intern(strN + Sharpen.Runtime.Substring(toNGrams, i, j)));
+							subs.Add(Intern(strN + toNGrams.Substring(i, j-i)));
 						}
 					}
 				}
@@ -1692,18 +1693,18 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					if (i > 0)
 					{
-						cliqueWriter.Print("\t");
+						cliqueWriter.Write("\t");
 					}
-					cliqueWriter.Print(wi[i]);
+					cliqueWriter.Write(wi[i]);
 				}
 				foreach (string feat in features.KeySet())
 				{
-					cliqueWriter.Print("\t");
-					cliqueWriter.Print(feat);
-					cliqueWriter.Print("\t");
-					cliqueWriter.Print(features.GetCount(feat));
+					cliqueWriter.Write("\t");
+					cliqueWriter.Write(feat);
+					cliqueWriter.Write("\t");
+					cliqueWriter.Write(features.GetCount(feat));
 				}
-				cliqueWriter.Println();
+				cliqueWriter.WriteLine();
 			}
 		}
 
@@ -1715,16 +1716,16 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					if (i > 0)
 					{
-						cliqueWriter.Print("\t");
+						cliqueWriter.Write("\t");
 					}
-					cliqueWriter.Print(wi[i]);
+					cliqueWriter.Write(wi[i]);
 				}
 				foreach (string feat in features)
 				{
-					cliqueWriter.Print("\t");
-					cliqueWriter.Print(feat);
+					cliqueWriter.Write("\t");
+					cliqueWriter.Write(feat);
 				}
-				cliqueWriter.Println();
+				cliqueWriter.WriteLine();
 			}
 		}
 
@@ -1755,8 +1756,8 @@ namespace Edu.Stanford.Nlp.Classify
 			ICollection<string> limitFeatureLabels = null;
 			if (globalFlags.limitFeaturesLabels != null)
 			{
-				string[] labels = globalFlags.limitFeaturesLabels.Split(",");
-				limitFeatureLabels = Generics.NewHashSet();
+				string[] labels = globalFlags.limitFeaturesLabels.Split(',');
+				limitFeatureLabels = new HashSet<string>();
 				foreach (string label in labels)
 				{
 					limitFeatureLabels.Add(label.Trim());
@@ -1771,12 +1772,12 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				logger.Info("Training: l1reg=" + l1reg + ", threshold=" + globalFlags.featureWeightThreshold + ", target=" + globalFlags.limitFeatures);
 				LinearClassifierFactory<string, string> lcf;
-				IMinimizer<IDiffFunction> minim = ReflectionLoading.LoadByReflection("edu.stanford.nlp.optimization.OWLQNMinimizer", l1reg);
+				IMinimizer<IDiffFunction> minim = ReflectionLoading.LoadByReflection<IMinimizer<IDiffFunction>>("edu.stanford.nlp.optimization.OWLQNMinimizer", l1reg);
 				lcf = new LinearClassifierFactory<string, string>(minim, globalFlags.tolerance, globalFlags.useSum, globalFlags.prior, globalFlags.sigma, globalFlags.epsilon);
 				int featureCount = -1;
 				try
 				{
-					LinearClassifier<string, string> c = lcf.TrainClassifier(train);
+					LinearClassifier<string, string> c = lcf.TrainClassifier(train) as LinearClassifier<string, string>;
 					lc = c;
 					featureCount = c.GetFeatureCount(limitFeatureLabels, globalFlags.featureWeightThreshold, false);
 					/*useMagnitude*/
@@ -1798,7 +1799,7 @@ namespace Edu.Stanford.Nlp.Classify
 					if (ex.Message != null && ex.Message.StartsWith("L-BFGS chose a non-descent direction"))
 					{
 						logger.Info("Error in optimization, will try again with different l1reg");
-						Sharpen.Runtime.PrintStackTrace(ex, System.Console.Error);
+						System.Console.Error.WriteLine(ex);
 					}
 					else
 					{
@@ -1852,11 +1853,11 @@ namespace Edu.Stanford.Nlp.Classify
 				IClassifierFactory<string, string, IClassifier<string, string>> cf;
 				if (globalFlags.classifierFactoryArgs != null)
 				{
-					cf = ReflectionLoading.LoadByReflection(globalFlags.useClassifierFactory, globalFlags.classifierFactoryArgs);
+					cf = ReflectionLoading.LoadByReflection<IClassifierFactory<string, string, IClassifier<string, string>>>(globalFlags.useClassifierFactory, globalFlags.classifierFactoryArgs);
 				}
 				else
 				{
-					cf = ReflectionLoading.LoadByReflection(globalFlags.useClassifierFactory);
+					cf = ReflectionLoading.LoadByReflection<IClassifierFactory<string, string, IClassifier<string, string>>>(globalFlags.useClassifierFactory);
 				}
 				lc = cf.TrainClassifier(train);
 			}
@@ -1894,7 +1895,7 @@ namespace Edu.Stanford.Nlp.Classify
 								LinearClassifierFactory<string, string> lcf;
 								if (globalFlags.l1reg > 0.0)
 								{
-									IMinimizer<IDiffFunction> minim = ReflectionLoading.LoadByReflection("edu.stanford.nlp.optimization.OWLQNMinimizer", globalFlags.l1reg);
+									IMinimizer<IDiffFunction> minim = ReflectionLoading.LoadByReflection<IMinimizer<IDiffFunction>>("edu.stanford.nlp.optimization.OWLQNMinimizer", globalFlags.l1reg);
 									lcf = new LinearClassifierFactory<string, string>(minim, globalFlags.tolerance, globalFlags.useSum, globalFlags.prior, globalFlags.sigma, globalFlags.epsilon);
 								}
 								else
@@ -1983,13 +1984,13 @@ namespace Edu.Stanford.Nlp.Classify
 			// presumably they'll load a fair-sized vocab!?
 			try
 			{
-				using (BufferedReader br = IOUtils.ReaderFromString(filename))
+				using (StreamReader br = IOUtils.ReaderFromString(filename))
 				{
 					int numDimensions = -1;
 					bool warned = false;
 					for (string line; (line = br.ReadLine()) != null; )
 					{
-						string[] fields = line.Split("\\s+");
+						string[] fields = Regex.Split(line,"\\s+");
 						if (numDimensions < 0)
 						{
 							numDimensions = fields.Length - 1;
@@ -2005,7 +2006,7 @@ namespace Edu.Stanford.Nlp.Classify
 						float[] vector = new float[fields.Length - 1];
 						for (int i = 1; i < fields.Length; i++)
 						{
-							vector[i - 1] = float.ParseFloat(fields[i]);
+							vector[i - 1] = float.Parse(fields[i]);
 						}
 						map[fields[0]] = vector;
 					}
@@ -2423,7 +2424,7 @@ namespace Edu.Stanford.Nlp.Classify
 																																																			{
 																																																				myFlags[col].partialNGramPattern = new Regex(myFlags[col].partialNGramRegexp, RegexOptions.Compiled);
 																																																			}
-																																																			catch (PatternSyntaxException)
+																																																			catch (Exception)
 																																																			{
 																																																				logger.Info("Ill-formed partialNGramPattern: " + myFlags[col].partialNGramPattern);
 																																																				myFlags[col].partialNGramRegexp = null;
@@ -2949,7 +2950,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// The properties object specifies all aspects of its behavior.
 		/// See the class documentation for details of the properties.
 		/// </param>
-		public ColumnDataClassifier(Properties props)
+		public ColumnDataClassifier(IConfiguration props)
 			: this(SetProperties(props))
 		{
 		}

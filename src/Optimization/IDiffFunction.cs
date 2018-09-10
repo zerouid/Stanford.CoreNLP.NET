@@ -13,9 +13,9 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// </remarks>
 	/// <author><a href="mailto:klein@cs.stanford.edu">Dan Klein</a></author>
 	/// <version>1.0</version>
-	/// <seealso cref="IFunction"/>
+	/// <seealso cref="Func"/>
 	/// <since>1.0</since>
-	public interface IDiffFunction : IFunction
+	public interface IDiffFunction : Func
 	{
 		/// <summary>Returns the first-derivative vector at the input location.</summary>
 		/// <param name="x">a <code>double[]</code> input vector</param>

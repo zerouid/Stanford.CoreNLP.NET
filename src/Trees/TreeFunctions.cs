@@ -28,7 +28,7 @@ namespace Edu.Stanford.Nlp.Trees
 		{
 		}
 
-		private class LabeledTreeToStringLabeledTreeFunction : IFunction<Tree, Tree>
+		private class LabeledTreeToStringLabeledTreeFunction : Func<Tree, Tree>
 		{
 			protected internal ITreeFactory tf = new LabeledScoredTreeFactory();
 
@@ -68,12 +68,12 @@ namespace Edu.Stanford.Nlp.Trees
 		/// label.
 		/// </summary>
 		/// <returns>The Function object</returns>
-		public static IFunction<Tree, Tree> GetLabeledTreeToStringLabeledTreeFunction()
+		public static Func<Tree, Tree> GetLabeledTreeToStringLabeledTreeFunction()
 		{
 			return new TreeFunctions.LabeledTreeToStringLabeledTreeFunction();
 		}
 
-		private class LabeledTreeToCategoryWordTagTreeFunction : IFunction<Tree, Tree>
+		private class LabeledTreeToCategoryWordTagTreeFunction : Func<Tree, Tree>
 		{
 			protected internal ITreeFactory tf = new LabeledScoredTreeFactory(new CategoryWordTagFactory());
 
@@ -121,7 +121,7 @@ namespace Edu.Stanford.Nlp.Trees
 		/// LabeledScoredTrees with a CategoryWordTag label.
 		/// </summary>
 		/// <returns>The Function object</returns>
-		public static IFunction<Tree, Tree> GetLabeledTreeToCategoryWordTagTreeFunction()
+		public static Func<Tree, Tree> GetLabeledTreeToCategoryWordTagTreeFunction()
 		{
 			return new TreeFunctions.LabeledTreeToCategoryWordTagTreeFunction();
 		}
@@ -130,7 +130,7 @@ namespace Edu.Stanford.Nlp.Trees
 		/// This function recursively goes through the tree and builds a new
 		/// copy with CoreLabels containing the toString() of the original label.
 		/// </summary>
-		private class LabeledToDescriptiveCoreLabelTreeFunction : IFunction<Tree, Tree>
+		private class LabeledToDescriptiveCoreLabelTreeFunction : Func<Tree, Tree>
 		{
 			protected internal ITreeFactory tf = new LabeledScoredTreeFactory(CoreLabel.Factory());
 
@@ -174,7 +174,7 @@ namespace Edu.Stanford.Nlp.Trees
 		/// tree with CoreLabels which contain the toString() of each of
 		/// the input labels.
 		/// </summary>
-		public static IFunction<Tree, Tree> GetLabeledToDescriptiveCoreLabelTreeFunction()
+		public static Func<Tree, Tree> GetLabeledToDescriptiveCoreLabelTreeFunction()
 		{
 			return new TreeFunctions.LabeledToDescriptiveCoreLabelTreeFunction();
 		}
@@ -193,12 +193,12 @@ namespace Edu.Stanford.Nlp.Trees
 			}
 			// do nothing
 			System.Console.Out.WriteLine(stringyTree);
-			IFunction<Tree, Tree> a = GetLabeledTreeToCategoryWordTagTreeFunction();
+			Func<Tree, Tree> a = GetLabeledTreeToCategoryWordTagTreeFunction();
 			Tree adaptyTree = a.Apply(stringyTree);
 			System.Console.Out.WriteLine(adaptyTree);
 			adaptyTree.PercolateHeads(new CollinsHeadFinder());
 			System.Console.Out.WriteLine(adaptyTree);
-			IFunction<Tree, Tree> b = GetLabeledTreeToStringLabeledTreeFunction();
+			Func<Tree, Tree> b = GetLabeledTreeToStringLabeledTreeFunction();
 			Tree stringLabelTree = b.Apply(adaptyTree);
 			System.Console.Out.WriteLine(stringLabelTree);
 		}

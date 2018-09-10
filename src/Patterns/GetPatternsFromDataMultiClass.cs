@@ -386,7 +386,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 			ICollection<string> extremelySmallStopWordsList = CollectionUtils.AsSet(".", ",", "in", "on", "of", "a", "the", "an");
 			//Function to use to how to add CoreLabels to index
-			IFunction<CoreLabel, IDictionary<string, string>> transformCoreLabelToString = null;
+			Func<CoreLabel, IDictionary<string, string>> transformCoreLabelToString = null;
 			bool createIndex = false;
 			if (constVars.loadInvertedIndex)
 			{
@@ -513,7 +513,7 @@ namespace Edu.Stanford.Nlp.Patterns
 						}
 						string s = t[0].Replace("Cluster-", string.Empty);
 						int clusterNum = System.Convert.ToInt32(s);
-						distSimWeightsLabel.SetCount(clusterNum, double.ParseDouble(t[1]));
+						distSimWeightsLabel.SetCount(clusterNum, double.Parse(t[1]));
 					}
 					constVars.distSimWeights[label_1] = distSimWeightsLabel;
 				}
@@ -624,8 +624,8 @@ namespace Edu.Stanford.Nlp.Patterns
 			IList<string> anns = new List<string>();
 			anns.Add("pos");
 			anns.Add("lemma");
-			bool useTargetParserParentRestriction = bool.ParseBoolean(propsoriginal.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetParserParentRestriction));
-			bool useTargetNERRestriction = bool.ParseBoolean(propsoriginal.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetNERRestriction));
+			bool useTargetParserParentRestriction = bool.Parse(propsoriginal.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetParserParentRestriction));
+			bool useTargetNERRestriction = bool.Parse(propsoriginal.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetNERRestriction));
 			string posModelPath = props.GetProperty(GetPatternsFromDataMultiClass.Flags.posModelPath);
 			string numThreads = propsoriginal.GetProperty(GetPatternsFromDataMultiClass.Flags.numThreads);
 			if (useTargetParserParentRestriction)
@@ -1031,7 +1031,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			return allIndices;
 		}
 
-		private sealed class _IFunction_915 : IFunction<CoreLabel, string>
+		private sealed class _IFunction_915 : Func<CoreLabel, string>
 		{
 			public _IFunction_915()
 			{
@@ -1059,7 +1059,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 		}
 
-		private static IFunction<CoreLabel, string> stringTransformationFunction = new _IFunction_915();
+		private static Func<CoreLabel, string> stringTransformationFunction = new _IFunction_915();
 
 		public static IList<IList<E>> GetThreadBatches<E>(IList<E> keyset, int numThreads)
 		{
@@ -1156,7 +1156,7 @@ namespace Edu.Stanford.Nlp.Patterns
 
 			internal ICollection<string> doNotLabelDictWords = null;
 
-			internal IFunction<CoreLabel, string> stringTransformation;
+			internal Func<CoreLabel, string> stringTransformation;
 
 			internal bool writeMatchedTokensIdsForEachPhrase = false;
 
@@ -1169,7 +1169,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			internal IDictionary<string, string> ignoreCaseSeedMatch;
 
 			public LabelWithSeedWords(ICollection<CandidatePhrase> seedwords, IDictionary<string, DataInstance> sents, IList<string> keyset, Type labelclass, string label, bool fuzzyMatch, int minLen4FuzzyForPattern, string backgroundSymbol, ICollection
-				<string> doNotLabelDictWords, IFunction<CoreLabel, string> stringTransformation, bool writeMatchedTokensIdsForEachPhrase, bool overwriteExistingLabels, PatternFactory.PatternType type, IDictionary<string, string> ignoreCaseSeedMatch)
+				<string> doNotLabelDictWords, Func<CoreLabel, string> stringTransformation, bool writeMatchedTokensIdsForEachPhrase, bool overwriteExistingLabels, PatternFactory.PatternType type, IDictionary<string, string> ignoreCaseSeedMatch)
 			{
 				//System.out.println("For graph " + graph.toFormattedString() + " and vertex " + vertex + " the features are " + features);
 				foreach (CandidatePhrase s in seedwords)
@@ -2676,7 +2676,7 @@ namespace Edu.Stanford.Nlp.Patterns
 					continue;
 				}
 				string[] t = line.Split("\t");
-				words.SetCount(CandidatePhrase.CreateOrGet(t[0]), double.ParseDouble(t[1]));
+				words.SetCount(CandidatePhrase.CreateOrGet(t[0]), double.Parse(t[1]));
 			}
 			if (words != null)
 			{
@@ -3429,10 +3429,10 @@ namespace Edu.Stanford.Nlp.Patterns
 		{
 			string fileFormat = props.GetProperty("fileFormat");
 			IDictionary<string, DataInstance> sents = null;
-			bool batchProcessSents = bool.ParseBoolean(props.GetProperty("batchProcessSents", "false"));
+			bool batchProcessSents = bool.Parse(props.GetProperty("batchProcessSents", "false"));
 			int numMaxSentencesPerBatchFile = System.Convert.ToInt32(props.GetProperty("numMaxSentencesPerBatchFile", int.MaxValue.ToString()));
 			//works only for non-batch processing!
-			bool preserveSentenceSequence = bool.ParseBoolean(props.GetProperty("preserveSentenceSequence", "false"));
+			bool preserveSentenceSequence = bool.Parse(props.GetProperty("preserveSentenceSequence", "false"));
 			if (!batchProcessSents)
 			{
 				if (preserveSentenceSequence)
@@ -3451,11 +3451,11 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 			string file = props.GetProperty("file");
 			string posModelPath = props.GetProperty("posModelPath");
-			bool lowercase = bool.ParseBoolean(props.GetProperty("lowercaseText"));
-			bool useTargetNERRestriction = bool.ParseBoolean(props.GetProperty("useTargetNERRestriction"));
-			bool useTargetParserParentRestriction = bool.ParseBoolean(props.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetParserParentRestriction));
-			bool useContextNERRestriction = bool.ParseBoolean(props.GetProperty("useContextNERRestriction"));
-			bool addEvalSentsToTrain = bool.ParseBoolean(props.GetProperty("addEvalSentsToTrain", "true"));
+			bool lowercase = bool.Parse(props.GetProperty("lowercaseText"));
+			bool useTargetNERRestriction = bool.Parse(props.GetProperty("useTargetNERRestriction"));
+			bool useTargetParserParentRestriction = bool.Parse(props.GetProperty(GetPatternsFromDataMultiClass.Flags.useTargetParserParentRestriction));
+			bool useContextNERRestriction = bool.Parse(props.GetProperty("useContextNERRestriction"));
+			bool addEvalSentsToTrain = bool.Parse(props.GetProperty("addEvalSentsToTrain", "true"));
 			string evalFileWithGoldLabels = props.GetProperty("evalFileWithGoldLabels");
 			if (file == null && (evalFileWithGoldLabels == null || addEvalSentsToTrain == false))
 			{
@@ -3558,7 +3558,7 @@ namespace Edu.Stanford.Nlp.Patterns
 				}
 			}
 			IDictionary<string, DataInstance> evalsents = new Dictionary<string, DataInstance>();
-			bool evaluate = bool.ParseBoolean(props.GetProperty("evaluate"));
+			bool evaluate = bool.Parse(props.GetProperty("evaluate"));
 			// Read Evaluation File
 			if (evaluate)
 			{
@@ -3697,7 +3697,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 			if (evalsents.Count > 0)
 			{
-				bool evalPerEntity = bool.ParseBoolean(props.GetProperty("evalPerEntity", "true"));
+				bool evalPerEntity = bool.Parse(props.GetProperty("evalPerEntity", "true"));
 				Evaluate(evalsents, evalPerEntity);
 			}
 			if (evalsents.Count == 0 && constVars.goldEntitiesEvalFiles == null)
@@ -3737,7 +3737,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 			//process all the sentences here!
 			Pair<IDictionary<string, DataInstance>, IDictionary<string, DataInstance>> sentsPair = ProcessSents(props, seedWords.Keys);
-			bool labelUsingSeedSets = bool.ParseBoolean(props.GetProperty("labelUsingSeedSets", "true"));
+			bool labelUsingSeedSets = bool.Parse(props.GetProperty("labelUsingSeedSets", "true"));
 			GetPatternsFromDataMultiClass<E> model = new GetPatternsFromDataMultiClass<E>(props, sentsPair.First(), seedWords, labelUsingSeedSets);
 			return RunNineYards(model, props, sentsPair.Second());
 		}
@@ -3749,7 +3749,7 @@ namespace Edu.Stanford.Nlp.Patterns
 		{
 			ArgumentParser.FillOptions(model, props);
 			// If you want to reuse patterns and words learned previously (may be on another dataset etc)
-			bool loadSavedPatternsWordsDir = bool.ParseBoolean(props.GetProperty("loadSavedPatternsWordsDir"));
+			bool loadSavedPatternsWordsDir = bool.Parse(props.GetProperty("loadSavedPatternsWordsDir"));
 			//#################### Load already save pattersn and phrases
 			if (loadSavedPatternsWordsDir)
 			{
@@ -3777,7 +3777,7 @@ namespace Edu.Stanford.Nlp.Patterns
 				model.SaveModel();
 			}
 			//######## EVALUATE ###########################3
-			bool evaluate = bool.ParseBoolean(props.GetProperty("evaluate"));
+			bool evaluate = bool.Parse(props.GetProperty("evaluate"));
 			if (evaluate && evalsents != null)
 			{
 				model.Evaluate(evalsents);
@@ -3872,8 +3872,8 @@ namespace Edu.Stanford.Nlp.Patterns
 		public static IDictionary<E, string> LoadFromSavedPatternsWordsDir<E>(GetPatternsFromDataMultiClass<E> model, Properties props)
 			where E : Pattern
 		{
-			bool labelSentsUsingModel = bool.ParseBoolean(props.GetProperty("labelSentsUsingModel", "true"));
-			bool applyPatsUsingModel = bool.ParseBoolean(props.GetProperty("applyPatsUsingModel", "true"));
+			bool labelSentsUsingModel = bool.Parse(props.GetProperty("labelSentsUsingModel", "true"));
+			bool applyPatsUsingModel = bool.Parse(props.GetProperty("applyPatsUsingModel", "true"));
 			int numIterationsOfSavedPatternsToLoad = System.Convert.ToInt32(props.GetProperty(GetPatternsFromDataMultiClass.Flags.numIterationsOfSavedPatternsToLoad, int.MaxValue.ToString()));
 			IDictionary<E, string> labelsForPattterns = new Dictionary<E, string>();
 			string patternsWordsDirValue = props.GetProperty(GetPatternsFromDataMultiClass.Flags.patternsWordsDir);

@@ -371,14 +371,14 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			// tagger.  Using a function rather than a MaxentTagger means we
 			// can distribute a version of the parser that doesn't include the
 			// entire tagger.
-			IFunction<IList<IHasWord>, List<TaggedWord>> tagger = null;
+			Func<IList<IHasWord>, List<TaggedWord>> tagger = null;
 			if (op.testOptions.preTag)
 			{
 				try
 				{
 					Type[] argsClass = new Type[] { typeof(string) };
 					object[] arguments = new object[] { op.testOptions.taggerSerializedFile };
-					tagger = (IFunction<IList<IHasWord>, List<TaggedWord>>)Sharpen.Runtime.GetType("edu.stanford.nlp.tagger.maxent.MaxentTagger").GetConstructor(argsClass).NewInstance(arguments);
+					tagger = (Func<IList<IHasWord>, List<TaggedWord>>)Sharpen.Runtime.GetType("edu.stanford.nlp.tagger.maxent.MaxentTagger").GetConstructor(argsClass).NewInstance(arguments);
 				}
 				catch (Exception e)
 				{

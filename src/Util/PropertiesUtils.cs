@@ -367,7 +367,7 @@ namespace Edu.Stanford.Nlp.Util
 			string value = props.GetProperty(key);
 			if (value != null)
 			{
-				return double.ParseDouble(value);
+				return double.Parse(value);
 			}
 			else
 			{
@@ -389,7 +389,7 @@ namespace Edu.Stanford.Nlp.Util
 			string value = props.GetProperty(key);
 			if (value != null)
 			{
-				return bool.ParseBoolean(value);
+				return bool.Parse(value);
 			}
 			else
 			{

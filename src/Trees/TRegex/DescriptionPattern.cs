@@ -53,7 +53,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 		private readonly IList<Pair<int, string>> variableGroups;
 
-		private readonly IFunction<string, string> basicCatFunction;
+		private readonly Func<string, string> basicCatFunction;
 
 		/// <summary>Used to detect regex expressions which can be simplified to exact matches</summary>
 		private static readonly Pattern SingleWordPattern = Pattern.Compile("/\\^(.)\\$/" + "|" + "/\\^\\[(.)\\]\\$/" + "|" + "/\\^([-a-zA-Z']+)\\$/");
@@ -65,7 +65,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		/// <summary>Used to detect regex expressions which can be simplified to exact matches</summary>
 		private static readonly Pattern PrefixPattern = Pattern.Compile("/\\^([-a-zA-Z|]+)\\/" + "|" + "/\\^\\(\\?\\:([-a-zA-Z|]+)\\)\\/");
 
-		public DescriptionPattern(Relation rel, bool negDesc, string desc, string name, bool useBasicCat, IFunction<string, string> basicCatFunction, IList<Pair<int, string>> variableGroups, bool isLink, string linkedName)
+		public DescriptionPattern(Relation rel, bool negDesc, string desc, string name, bool useBasicCat, Func<string, string> basicCatFunction, IList<Pair<int, string>> variableGroups, bool isLink, string linkedName)
 		{
 			// what size string matchers to use before switching to regex for
 			// disjunction matches

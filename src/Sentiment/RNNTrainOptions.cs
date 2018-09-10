@@ -147,49 +147,49 @@ namespace Edu.Stanford.Nlp.Sentiment
 						{
 							if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-learningRate"))
 							{
-								learningRate = double.ParseDouble(args[argIndex + 1]);
+								learningRate = double.Parse(args[argIndex + 1]);
 								return argIndex + 2;
 							}
 							else
 							{
 								if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-scalingForInit"))
 								{
-									scalingForInit = double.ParseDouble(args[argIndex + 1]);
+									scalingForInit = double.Parse(args[argIndex + 1]);
 									return argIndex + 2;
 								}
 								else
 								{
 									if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-regTransformMatrix"))
 									{
-										regTransformMatrix = double.ParseDouble(args[argIndex + 1]);
+										regTransformMatrix = double.Parse(args[argIndex + 1]);
 										return argIndex + 2;
 									}
 									else
 									{
 										if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-regTransformTensor"))
 										{
-											regTransformTensor = double.ParseDouble(args[argIndex + 1]);
+											regTransformTensor = double.Parse(args[argIndex + 1]);
 											return argIndex + 2;
 										}
 										else
 										{
 											if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-regClassification"))
 											{
-												regClassification = double.ParseDouble(args[argIndex + 1]);
+												regClassification = double.Parse(args[argIndex + 1]);
 												return argIndex + 2;
 											}
 											else
 											{
 												if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-regWordVector"))
 												{
-													regWordVector = double.ParseDouble(args[argIndex + 1]);
+													regWordVector = double.Parse(args[argIndex + 1]);
 													return argIndex + 2;
 												}
 												else
 												{
 													if (Sharpen.Runtime.EqualsIgnoreCase(args[argIndex], "-initialAdagradWeight"))
 													{
-														initialAdagradWeight = double.ParseDouble(args[argIndex + 1]);
+														initialAdagradWeight = double.Parse(args[argIndex + 1]);
 														return argIndex + 2;
 													}
 													else
@@ -208,7 +208,7 @@ namespace Edu.Stanford.Nlp.Sentiment
 																classWeights = new double[pieces.Length];
 																for (int i = 0; i < pieces.Length; ++i)
 																{
-																	classWeights[i] = double.ParseDouble(pieces[i]);
+																	classWeights[i] = double.Parse(pieces[i]);
 																}
 																return argIndex + 2;
 															}

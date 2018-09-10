@@ -521,7 +521,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 					while (reader.Ready())
 					{
 						string[] split = reader.ReadLine().Split("\t");
-						dict[i].SetCount(new Pair<string, string>(split[0], split[1]), double.ParseDouble(split[2]));
+						dict[i].SetCount(new Pair<string, string>(split[0], split[1]), double.Parse(split[2]));
 					}
 				}
 				catch (IOException e)
@@ -546,7 +546,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 				while (reader.Ready())
 				{
 					string[] split = reader.ReadLine().Split("\t");
-					dict.SetCount(new Pair<string, string>(split[0], split[1]), double.ParseDouble(split[3]));
+					dict.SetCount(new Pair<string, string>(split[0], split[1]), double.Parse(split[3]));
 				}
 			}
 			catch (IOException e)
@@ -572,7 +572,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 					sigs[split[0]] = cntr;
 					for (int i = 1; i < split.Length; i = i + 2)
 					{
-						cntr.SetCount(split[i], double.ParseDouble(split[i + 1]));
+						cntr.SetCount(split[i], double.Parse(split[i + 1]));
 					}
 				}
 			}

@@ -778,7 +778,7 @@ namespace Edu.Stanford.Nlp.Naturalli.Demo
 			if (supportsCredentials != null)
 			{
 				// For any value other then 'true' this will be false.
-				this.supportsCredentials = bool.ParseBoolean(supportsCredentials);
+				this.supportsCredentials = bool.Parse(supportsCredentials);
 			}
 			if (preflightMaxAge != null)
 			{
@@ -801,12 +801,12 @@ namespace Edu.Stanford.Nlp.Naturalli.Demo
 			if (loggingEnabled != null)
 			{
 				// For any value other then 'true' this will be false.
-				this.loggingEnabled = bool.ParseBoolean(loggingEnabled);
+				this.loggingEnabled = bool.Parse(loggingEnabled);
 			}
 			if (decorateRequest != null)
 			{
 				// For any value other then 'true' this will be false.
-				this.decorateRequest = bool.ParseBoolean(decorateRequest);
+				this.decorateRequest = bool.Parse(decorateRequest);
 			}
 		}
 

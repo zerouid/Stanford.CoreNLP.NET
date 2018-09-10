@@ -58,8 +58,8 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			{
 				int startNode = System.Convert.ToInt32(wordLineMatcher.Group(1)) - 1;
 				int endNode = System.Convert.ToInt32(wordLineMatcher.Group(2)) - 1;
-				double lm = double.ParseDouble(wordLineMatcher.Group(3));
-				double am = double.ParseDouble(wordLineMatcher.Group(4));
+				double lm = double.Parse(wordLineMatcher.Group(3));
+				double am = double.Parse(wordLineMatcher.Group(4));
 				string word = wordLineMatcher.Group(5).ToLower();
 				string pronun = wordLineMatcher.Group(6);
 				if (Sharpen.Runtime.EqualsIgnoreCase(word, "<s>"))

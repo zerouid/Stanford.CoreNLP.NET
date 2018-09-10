@@ -2329,7 +2329,7 @@ OUTER_break: ;
 				}
 				if (flags.interimOutputFreq != 0)
 				{
-					IFunction monitor = new ResultStoringMonitor(flags.interimOutputFreq, flags.serializeTo);
+					Func monitor = new ResultStoringMonitor(flags.interimOutputFreq, flags.serializeTo);
 					qnMinimizer = new QNMinimizer(monitor, qnMem, flags.useRobustQN);
 				}
 				else
@@ -2786,7 +2786,7 @@ OUTER_break: ;
 				}
 				for (int i2 = 0; i2 < weights2Length; i2++)
 				{
-					weights[count_1][i2] = double.ParseDouble(weightsValue[i2]);
+					weights[count_1][i2] = double.Parse(weightsValue[i2]);
 				}
 				count_1++;
 			}
@@ -3248,7 +3248,7 @@ OUTER_break: ;
 				{
 					string[] subparts = part.Split(" ");
 					string[] subsubparts = subparts[0].Split(":");
-					double counts = double.ParseDouble(subparts[1]);
+					double counts = double.Parse(subparts[1]);
 					if (counts == 0.0 && smooth)
 					{
 						// smoothing

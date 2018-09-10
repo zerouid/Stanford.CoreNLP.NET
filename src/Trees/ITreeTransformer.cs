@@ -10,7 +10,7 @@ namespace Edu.Stanford.Nlp.Trees
 	/// .
 	/// </summary>
 	/// <author>Christopher Manning.</author>
-	public interface ITreeTransformer : IFunction<Tree, Tree>
+	public interface ITreeTransformer : Func<Tree, Tree>
 	{
 		/// <summary>Does whatever one needs to do to a particular tree.</summary>
 		/// <remarks>

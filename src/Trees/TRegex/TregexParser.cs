@@ -14,13 +14,13 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 	{
 		private bool underNegation = false;
 
-		private IFunction<string, string> basicCatFunction = TregexPatternCompiler.DefaultBasicCatFunction;
+		private Func<string, string> basicCatFunction = TregexPatternCompiler.DefaultBasicCatFunction;
 
 		private IHeadFinder headFinder = TregexPatternCompiler.DefaultHeadFinder;
 
 		private ICollection<string> knownVariables = Generics.NewHashSet();
 
-		public TregexParser(Reader stream, IFunction<string, string> basicCatFunction, IHeadFinder headFinder)
+		public TregexParser(Reader stream, Func<string, string> basicCatFunction, IHeadFinder headFinder)
 			: this(stream)
 		{
 			// all generated classes are in this package

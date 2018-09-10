@@ -141,7 +141,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// applying <code>function</code> to the values to transform them
 		/// from <code>V2</code> to <code>V1</code>.
 		/// </summary>
-		public static void AddAll<K, V1, V2>(IDictionary<K, V1> to, IDictionary<K, V2> from, IFunction<V2, V1> function)
+		public static void AddAll<K, V1, V2>(IDictionary<K, V1> to, IDictionary<K, V2> from, Func<V2, V1> function)
 		{
 			foreach (KeyValuePair<K, V2> entry in from)
 			{

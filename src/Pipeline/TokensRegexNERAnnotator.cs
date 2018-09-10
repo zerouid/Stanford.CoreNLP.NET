@@ -955,7 +955,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 				{
 					try
 					{
-						priority = double.ParseDouble(split[iPriority].Trim());
+						priority = double.Parse(split[iPriority].Trim());
 					}
 					catch (NumberFormatException e)
 					{
@@ -967,7 +967,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 				{
 					try
 					{
-						weight = double.ParseDouble(split[iWeight].Trim());
+						weight = double.Parse(split[iWeight].Trim());
 					}
 					catch (NumberFormatException e)
 					{
@@ -1110,7 +1110,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 							{
 								case "ignorecase":
 								{
-									ignoreCaseList.Add(bool.ParseBoolean(optionAndValue[1].Trim()));
+									ignoreCaseList.Add(bool.Parse(optionAndValue[1].Trim()));
 									ignoreCaseSet = true;
 									break;
 								}

@@ -39,7 +39,7 @@ namespace Edu.Stanford.Nlp.Coref
 			while (matcher.Find())
 			{
 				string number = matcher.Group();
-				summary = summary.ReplaceFirst(number, df.Format(double.ParseDouble(number)));
+				summary = summary.ReplaceFirst(number, df.Format(double.Parse(number)));
 			}
 			return summary;
 		}
@@ -84,7 +84,7 @@ namespace Edu.Stanford.Nlp.Coref
 			int i = 0;
 			while (f1Matcher.Find())
 			{
-				F1s[i++] = double.ParseDouble(f1Matcher.Group(1));
+				F1s[i++] = double.Parse(f1Matcher.Group(1));
 			}
 			double finalScore = (F1s[0] + F1s[1] + F1s[3]) / 3;
 			return finalScore;

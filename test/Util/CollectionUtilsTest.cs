@@ -68,7 +68,7 @@ namespace Edu.Stanford.Nlp.Util
 
 			public TestDouble(string @string)
 			{
-				this.d = double.ParseDouble(@string);
+				this.d = double.Parse(@string);
 			}
 
 			public override bool Equals(object other)

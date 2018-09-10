@@ -26,7 +26,7 @@ namespace Edu.Stanford.Nlp.Sequences
 
 		public const string ThreeClassesProperty = "3class";
 
-		public static readonly bool ThreeClasses = bool.ParseBoolean(Runtime.GetProperty(ThreeClassesProperty, "false"));
+		public static readonly bool ThreeClasses = bool.Parse(Runtime.GetProperty(ThreeClassesProperty, "false"));
 
 		private const long serialVersionUID = -3000389291781534479L;
 
@@ -128,7 +128,7 @@ namespace Edu.Stanford.Nlp.Sequences
 			@out.Println();
 		}
 
-		public class LineToTrueCasesParser : IFunction<string, IList<CoreLabel>>
+		public class LineToTrueCasesParser : Func<string, IList<CoreLabel>>
 		{
 			private static readonly Pattern allLower = Pattern.Compile("[^A-Z]*?[a-z]+[^A-Z]*?");
 

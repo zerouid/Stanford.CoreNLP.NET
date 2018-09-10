@@ -408,9 +408,9 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		private static readonly int VeryCommonWordThresh = System.Convert.ToInt32(TaggerConfig.VeryCommonWordThresh);
 
-		private static readonly bool OccurringTagsOnly = bool.ParseBoolean(TaggerConfig.OccurringTagsOnly);
+		private static readonly bool OccurringTagsOnly = bool.Parse(TaggerConfig.OccurringTagsOnly);
 
-		private static readonly bool PossibleTagsOnly = bool.ParseBoolean(TaggerConfig.PossibleTagsOnly);
+		private static readonly bool PossibleTagsOnly = bool.Parse(TaggerConfig.PossibleTagsOnly);
 
 		private double defaultScore;
 
@@ -505,7 +505,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 		/// raw text as well.  This is also more efficient, in that the
 		/// function is applied once at the start of the process.
 		/// </remarks>
-		internal IFunction<string, string> wordFunction;
+		internal Func<string, string> wordFunction;
 
 		// For each extractor index, we have a map from possible extracted
 		// features to an array which maps from tag number to feature weight index in the lambdas array.
@@ -1482,7 +1482,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 			log.Info("Tagged " + numWords + " words at " + nf.Format(wordsPerSec) + " words per second.");
 		}
 
-		internal class TaggerWrapper : IFunction<string, string>
+		internal class TaggerWrapper : Func<string, string>
 		{
 			private readonly TaggerConfig config;
 

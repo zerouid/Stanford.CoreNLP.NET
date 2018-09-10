@@ -28,7 +28,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// .
 	/// </remarks>
 	/// <author>Christopher Manning</author>
-	public class Americanize : IFunction<IHasWord, IHasWord>
+	public class Americanize : Func<IHasWord, IHasWord>
 	{
 		/// <summary>A logger for this class</summary>
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Process.Americanize));

@@ -44,7 +44,7 @@ namespace Edu.Stanford.Nlp.IE.Pascal
 				string[] tokens = line.Split("\\s+");
 				for (int t = 0; matrixIdx < matrix.Length && t < tokens.Length; ++t)
 				{
-					matrix[matrixIdx++] = double.ParseDouble(tokens[t]);
+					matrix[matrixIdx++] = double.Parse(tokens[t]);
 				}
 			}
 		}

@@ -1251,7 +1251,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// feature to convert it to a more readable form
 		/// </param>
 		/// <param name="sortedByFeature">Whether to sort by feature names</param>
-		public virtual void JustificationOf<T>(IDatum<L, F> example, PrintWriter pw, IFunction<F, T> printer, bool sortedByFeature)
+		public virtual void JustificationOf<T>(IDatum<L, F> example, PrintWriter pw, Func<F, T> printer, bool sortedByFeature)
 		{
 			if (example is RVFDatum<object, object>)
 			{

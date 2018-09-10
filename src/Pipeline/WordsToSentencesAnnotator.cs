@@ -78,7 +78,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 			else
 			{
 				string isOneSentence = properties.GetProperty("ssplit.isOneSentence");
-				if (bool.ParseBoolean(isOneSentence))
+				if (bool.Parse(isOneSentence))
 				{
 					// this method treats null as false
 					// Treat as one sentence: You get a no-op sentence splitter that always returns all tokens as one sentence.

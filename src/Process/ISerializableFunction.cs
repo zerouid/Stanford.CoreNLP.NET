@@ -10,7 +10,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// enough to support type conjunctions.
 	/// </summary>
 	/// <author>dramage</author>
-	public interface ISerializableFunction<T1, T2> : IFunction<T1, T2>
+	public interface ISerializableFunction<T1, T2> : Func<T1, T2>
 	{
 	}
 }

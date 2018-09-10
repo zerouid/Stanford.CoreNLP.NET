@@ -659,7 +659,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 						knownWords.Add(splits[0]);
 						for (int i = 0; i < eSize; ++i)
 						{
-							E[index][i] = double.ParseDouble(splits[i + 1]);
+							E[index][i] = double.Parse(splits[i + 1]);
 						}
 						index = index + 1;
 					}
@@ -670,7 +670,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 						knownPos.Add(splits[0]);
 						for (int i = 0; i < eSize; ++i)
 						{
-							E[index][i] = double.ParseDouble(splits[i + 1]);
+							E[index][i] = double.Parse(splits[i + 1]);
 						}
 						index = index + 1;
 					}
@@ -681,7 +681,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 						knownLabels.Add(splits[0]);
 						for (int i = 0; i < eSize; ++i)
 						{
-							E[index][i] = double.ParseDouble(splits[i + 1]);
+							E[index][i] = double.Parse(splits[i + 1]);
 						}
 						index = index + 1;
 					}
@@ -693,7 +693,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 						splits = s.Split(" ");
 						for (int i = 0; i < W1.Length; ++i)
 						{
-							W1[i][j] = double.ParseDouble(splits[i]);
+							W1[i][j] = double.Parse(splits[i]);
 						}
 					}
 					double[] b1 = new double[hSize];
@@ -701,7 +701,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 					splits = s.Split(" ");
 					for (int i_1 = 0; i_1 < b1.Length; ++i_1)
 					{
-						b1[i_1] = double.ParseDouble(splits[i_1]);
+						b1[i_1] = double.Parse(splits[i_1]);
 					}
 					double[][] W2 = new double[][] {  };
 					for (int j_1 = 0; j_1 < W2[0].Length; ++j_1)
@@ -710,7 +710,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 						splits = s.Split(" ");
 						for (int i = 0; i_1 < W2.Length; ++i_1)
 						{
-							W2[i_1][j_1] = double.ParseDouble(splits[i_1]);
+							W2[i_1][j_1] = double.Parse(splits[i_1]);
 						}
 					}
 					preComputed = new List<int>();
@@ -769,7 +769,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 							embedID[splits[0]] = i;
 							for (int j = 0; j < dim; ++j)
 							{
-								embeddings[i][j] = double.ParseDouble(splits[j + 1]);
+								embeddings[i][j] = double.Parse(splits[j + 1]);
 							}
 						}
 					}
@@ -992,7 +992,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 								int index = GetWordID(splits[0]);
 								for (int i_4 = 0; i_4 < eSize; ++i_4)
 								{
-									E[index][i_4] = double.ParseDouble(splits[i_4 + 1]);
+									E[index][i_4] = double.Parse(splits[i_4 + 1]);
 								}
 							}
 						}
@@ -1005,7 +1005,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 								int index = GetPosID(splits[0]);
 								for (int i_4 = 0; i_4 < eSize; ++i_4)
 								{
-									E[index][i_4] = double.ParseDouble(splits[i_4 + 1]);
+									E[index][i_4] = double.Parse(splits[i_4 + 1]);
 								}
 							}
 						}
@@ -1018,7 +1018,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 								int index = GetLabelID(splits[0]);
 								for (int i_4 = 0; i_4 < eSize; ++i_4)
 								{
-									E[index][i_4] = double.ParseDouble(splits[i_4 + 1]);
+									E[index][i_4] = double.Parse(splits[i_4 + 1]);
 								}
 							}
 						}
@@ -1035,7 +1035,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 								splits = s.Split(" ");
 								for (int i_4 = 0; i_4 < hSize; ++i_4)
 								{
-									W1[i_4][j_2] = double.ParseDouble(splits[i_4]);
+									W1[i_4][j_2] = double.Parse(splits[i_4]);
 								}
 							}
 						}
@@ -1045,7 +1045,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 							splits = s.Split(" ");
 							for (int i_4 = 0; i_4 < hSize; ++i_4)
 							{
-								b1[i_4] = double.ParseDouble(splits[i_4]);
+								b1[i_4] = double.Parse(splits[i_4]);
 							}
 						}
 						bool copyLayer2 = (nLabel * 2 - 1 == system.NumTransitions()) && hSize == config.hiddenSize;
@@ -1061,7 +1061,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 								splits = s.Split(" ");
 								for (int i_4 = 0; i_4 < nLabel * 2 - 1; ++i_4)
 								{
-									W2[i_4][j_3] = double.ParseDouble(splits[i_4]);
+									W2[i_4][j_3] = double.Parse(splits[i_4]);
 								}
 							}
 						}

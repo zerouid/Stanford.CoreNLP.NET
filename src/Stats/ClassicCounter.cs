@@ -729,7 +729,7 @@ namespace Edu.Stanford.Nlp.Stats
 						throw new Exception("Got unsplittable line: \"" + line + '\"');
 					}
 				}
-				result.SetCount(fields[0], double.ParseDouble(fields[1]));
+				result.SetCount(fields[0], double.Parse(fields[1]));
 			}
 			return result;
 		}
@@ -762,7 +762,7 @@ namespace Edu.Stanford.Nlp.Stats
 				{
 					throw new Exception("Got unsplittable line: \"" + line + '\"');
 				}
-				result.SetCount(fields[0], double.ParseDouble(fields[1]));
+				result.SetCount(fields[0], double.Parse(fields[1]));
 			}
 			return result;
 		}

@@ -159,15 +159,15 @@ namespace Edu.Stanford.Nlp.Dcoref
 			//
 			// create scoring framework
 			//
-			doScore = bool.ParseBoolean(props.GetProperty(Constants.ScoreProp, "false"));
+			doScore = bool.Parse(props.GetProperty(Constants.ScoreProp, "false"));
 			//
 			// setting post processing
 			//
-			doPostProcessing = bool.ParseBoolean(props.GetProperty(Constants.PostprocessingProp, "false"));
+			doPostProcessing = bool.Parse(props.GetProperty(Constants.PostprocessingProp, "false"));
 			//
 			// setting singleton predictor
 			//
-			useSingletonPredictor = bool.ParseBoolean(props.GetProperty(Constants.SingletonProp, "true"));
+			useSingletonPredictor = bool.Parse(props.GetProperty(Constants.SingletonProp, "true"));
 			//
 			// setting maximum sentence distance between two mentions for resolution (-1: no constraint on distance)
 			//
@@ -177,10 +177,10 @@ namespace Edu.Stanford.Nlp.Dcoref
 			//
 			useSemantics = sievePasses.Contains("AliasMatch") || sievePasses.Contains("LexicalChainMatch");
 			// flag for replicating CoNLL result
-			replicateCoNLL = bool.ParseBoolean(props.GetProperty(Constants.ReplicateconllProp, "false"));
+			replicateCoNLL = bool.Parse(props.GetProperty(Constants.ReplicateconllProp, "false"));
 			conllMentionEvalScript = props.GetProperty(Constants.ConllScorer, Constants.conllMentionEvalScript);
 			// flag for optimizing sieve ordering
-			optimizeSieves = bool.ParseBoolean(props.GetProperty(Constants.OptimizeSievesProp, "false"));
+			optimizeSieves = bool.Parse(props.GetProperty(Constants.OptimizeSievesProp, "false"));
 			optimizeScoreType = props.GetProperty(Constants.OptimizeSievesScoreProp, "pairwise.Precision");
 			// Break down of the optimize score type
 			string[] validMetricTypes = new string[] { "muc", "pairwise", "bcub", "ceafe", "ceafm", "combined" };
@@ -765,7 +765,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 							{
 								int potentialSieveIndex_1 = System.Convert.ToInt32(m.Group(2));
 								string text = IOUtils.SlurpFile(file);
-								double score = double.ParseDouble(text);
+								double score = double.Parse(text);
 								// keeps scores so we can select best score and log them
 								scores.Add(new Pair<double, int>(score, potentialSieveIndex_1));
 							}
@@ -1175,7 +1175,7 @@ LOOP_break: ;
 			while (matcher.Find())
 			{
 				string number = matcher.Group();
-				summary = summary.ReplaceFirst(number, df.Format(double.ParseDouble(number)));
+				summary = summary.ReplaceFirst(number, df.Format(double.Parse(number)));
 			}
 			return summary;
 		}
@@ -1602,7 +1602,7 @@ LOOP_break: ;
 			int i = 0;
 			while (f1Matcher.Find())
 			{
-				F1s[i++] = double.ParseDouble(f1Matcher.Group(1));
+				F1s[i++] = double.Parse(f1Matcher.Group(1));
 			}
 			double finalScore = (F1s[0] + F1s[1] + F1s[3]) / 3;
 			logger.Info("Final conll score ((muc+bcub+ceafe)/3) = " + (new DecimalFormat("#.##")).Format(finalScore));
@@ -1621,7 +1621,7 @@ LOOP_break: ;
 			while (matcher.Find())
 			{
 				names[i] = matcher.Group(1);
-				scores[i] = double.ParseDouble(matcher.Group(3));
+				scores[i] = double.Parse(matcher.Group(3));
 				i++;
 			}
 			metricType = metricType.ToLower();

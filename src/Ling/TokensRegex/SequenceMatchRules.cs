@@ -998,7 +998,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class StringMatchResultExtractor : IFunction<IMatchResult, IValue>
+		public class StringMatchResultExtractor : Func<IMatchResult, IValue>
 		{
 			internal readonly Env env;
 
@@ -1033,7 +1033,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class SequenceMatchResultExtractor<T> : IFunction<ISequenceMatchResult<T>, IValue>
+		public class SequenceMatchResultExtractor<T> : Func<ISequenceMatchResult<T>, IValue>
 		{
 			internal readonly Env env;
 
@@ -1297,27 +1297,27 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class SequencePatternExtractRule<T, O> : SequenceMatchRules.IExtractRule<IList<T>, O>, IFunction<IList<T>, O>
+		public class SequencePatternExtractRule<T, O> : SequenceMatchRules.IExtractRule<IList<T>, O>, Func<IList<T>, O>
 		{
 			internal readonly SequencePattern<T> pattern;
 
-			internal readonly IFunction<ISequenceMatchResult<T>, O> extractor;
+			internal readonly Func<ISequenceMatchResult<T>, O> extractor;
 
 			internal readonly SequenceMatcher.FindType findType;
 
 			internal readonly bool matchWithResult;
 
-			public SequencePatternExtractRule(Env env, string regex, IFunction<ISequenceMatchResult<T>, O> extractor)
+			public SequencePatternExtractRule(Env env, string regex, Func<ISequenceMatchResult<T>, O> extractor)
 				: this(SequencePattern.Compile(env, regex), extractor)
 			{
 			}
 
-			public SequencePatternExtractRule(SequencePattern<T> p, IFunction<ISequenceMatchResult<T>, O> extractor)
+			public SequencePatternExtractRule(SequencePattern<T> p, Func<ISequenceMatchResult<T>, O> extractor)
 				: this(p, extractor, null, false)
 			{
 			}
 
-			public SequencePatternExtractRule(SequencePattern<T> p, IFunction<ISequenceMatchResult<T>, O> extractor, SequenceMatcher.FindType findType, bool matchWithResult)
+			public SequencePatternExtractRule(SequencePattern<T> p, Func<ISequenceMatchResult<T>, O> extractor, SequenceMatcher.FindType findType, bool matchWithResult)
 			{
 				this.extractor = extractor;
 				this.pattern = p;
@@ -1368,13 +1368,13 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class MultiSequencePatternExtractRule<T, O> : SequenceMatchRules.IExtractRule<IList<T>, O>, IFunction<IList<T>, O>
+		public class MultiSequencePatternExtractRule<T, O> : SequenceMatchRules.IExtractRule<IList<T>, O>, Func<IList<T>, O>
 		{
 			internal readonly MultiPatternMatcher<T> matcher;
 
-			internal readonly IFunction<ISequenceMatchResult<T>, O> extractor;
+			internal readonly Func<ISequenceMatchResult<T>, O> extractor;
 
-			public MultiSequencePatternExtractRule(MultiPatternMatcher<T> matcher, IFunction<ISequenceMatchResult<T>, O> extractor)
+			public MultiSequencePatternExtractRule(MultiPatternMatcher<T> matcher, Func<ISequenceMatchResult<T>, O> extractor)
 			{
 				// end static class SequencePatternExtractRule
 				this.extractor = extractor;
@@ -1417,29 +1417,29 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class StringPatternExtractRule<O> : SequenceMatchRules.IExtractRule<string, O>, IFunction<string, O>
+		public class StringPatternExtractRule<O> : SequenceMatchRules.IExtractRule<string, O>, Func<string, O>
 		{
 			private readonly Pattern pattern;
 
-			private readonly IFunction<IMatchResult, O> extractor;
+			private readonly Func<IMatchResult, O> extractor;
 
-			public StringPatternExtractRule(Pattern pattern, IFunction<IMatchResult, O> extractor)
+			public StringPatternExtractRule(Pattern pattern, Func<IMatchResult, O> extractor)
 			{
 				this.pattern = pattern;
 				this.extractor = extractor;
 			}
 
-			public StringPatternExtractRule(Env env, string regex, IFunction<IMatchResult, O> extractor)
+			public StringPatternExtractRule(Env env, string regex, Func<IMatchResult, O> extractor)
 				: this(env, regex, extractor, false)
 			{
 			}
 
-			public StringPatternExtractRule(string regex, IFunction<IMatchResult, O> extractor)
+			public StringPatternExtractRule(string regex, Func<IMatchResult, O> extractor)
 				: this(null, regex, extractor, false)
 			{
 			}
 
-			public StringPatternExtractRule(Env env, string regex, IFunction<IMatchResult, O> extractor, bool addWordBoundaries)
+			public StringPatternExtractRule(Env env, string regex, Func<IMatchResult, O> extractor, bool addWordBoundaries)
 			{
 				this.extractor = extractor;
 				if (addWordBoundaries)
@@ -1491,7 +1491,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class StringMatchedExpressionExtractor : IFunction<IMatchResult, MatchedExpression>
+		public class StringMatchedExpressionExtractor : Func<IMatchResult, MatchedExpression>
 		{
 			internal readonly MatchedExpression.SingleAnnotationExtractor extractor;
 
@@ -1511,7 +1511,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class SequenceMatchedExpressionExtractor : IFunction<ISequenceMatchResult<ICoreMap>, MatchedExpression>
+		public class SequenceMatchedExpressionExtractor : Func<ISequenceMatchResult<ICoreMap>, MatchedExpression>
 		{
 			internal readonly MatchedExpression.SingleAnnotationExtractor extractor;
 
@@ -1543,15 +1543,15 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class CoreMapFunctionApplier<T, O> : IFunction<ICoreMap, O>
+		public class CoreMapFunctionApplier<T, O> : Func<ICoreMap, O>
 		{
 			internal readonly Env env;
 
 			internal readonly Type annotationField;
 
-			internal readonly IFunction<T, O> func;
+			internal readonly Func<T, O> func;
 
-			public CoreMapFunctionApplier(Env env, Type annotationField, IFunction<T, O> func)
+			public CoreMapFunctionApplier(Env env, Type annotationField, Func<T, O> func)
 			{
 				this.annotationField = annotationField;
 				if (annotationField == null)
@@ -1583,13 +1583,13 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public class CoreMapToListFunctionApplier<O> : IFunction<ICoreMap, O>
+		public class CoreMapToListFunctionApplier<O> : Func<ICoreMap, O>
 		{
 			internal readonly Env env;
 
-			internal readonly IFunction<IList<ICoreMap>, O> func;
+			internal readonly Func<IList<ICoreMap>, O> func;
 
-			public CoreMapToListFunctionApplier(Env env, IFunction<IList<ICoreMap>, O> func)
+			public CoreMapToListFunctionApplier(Env env, Func<IList<ICoreMap>, O> func)
 			{
 				this.func = func;
 				this.env = env;

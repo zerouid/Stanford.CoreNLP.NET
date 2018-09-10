@@ -279,7 +279,7 @@ namespace Edu.Stanford.Nlp.Ling
 							{
 								if (valueClass == typeof(double))
 								{
-									this.Set(coreKeyClass, double.ParseDouble(values[i]));
+									this.Set(coreKeyClass, double.Parse(values[i]));
 								}
 								else
 								{
@@ -347,7 +347,7 @@ namespace Edu.Stanford.Nlp.Ling
 						{
 							if (valueClass == typeof(double))
 							{
-								this.Set(coreKeyClass, double.ParseDouble(values[i]));
+								this.Set(coreKeyClass, double.Parse(values[i]));
 							}
 							else
 							{

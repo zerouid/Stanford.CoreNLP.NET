@@ -145,7 +145,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 					{
 						IElement xmlEdge = (IElement)xmlEdges.Item(edgeIdx);
 						string segment = xmlEdge.GetAttribute(Segment);
-						double weight = double.ParseDouble(xmlEdge.GetAttribute(Weight));
+						double weight = double.Parse(xmlEdge.GetAttribute(Weight));
 						//Input weights should be log scale
 						int from = System.Convert.ToInt32(xmlEdge.GetAttribute(FromNode));
 						int normFrom = nodeMap[from];

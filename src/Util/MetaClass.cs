@@ -635,7 +635,7 @@ namespace Edu.Stanford.Nlp.Util
 					{
 						return (E)true;
 					}
-					return (E)bool.ValueOf(bool.ParseBoolean(value));
+					return (E)bool.ValueOf(bool.Parse(value));
 				}
 				else
 				{
@@ -648,7 +648,7 @@ namespace Edu.Stanford.Nlp.Util
 						}
 						catch (NumberFormatException)
 						{
-							return (E)(int)double.ParseDouble(value);
+							return (E)(int)double.Parse(value);
 						}
 					}
 					else
@@ -673,7 +673,7 @@ namespace Edu.Stanford.Nlp.Util
 								}
 								catch (NumberFormatException)
 								{
-									return (E)(long)double.ParseDouble(value);
+									return (E)(long)double.Parse(value);
 								}
 							}
 							else
@@ -696,7 +696,7 @@ namespace Edu.Stanford.Nlp.Util
 										{
 											return (E)double.NaN;
 										}
-										return (E)double.ParseDouble(value);
+										return (E)double.Parse(value);
 									}
 									else
 									{
@@ -720,7 +720,7 @@ namespace Edu.Stanford.Nlp.Util
 												}
 												catch (NumberFormatException)
 												{
-													return (E)(short)double.ParseDouble(value);
+													return (E)(short)double.Parse(value);
 												}
 											}
 											else
@@ -734,7 +734,7 @@ namespace Edu.Stanford.Nlp.Util
 													}
 													catch (NumberFormatException)
 													{
-														return (E)unchecked((byte)double.ParseDouble(value));
+														return (E)unchecked((byte)double.Parse(value));
 													}
 												}
 												else

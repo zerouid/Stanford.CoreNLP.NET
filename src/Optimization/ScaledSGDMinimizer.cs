@@ -41,7 +41,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		private double aMax = 1e6;
 
 		// 0=MinErr  1=Bradley
-		public virtual double TuneFixedGain(IFunction function, double[] initial, long msPerTest, double fixedStart)
+		public virtual double TuneFixedGain(Func function, double[] initial, long msPerTest, double fixedStart)
 		{
 			double[] xtest = new double[initial.Length];
 			double fOpt = 0.0;
@@ -120,7 +120,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			private readonly ScaledSGDMinimizer<Q> _enclosing;
 		}
 
-		public override Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest)
+		public override Pair<int, double> Tune(Func function, double[] initial, long msPerTest)
 		{
 			this.quiet = true;
 			for (int i = 0; i < 2; i++)

@@ -207,7 +207,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="toString">The function to use to convert a span to a string. The canonical case is Sentence::words</param>
 		/// <returns>A list of keyphrases, as Strings.</returns>
 		/// <seealso cref="KeyphraseSpans()"/>
-		public virtual IList<string> Keyphrases(IFunction<Sentence, IList<string>> toString)
+		public virtual IList<string> Keyphrases(Func<Sentence, IList<string>> toString)
 		{
 			return KeyphraseSpans().Stream().Map(null).Collect(Collectors.ToList());
 		}
@@ -285,7 +285,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// </param>
 		/// <?/>
 		/// <returns>A streaming iterable of spans for this sentence.</returns>
-		public virtual IEnumerable<IList<E>> AllSpans<E>(IFunction<Sentence, IList<E>> selector, int maxLength)
+		public virtual IEnumerable<IList<E>> AllSpans<E>(Func<Sentence, IList<E>> selector, int maxLength)
 		{
 			return null;
 		}
@@ -293,13 +293,13 @@ namespace Edu.Stanford.Nlp.Simple
 		// Get the term
 		// Update the state
 		// Return
-		/// <seealso cref="AllSpans{E}(Java.Util.Function.IFunction{T, R}, int)"></seealso>
-		public virtual IEnumerable<IList<E>> AllSpans<E>(IFunction<Sentence, IList<E>> selector)
+		/// <seealso cref="AllSpans{E}(Java.Util.Function.Func{T, R}, int)"></seealso>
+		public virtual IEnumerable<IList<E>> AllSpans<E>(Func<Sentence, IList<E>> selector)
 		{
 			return AllSpans(selector, sentence.Length());
 		}
 
-		/// <seealso cref="AllSpans{E}(Java.Util.Function.IFunction{T, R}, int)"></seealso>
+		/// <seealso cref="AllSpans{E}(Java.Util.Function.Func{T, R}, int)"></seealso>
 		public virtual IEnumerable<IList<string>> AllSpans()
 		{
 			return AllSpans(null, sentence.Length());
@@ -316,7 +316,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="selector">The property of the sentence we are getting the mode of. For example, <code>Sentence::posTags</code></param>
 		/// <?/>
 		/// <returns>The most common element of the given property in the sentence.</returns>
-		public virtual E ModeInSpan<E>(Span span, IFunction<Sentence, IList<E>> selector)
+		public virtual E ModeInSpan<E>(Span span, Func<Sentence, IList<E>> selector)
 		{
 			if (!Span.FromValues(0, sentence.Length()).Contains(span))
 			{
@@ -339,7 +339,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// A path string, analogous to
 		/// <see cref="DependencyPathBetween(int, int)"/>
 		/// </returns>
-		protected internal virtual IList<string> LoopyDependencyPathBetween(int start, int end, Optional<IFunction<Sentence, IList<string>>> selector)
+		protected internal virtual IList<string> LoopyDependencyPathBetween(int start, int end, Optional<Func<Sentence, IList<string>>> selector)
 		{
 			// Find the start and end
 			SemanticGraph graph = this.sentence.DependencyGraph();
@@ -443,7 +443,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="end">The end word, 0-indexed.</param>
 		/// <param name="selector">The selector for the strings between the path, if any. If left empty, these will be omitted from the list.</param>
 		/// <returns>A list encoding the dependency path between the vertices, suitable for inclusion as features.</returns>
-		public virtual IList<string> DependencyPathBetween(int start, int end, Optional<IFunction<Sentence, IList<string>>> selector)
+		public virtual IList<string> DependencyPathBetween(int start, int end, Optional<Func<Sentence, IList<string>>> selector)
 		{
 			// Get paths from a node to the root of the sentence
 			LinkedList<int> rootToStart = new LinkedList<int>();

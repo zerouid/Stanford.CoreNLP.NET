@@ -134,7 +134,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// Adds all of the entries in the <code>other</code> map, performing
 		/// <code>function</code> on them to transform the values
 		/// </summary>
-		public virtual void AddAll<V2, _T1>(Edu.Stanford.Nlp.Util.TwoDimensionalMap<_T1> other, IFunction<V2, V> function)
+		public virtual void AddAll<V2, _T1>(Edu.Stanford.Nlp.Util.TwoDimensionalMap<_T1> other, Func<V2, V> function)
 			where _T1 : K1
 		{
 			foreach (TwoDimensionalMap.Entry<K1, K2, V2> entry in other)

@@ -910,7 +910,7 @@ namespace Edu.Stanford.Nlp.Stats
 		/// Returns the counter with keys modified according to function F. Eager
 		/// evaluation. If two keys are same after the transformation, one of the values is randomly chosen (depending on how the keyset is traversed)
 		/// </remarks>
-		public static ICounter<T2> Transform<T1, T2>(ICounter<T1> c, IFunction<T1, T2> f)
+		public static ICounter<T2> Transform<T1, T2>(ICounter<T1> c, Func<T1, T2> f)
 		{
 			ICounter<T2> c2 = new ClassicCounter<T2>();
 			foreach (T1 key in c.KeySet())
@@ -922,7 +922,7 @@ namespace Edu.Stanford.Nlp.Stats
 
 		/// <summary>Returns the counter with keys modified according to function F.</summary>
 		/// <remarks>Returns the counter with keys modified according to function F. If two keys are same after the transformation, their values get added up.</remarks>
-		public static ICounter<T2> TransformWithValuesAdd<T1, T2>(ICounter<T1> c, IFunction<T1, T2> f)
+		public static ICounter<T2> TransformWithValuesAdd<T1, T2>(ICounter<T1> c, Func<T1, T2> f)
 		{
 			ICounter<T2> c2 = new ClassicCounter<T2>();
 			foreach (T1 key in c.KeySet())
@@ -2016,7 +2016,7 @@ namespace Edu.Stanford.Nlp.Stats
 					{
 						throw new Exception();
 					}
-					double value = double.ParseDouble(tokens[1]);
+					double value = double.Parse(tokens[1]);
 					counter.SetCount(m.NewInstance(tokens[0]), value);
 				}
 				@in.Close();
@@ -2093,7 +2093,7 @@ namespace Edu.Stanford.Nlp.Stats
 					string outer = tuple[0];
 					string inner = tuple[1];
 					string valStr = tuple[2];
-					tdc.SetCount(m1.NewInstance(outer.Trim()), m2.NewInstance(inner.Trim()), double.ParseDouble(valStr.Trim()));
+					tdc.SetCount(m1.NewInstance(outer.Trim()), m2.NewInstance(inner.Trim()), double.Parse(valStr.Trim()));
 				}
 				@in.Close();
 			}
@@ -2122,7 +2122,7 @@ namespace Edu.Stanford.Nlp.Stats
 					string outer = tuple[0];
 					string inner = tuple[1];
 					string valStr = tuple[2];
-					tdc.IncrementCount(m1.NewInstance(outer.Trim()), m2.NewInstance(inner.Trim()), double.ParseDouble(valStr.Trim()));
+					tdc.IncrementCount(m1.NewInstance(outer.Trim()), m2.NewInstance(inner.Trim()), double.Parse(valStr.Trim()));
 				}
 				@in.Close();
 			}

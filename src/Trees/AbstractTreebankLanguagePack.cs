@@ -387,18 +387,18 @@ namespace Edu.Stanford.Nlp.Trees
 
 		/// <summary>
 		/// Returns a
-		/// <see cref="Java.Util.Function.IFunction{T, R}">IFunction{T, R}</see>
+		/// <see cref="Java.Util.Function.Func{T, R}">Func{T, R}</see>
 		/// object that maps Strings to Strings according
 		/// to this TreebankLanguagePack's basicCategory() method.
 		/// </summary>
 		/// <returns>The String-&gt;String Function object</returns>
-		public virtual IFunction<string, string> GetBasicCategoryFunction()
+		public virtual Func<string, string> GetBasicCategoryFunction()
 		{
 			return new AbstractTreebankLanguagePack.BasicCategoryStringFunction(this);
 		}
 
 		[System.Serializable]
-		private class BasicCategoryStringFunction : IFunction<string, string>
+		private class BasicCategoryStringFunction : Func<string, string>
 		{
 			private const long serialVersionUID = 1L;
 
@@ -416,7 +416,7 @@ namespace Edu.Stanford.Nlp.Trees
 		}
 
 		[System.Serializable]
-		private class CategoryAndFunctionStringFunction : IFunction<string, string>
+		private class CategoryAndFunctionStringFunction : Func<string, string>
 		{
 			private const long serialVersionUID = 1L;
 
@@ -512,12 +512,12 @@ namespace Edu.Stanford.Nlp.Trees
 
 		/// <summary>
 		/// Returns a
-		/// <see cref="Java.Util.Function.IFunction{T, R}">IFunction{T, R}</see>
+		/// <see cref="Java.Util.Function.Func{T, R}">Func{T, R}</see>
 		/// object that maps Strings to Strings according
 		/// to this TreebankLanguagePack's categoryAndFunction() method.
 		/// </summary>
 		/// <returns>The String-&gt;String Function object</returns>
-		public virtual IFunction<string, string> GetCategoryAndFunctionFunction()
+		public virtual Func<string, string> GetCategoryAndFunctionFunction()
 		{
 			return new AbstractTreebankLanguagePack.CategoryAndFunctionStringFunction(this);
 		}

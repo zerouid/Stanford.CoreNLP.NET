@@ -853,7 +853,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 					IntTaggedWord tempHead = new IntTaggedWord(fields[0], '/', wordIndex, tagIndex);
 					IntTaggedWord tempArg = new IntTaggedWord(fields[2], '/', wordIndex, tagIndex);
 					IntDependency tempDependency = new IntDependency(tempHead, tempArg, fields[3].Equals(Left), distance);
-					double count = double.ParseDouble(fields[5]);
+					double count = double.Parse(fields[5]);
 					if (doingStop)
 					{
 						ExpandStop(tempDependency, distance, count, false);

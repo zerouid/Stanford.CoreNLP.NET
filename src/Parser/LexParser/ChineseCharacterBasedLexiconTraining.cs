@@ -197,7 +197,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			}
 			if (argMap.Contains("-lengthPenalty"))
 			{
-				ctpp.lengthPenalty = double.ParseDouble((argMap["-lengthPenalty"])[0]);
+				ctpp.lengthPenalty = double.Parse((argMap["-lengthPenalty"])[0]);
 			}
 			if (argMap.Contains("-penaltyType"))
 			{

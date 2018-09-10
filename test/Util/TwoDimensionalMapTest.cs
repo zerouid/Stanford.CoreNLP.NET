@@ -194,7 +194,7 @@ namespace Edu.Stanford.Nlp.Util
 			TwoDimensionalMap<string, string, string> m2 = TwoDimensionalMap.TreeMap();
 			m2.AddAll(m1, Functions.IdentityFunction<string>());
 			NUnit.Framework.Assert.AreEqual(m1, m2);
-			IFunction<string, int> valueOf = null;
+			Func<string, int> valueOf = null;
 			TwoDimensionalMap<string, string, int> m3 = TwoDimensionalMap.HashMap();
 			m3.AddAll(m1, valueOf);
 			NUnit.Framework.Assert.AreEqual(m1.Size(), m3.Size());

@@ -12,7 +12,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 	public class CoreMapSequenceMatcher<T> : SequenceMatcher<T>
 		where T : ICoreMap
 	{
-		protected internal static readonly IFunction<IList<ICoreMap>, string> CoremapListToStringConverter = null;
+		protected internal static readonly Func<IList<ICoreMap>, string> CoremapListToStringConverter = null;
 
 		public CoreMapSequenceMatcher(SequencePattern<T> pattern, IList<T> tokens)
 			: base(pattern, tokens)

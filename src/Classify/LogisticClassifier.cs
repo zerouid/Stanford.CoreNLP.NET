@@ -415,7 +415,7 @@ namespace Edu.Stanford.Nlp.Classify
 		public static void Main(string[] args)
 		{
 			Properties prop = StringUtils.ArgsToProperties(args);
-			double l1reg = double.ParseDouble(prop.GetProperty("l1reg", "0.0"));
+			double l1reg = double.Parse(prop.GetProperty("l1reg", "0.0"));
 			Dataset<string, string> ds = new Dataset<string, string>();
 			foreach (string line in ObjectBank.GetLineIterator(new File(prop.GetProperty("trainFile"))))
 			{

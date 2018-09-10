@@ -12,7 +12,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 	/// <summary>Implements linear rule smoothing a la Petrov et al.</summary>
 	/// <remarks>Implements linear rule smoothing a la Petrov et al. (2006).</remarks>
 	/// <author>Spence Green</author>
-	public class LinearGrammarSmoother : IFunction<Pair<UnaryGrammar, BinaryGrammar>, Pair<UnaryGrammar, BinaryGrammar>>
+	public class LinearGrammarSmoother : Func<Pair<UnaryGrammar, BinaryGrammar>, Pair<UnaryGrammar, BinaryGrammar>>
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Parser.Lexparser.LinearGrammarSmoother));

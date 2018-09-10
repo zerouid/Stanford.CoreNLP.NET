@@ -394,7 +394,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		{
 			// Some useful variables
 			IList<CoreLabel> tokens = sentence.Get(typeof(CoreAnnotations.TokensAnnotation));
-			IFunction<CoreLabel, string> glossFn = null;
+			Func<CoreLabel, string> glossFn = null;
 			int quantIndex = quantifier.Index();
 			// Look forward a bit too, if the head is a number.
 			int[] positiveOffsetToCheck = "CD".Equals(tokens[quantIndex - 1].Tag()) ? new int[] { 2, 1, 0 } : new int[] { 0 };

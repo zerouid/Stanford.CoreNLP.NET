@@ -48,7 +48,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// </remarks>
 	/// <author>Kristina Toutanova (kristina@cs.stanford.edu)</author>
 	/// <author>Christopher Manning</author>
-	public class Morphology : IFunction
+	public class Morphology : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Process.Morphology));

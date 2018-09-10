@@ -295,7 +295,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 						{
 							if (obj is string)
 							{
-								sum += double.ParseDouble((string)obj);
+								sum += double.Parse((string)obj);
 							}
 							else
 							{

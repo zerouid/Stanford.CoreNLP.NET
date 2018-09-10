@@ -96,7 +96,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		/// <param name="trainingDataDump">The path to save the training data, as a set of labeled featurized datums.</param>
 		/// <param name="featurizer">The featurizer to use for this classifier.</param>
 		/// <returns>A factory for creating searchers from a given dependency tree.</returns>
-		IClauseSplitter Train(IStream<Pair<ICoreMap, ICollection<Pair<Span, Span>>>> trainingData, Optional<File> modelPath, Optional<File> trainingDataDump, ClauseSplitterSearchProblem.IFeaturizer featurizer);
+		IClauseSplitter Train(IEnumerable<Pair<ICoreMap, ICollection<Pair<Span, Span>>>> trainingData, Optional<File> modelPath, Optional<File> trainingDataDump, ClauseSplitterSearchProblem.IFeaturizer featurizer);
 
 		// Parse options
 		// Generally useful objects
@@ -124,7 +124,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		// Step 2: Train classifier
 		// Step 3: Check accuracy of classifier
 		// Step 5: return factory
-		IClauseSplitter Train(IStream<Pair<ICoreMap, ICollection<Pair<Span, Span>>>> trainingData, File modelPath, File trainingDataDump);
+		IClauseSplitter Train(IEnumerable<Pair<ICoreMap, ICollection<Pair<Span, Span>>>> trainingData, File modelPath, File trainingDataDump);
 
 		/// <summary>Load a factory model from a given path.</summary>
 		/// <remarks>

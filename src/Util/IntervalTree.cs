@@ -1085,7 +1085,7 @@ namespace Edu.Stanford.Nlp.Util
 			return false;
 		}
 
-		public static IList<T> GetNonOverlapping<T, E, _T2, _T3>(IList<_T2> items, IFunction<_T3> toIntervalFunc)
+		public static IList<T> GetNonOverlapping<T, E, _T2, _T3>(IList<_T2> items, Func<_T3> toIntervalFunc)
 			where E : IComparable<E>
 			where _T2 : T
 		{
@@ -1103,7 +1103,7 @@ namespace Edu.Stanford.Nlp.Util
 			return nonOverlapping;
 		}
 
-		public static IList<T> GetNonOverlapping<T, E, _T2, _T3, _T4>(IList<_T2> items, IFunction<_T3> toIntervalFunc, IComparator<_T4> compareFunc)
+		public static IList<T> GetNonOverlapping<T, E, _T2, _T3, _T4>(IList<_T2> items, Func<_T3> toIntervalFunc, IComparator<_T4> compareFunc)
 			where E : IComparable<E>
 			where _T2 : T
 		{
@@ -1117,7 +1117,7 @@ namespace Edu.Stanford.Nlp.Util
 			where E : IComparable<E>
 			where _T2 : T
 		{
-			IFunction<T, Interval<E>> toIntervalFunc = null;
+			Func<T, Interval<E>> toIntervalFunc = null;
 			return GetNonOverlapping(items, toIntervalFunc, compareFunc);
 		}
 
@@ -1126,7 +1126,7 @@ namespace Edu.Stanford.Nlp.Util
 			where E : IComparable<E>
 			where _T2 : T
 		{
-			IFunction<T, Interval<E>> toIntervalFunc = null;
+			Func<T, Interval<E>> toIntervalFunc = null;
 			return GetNonOverlapping(items, toIntervalFunc);
 		}
 
@@ -1141,7 +1141,7 @@ namespace Edu.Stanford.Nlp.Util
 			internal double score;
 		}
 
-		public static IList<T> GetNonOverlappingMaxScore<T, E, _T2, _T3, _T4>(IList<_T2> items, IFunction<_T3> toIntervalFunc, IToDoubleFunction<_T4> scoreFunc)
+		public static IList<T> GetNonOverlappingMaxScore<T, E, _T2, _T3, _T4>(IList<_T2> items, Func<_T3> toIntervalFunc, IToDoubleFunction<_T4> scoreFunc)
 			where E : IComparable<E>
 			where _T2 : T
 		{
@@ -1237,11 +1237,11 @@ namespace Edu.Stanford.Nlp.Util
 			where E : IComparable<E>
 			where _T2 : T
 		{
-			IFunction<T, Interval<E>> toIntervalFunc = null;
+			Func<T, Interval<E>> toIntervalFunc = null;
 			return GetNonOverlappingMaxScore(items, toIntervalFunc, scoreFunc);
 		}
 
-		public static IList<T> GetNonNested<T, E, _T2, _T3, _T4>(IList<_T2> items, IFunction<_T3> toIntervalFunc, IComparator<_T4> compareFunc)
+		public static IList<T> GetNonNested<T, E, _T2, _T3, _T4>(IList<_T2> items, Func<_T3> toIntervalFunc, IComparator<_T4> compareFunc)
 			where E : IComparable<E>
 			where _T2 : T
 		{

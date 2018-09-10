@@ -1016,7 +1016,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			if (op.trainOptions.ruleSmoothing)
 			{
 				log.Info("Smoothing PCFG...");
-				IFunction<Pair<UnaryGrammar, BinaryGrammar>, Pair<UnaryGrammar, BinaryGrammar>> smoother = new LinearGrammarSmoother(op.trainOptions, stateIndex, tagIndex);
+				Func<Pair<UnaryGrammar, BinaryGrammar>, Pair<UnaryGrammar, BinaryGrammar>> smoother = new LinearGrammarSmoother(op.trainOptions, stateIndex, tagIndex);
 				bgug = smoother.Apply(bgug);
 				Timing.Tick("done.");
 			}
@@ -1225,7 +1225,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// <li>
 		/// <c>-escaper class</c>
 		/// Specify a class of type
-		/// <see cref="Java.Util.Function.IFunction{T, R}"/>
+		/// <see cref="Java.Util.Function.Func{T, R}"/>
 		/// &lt;List&lt;HasWord&gt;,List&lt;HasWord&gt;&gt; to do
 		/// customized escaping of tokenized text.  This class will be run over the
 		/// tokenized text and can fix the representation of tokens. For instance,
@@ -1423,7 +1423,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			string tokenizerMethod = null;
 			bool tokenized = false;
 			// whether or not the input file has already been tokenized
-			IFunction<IList<IHasWord>, IList<IHasWord>> escaper = null;
+			Func<IList<IHasWord>, IList<IHasWord>> escaper = null;
 			string tagDelimiter = null;
 			string sentenceDelimiter = null;
 			string elementDelimiter = null;

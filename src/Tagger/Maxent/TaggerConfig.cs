@@ -393,7 +393,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual double GetSigmaSquared()
 		{
-			return double.ParseDouble(GetProperty("sigmaSquared"));
+			return double.Parse(GetProperty("sigmaSquared"));
 		}
 
 		public virtual int GetIterations()
@@ -428,12 +428,12 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual bool OccurringTagsOnly()
 		{
-			return bool.ParseBoolean(GetProperty("occurringTagsOnly"));
+			return bool.Parse(GetProperty("occurringTagsOnly"));
 		}
 
 		public virtual bool PossibleTagsOnly()
 		{
-			return bool.ParseBoolean(GetProperty("possibleTagsOnly"));
+			return bool.Parse(GetProperty("possibleTagsOnly"));
 		}
 
 		public virtual string GetLang()
@@ -465,7 +465,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual bool GetLearnClosedClassTags()
 		{
-			return bool.ParseBoolean(GetProperty("learnClosedClassTags"));
+			return bool.Parse(GetProperty("learnClosedClassTags"));
 		}
 
 		public virtual int GetClosedTagThreshold()
@@ -485,7 +485,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual bool GetDebug()
 		{
-			return bool.ParseBoolean(GetProperty("debug"));
+			return bool.Parse(GetProperty("debug"));
 		}
 
 		public virtual string GetDebugPrefix()
@@ -510,7 +510,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual bool GetTokenize()
 		{
-			return bool.ParseBoolean(GetProperty("tokenize"));
+			return bool.Parse(GetProperty("tokenize"));
 		}
 
 		public virtual string GetEncoding()
@@ -520,7 +520,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual double GetRegL1()
 		{
-			return double.ParseDouble(GetProperty("regL1"));
+			return double.Parse(GetProperty("regL1"));
 		}
 
 		public virtual string[] GetXMLInput()
@@ -530,17 +530,17 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 
 		public virtual bool GetVerbose()
 		{
-			return bool.ParseBoolean(GetProperty("verbose"));
+			return bool.Parse(GetProperty("verbose"));
 		}
 
 		public virtual bool GetVerboseResults()
 		{
-			return bool.ParseBoolean(GetProperty("verboseResults"));
+			return bool.Parse(GetProperty("verboseResults"));
 		}
 
 		public virtual bool GetSGML()
 		{
-			return bool.ParseBoolean(GetProperty("sgml"));
+			return bool.Parse(GetProperty("sgml"));
 		}
 
 		public virtual int GetNThreads()
@@ -608,7 +608,7 @@ namespace Edu.Stanford.Nlp.Tagger.Maxent
 				}
 				else
 				{
-					return double.ParseDouble(approx);
+					return double.Parse(approx);
 				}
 			}
 		}

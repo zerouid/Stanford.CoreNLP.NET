@@ -237,7 +237,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 													{
 														if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-evalGF"))
 														{
-															this.SetEvalGF(bool.ParseBoolean(args[i + 1]));
+															this.SetEvalGF(bool.Parse(args[i + 1]));
 															i += 2;
 														}
 														else

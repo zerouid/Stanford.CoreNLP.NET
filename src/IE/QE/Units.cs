@@ -172,7 +172,7 @@ namespace Edu.Stanford.Nlp.IE.QE
 					double scale = 1.0;
 					if (fields.Length > iDefaultUnitScale)
 					{
-						scale = double.ParseDouble(fields[iDefaultUnitScale]);
+						scale = double.Parse(fields[iDefaultUnitScale]);
 					}
 					unitToDefaultUnits[unit.GetName()] = Pair.MakePair(fields[iDefaultUnit], scale);
 				}

@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		private static readonly Random r = new Random();
 
 		// private static final double EPS = 1e-6;
-		private static double[] EstimateGradient(IFunction f, double[] x, int[] testIndices, double eps)
+		private static double[] EstimateGradient(Func f, double[] x, int[] testIndices, double eps)
 		{
 			double[] lowAnswer = new double[testIndices.Length];
 			double[] answer = new double[testIndices.Length];

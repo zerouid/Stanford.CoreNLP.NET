@@ -26,7 +26,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 		public abstract string[] GetCmd();
 
-		public abstract void OutputToCmd(OutputStream outputStream);
+		public abstract void OutputToCmd(Stream outputStream);
 
 		protected internal static string[] GetCmd(string cmdStr)
 		{
@@ -67,7 +67,7 @@ namespace Edu.Stanford.Nlp.Optimization
 				}
 				else
 				{
-					outputStream = new SystemUtils.ProcessOutputStream(cmd, new PrintWriter(System.Console.Error));
+					outputStream = new SystemUtils.ProcessOutputStream(cmd, System.Console.Error);
 				}
 				OutputToCmd(outputStream);
 				outputStream.Close();

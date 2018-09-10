@@ -918,7 +918,7 @@ edge2Loop_break: ;
 		/// <exception cref="System.Exception"/>
 		public static string SemgrexFromGraph(SemanticGraph sg, ICollection<IndexedWord> wildcardNodes, bool useTag, bool useWord, IDictionary<IndexedWord, string> nodeNameMap)
 		{
-			IFunction<IndexedWord, string> transformNode = null;
+			Func<IndexedWord, string> transformNode = null;
 			return SemgrexFromGraph(sg, wildcardNodes, nodeNameMap, transformNode);
 		}
 
@@ -930,7 +930,7 @@ edge2Loop_break: ;
 		/// function implementations (if useWord and useTag is true, the value is "{word: vertex.word; tag: vertex.tag}").
 		/// </remarks>
 		/// <exception cref="System.Exception"/>
-		public static string SemgrexFromGraph(SemanticGraph sg, ICollection<IndexedWord> wildcardNodes, IDictionary<IndexedWord, string> nodeNameMap, IFunction<IndexedWord, string> wordTransformation)
+		public static string SemgrexFromGraph(SemanticGraph sg, ICollection<IndexedWord> wildcardNodes, IDictionary<IndexedWord, string> nodeNameMap, Func<IndexedWord, string> wordTransformation)
 		{
 			IndexedWord patternRoot = sg.GetFirstRoot();
 			StringWriter buf = new StringWriter();
@@ -960,7 +960,7 @@ edge2Loop_break: ;
 		/// function implementations.
 		/// </remarks>
 		protected internal static string SemgrexFromGraphHelper(IndexedWord vertice, SemanticGraph sg, ICollection<IndexedWord> tabu, ICollection<SemanticGraphEdge> seenEdges, bool useWordAsLabel, bool nameEdges, ICollection<IndexedWord> wildcardNodes
-			, IDictionary<IndexedWord, string> nodeNameMap, bool orderedNodes, IFunction<IndexedWord, string> nodeValuesTransformation)
+			, IDictionary<IndexedWord, string> nodeNameMap, bool orderedNodes, Func<IndexedWord, string> nodeValuesTransformation)
 		{
 			StringWriter buf = new StringWriter();
 			// If the node is a wildcarded one, treat it as a {}, meaning any match.  Currently these will not
@@ -1070,7 +1070,7 @@ edge2Loop_break: ;
 
 		/// <summary>Same as semgrexFromGraph except the node traversal is ordered by sorting</summary>
 		/// <exception cref="System.Exception"/>
-		public static string SemgrexFromGraphOrderedNodes(SemanticGraph sg, ICollection<IndexedWord> wildcardNodes, IDictionary<IndexedWord, string> nodeNameMap, IFunction<IndexedWord, string> wordTransformation)
+		public static string SemgrexFromGraphOrderedNodes(SemanticGraph sg, ICollection<IndexedWord> wildcardNodes, IDictionary<IndexedWord, string> nodeNameMap, Func<IndexedWord, string> wordTransformation)
 		{
 			IndexedWord patternRoot = sg.GetFirstRoot();
 			StringWriter buf = new StringWriter();

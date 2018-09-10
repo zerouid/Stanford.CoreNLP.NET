@@ -19,7 +19,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// by calling one of the various stem(something) methods.
 	/// </remarks>
 	/// <author>Sepandar Kamvar (sdkamvar@stanford.edu)</author>
-	public class Stemmer : IFunction<Word, Word>
+	public class Stemmer : Func<Word, Word>
 	{
 		private char[] b;
 

@@ -765,7 +765,7 @@ namespace Edu.Stanford.Nlp.Util
 			return prefixesAndSuffixes;
 		}
 
-		public static IList<T> MergeList<T, M, _T2>(IList<_T2> list, ICollection<M> matched, IFunction<M, Interval<int>> toIntervalFunc, IFunction<IList<T>, T> aggregator)
+		public static IList<T> MergeList<T, M, _T2>(IList<_T2> list, ICollection<M> matched, Func<M, Interval<int>> toIntervalFunc, Func<IList<T>, T> aggregator)
 			where _T2 : T
 		{
 			IList<Interval<int>> matchedIntervals = new List<Interval<int>>(matched.Count);
@@ -776,7 +776,7 @@ namespace Edu.Stanford.Nlp.Util
 			return MergeList(list, matchedIntervals, aggregator);
 		}
 
-		public static IList<T> MergeList<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, IFunction<IList<T>, T> aggregator)
+		public static IList<T> MergeList<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, Func<IList<T>, T> aggregator)
 			where _T1 : T
 			where _T2 : IHasInterval<int>
 		{
@@ -784,7 +784,7 @@ namespace Edu.Stanford.Nlp.Util
 			return MergeListWithSortedMatched(list, matched, aggregator);
 		}
 
-		public static IList<T> MergeListWithSortedMatched<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, IFunction<IList<T>, T> aggregator)
+		public static IList<T> MergeListWithSortedMatched<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, Func<IList<T>, T> aggregator)
 			where _T1 : T
 			where _T2 : IHasInterval<int>
 		{
@@ -812,7 +812,7 @@ namespace Edu.Stanford.Nlp.Util
 			return merged;
 		}
 
-		public static IList<T> MergeListWithSortedMatchedPreAggregated<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, IFunction<T, Interval<int>> toIntervalFunc)
+		public static IList<T> MergeListWithSortedMatchedPreAggregated<T, _T1, _T2>(IList<_T1> list, IList<_T2> matched, Func<T, Interval<int>> toIntervalFunc)
 			where _T1 : T
 			where _T2 : T
 		{
@@ -859,7 +859,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// non-hashable. Alternatively, it lets you define an alternate hash function
 		/// for them for limited-use hashing.
 		/// </remarks>
-		public static ICollection<ObjType> UniqueNonhashableObjects<ObjType, Hashable>(ICollection<ObjType> objects, IFunction<ObjType, Hashable> customHasher)
+		public static ICollection<ObjType> UniqueNonhashableObjects<ObjType, Hashable>(ICollection<ObjType> objects, Func<ObjType, Hashable> customHasher)
 		{
 			IDictionary<Hashable, ObjType> hashesToObjects = Generics.NewHashMap();
 			foreach (ObjType @object in objects)
@@ -968,7 +968,7 @@ namespace Edu.Stanford.Nlp.Util
 		}
 
 		/// <summary>Transforms the keyset of collection according to the given Function and returns a set of the keys.</summary>
-		public static ICollection<T2> TransformAsSet<T1, T2, _T2>(ICollection<_T2> original, IFunction<T1, T2> f)
+		public static ICollection<T2> TransformAsSet<T1, T2, _T2>(ICollection<_T2> original, Func<T1, T2> f)
 			where _T2 : T1
 		{
 			ICollection<T2> transformed = Generics.NewHashSet();
@@ -980,7 +980,7 @@ namespace Edu.Stanford.Nlp.Util
 		}
 
 		/// <summary>Transforms the keyset of collection according to the given Function and returns a list.</summary>
-		public static IList<T2> TransformAsList<T1, T2, _T2>(ICollection<_T2> original, IFunction<T1, T2> f)
+		public static IList<T2> TransformAsList<T1, T2, _T2>(ICollection<_T2> original, Func<T1, T2> f)
 			where _T2 : T1
 		{
 			IList<T2> transformed = new List<T2>();

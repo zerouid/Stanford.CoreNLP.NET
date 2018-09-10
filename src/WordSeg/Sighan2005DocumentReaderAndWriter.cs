@@ -102,7 +102,7 @@ namespace Edu.Stanford.Nlp.Wordseg
 		}
 
 		[System.Serializable]
-		internal class CTBDocumentParser : IFunction<string, IList<CoreLabel>>
+		internal class CTBDocumentParser : Func<string, IList<CoreLabel>>
 		{
 			private const long serialVersionUID = 3260297180259462337L;
 

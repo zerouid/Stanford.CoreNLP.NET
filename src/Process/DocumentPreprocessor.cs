@@ -61,7 +61,7 @@ namespace Edu.Stanford.Nlp.Process
 
 		private string[] sentenceFinalPuncWords = DefaultSentenceDelims;
 
-		private IFunction<IList<IHasWord>, IList<IHasWord>> escaper;
+		private Func<IList<IHasWord>, IList<IHasWord>> escaper;
 
 		private string sentenceDelimiter;
 
@@ -192,7 +192,7 @@ namespace Edu.Stanford.Nlp.Process
 
 		/// <summary>Set an escaper.</summary>
 		/// <param name="e">The escaper</param>
-		public virtual void SetEscaper(IFunction<IList<IHasWord>, IList<IHasWord>> e)
+		public virtual void SetEscaper(Func<IList<IHasWord>, IList<IHasWord>> e)
 		{
 			escaper = e;
 		}
@@ -275,7 +275,7 @@ namespace Edu.Stanford.Nlp.Process
 
 			private readonly ICollection<string> delimFollowers;
 
-			private readonly IFunction<string, string[]> splitTag;
+			private readonly Func<string, string[]> splitTag;
 
 			private IList<IHasWord> nextSent;
 
@@ -337,7 +337,7 @@ namespace Edu.Stanford.Nlp.Process
 				}
 			}
 
-			private sealed class _IFunction_281 : IFunction<string, string[]>
+			private sealed class _IFunction_281 : Func<string, string[]>
 			{
 				public _IFunction_281()
 				{

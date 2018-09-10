@@ -60,7 +60,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 		private static NumberFormat nf = new DecimalFormat("00.0");
 
-		public StochasticDiffFunctionTester(IFunction function)
+		public StochasticDiffFunctionTester(Func function)
 		{
 			// check for derivatives
 			if (!(function is AbstractStochasticCachingDiffFunction))

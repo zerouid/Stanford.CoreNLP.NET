@@ -177,7 +177,7 @@ namespace Edu.Stanford.Nlp.Parser.Shiftreduce
 																				{
 																					if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-decayLearningRate"))
 																					{
-																						TrainOptions().decayLearningRate = double.ParseDouble(args[i + 1]);
+																						TrainOptions().decayLearningRate = double.Parse(args[i + 1]);
 																						i += 2;
 																					}
 																				}

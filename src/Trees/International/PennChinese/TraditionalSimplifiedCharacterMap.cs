@@ -32,7 +32,7 @@ namespace Edu.Stanford.Nlp.Trees.International.Pennchinese
 	/// </ul>
 	/// </remarks>
 	/// <author>John Bauer</author>
-	public class TraditionalSimplifiedCharacterMap : IFunction<string, string>
+	public class TraditionalSimplifiedCharacterMap : Func<string, string>
 	{
 		internal IDictionary<string, string> map = Generics.NewHashMap();
 

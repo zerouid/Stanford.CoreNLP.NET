@@ -274,7 +274,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 
 		SequenceMatchResult.MatchedGroupInfo<T> GroupInfo(string var);
 
-		public class GroupToIntervalFunc<Mr> : IFunction<MR, Interval<int>>
+		public class GroupToIntervalFunc<Mr> : Func<MR, Interval<int>>
 			where Mr : IMatchResult
 		{
 			internal int group;

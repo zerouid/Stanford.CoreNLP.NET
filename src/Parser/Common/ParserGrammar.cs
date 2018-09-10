@@ -26,7 +26,7 @@ namespace Edu.Stanford.Nlp.Parser.Common
 	/// Perhaps Java 8 will allow that
 	/// </remarks>
 	/// <author>John Bauer</author>
-	public abstract class ParserGrammar : IFunction<IList<IHasWord>, Tree>
+	public abstract class ParserGrammar : Func<IList<IHasWord>, Tree>
 	{
 		private static Redwood.RedwoodChannels logger = Redwood.Channels(typeof(ParserGrammar));
 
@@ -69,19 +69,19 @@ namespace Edu.Stanford.Nlp.Parser.Common
 			IList<IHasWord> tokens = Tokenize(sentence);
 			if (GetOp().testOptions.preTag)
 			{
-				IFunction<IList<IHasWord>, IList<TaggedWord>> tagger = LoadTagger();
+				Func<IList<IHasWord>, IList<TaggedWord>> tagger = LoadTagger();
 				tokens = tagger.Apply(tokens);
 			}
 			return Parse(tokens);
 		}
 
 		[System.NonSerialized]
-		private IFunction<IList<IHasWord>, IList<TaggedWord>> tagger;
+		private Func<IList<IHasWord>, IList<TaggedWord>> tagger;
 
 		[System.NonSerialized]
 		private string taggerPath;
 
-		public virtual IFunction<IList<IHasWord>, IList<TaggedWord>> LoadTagger()
+		public virtual Func<IList<IHasWord>, IList<TaggedWord>> LoadTagger()
 		{
 			Options op = GetOp();
 			if (op.testOptions.preTag)
@@ -119,7 +119,7 @@ namespace Edu.Stanford.Nlp.Parser.Common
 			IList<TaggedWord> tagged;
 			if (GetOp().testOptions.preTag)
 			{
-				IFunction<IList<IHasWord>, IList<TaggedWord>> tagger = LoadTagger();
+				Func<IList<IHasWord>, IList<TaggedWord>> tagger = LoadTagger();
 				tagged = tagger.Apply(tokens);
 			}
 			else

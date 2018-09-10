@@ -246,8 +246,8 @@ namespace Edu.Stanford.Nlp.Patterns.Surface
 				string sentsFile = props.GetProperty("sentsFile");
 				IDictionary<string, DataInstance> sents = IOUtils.ReadObjectFromFile(sentsFile);
 				System.Console.Out.WriteLine("Read the sents file: " + sentsFile);
-				double perSelectRand = double.ParseDouble(props.GetProperty("perSelectRand"));
-				double perSelectNeg = double.ParseDouble(props.GetProperty("perSelectNeg"));
+				double perSelectRand = double.Parse(props.GetProperty("perSelectRand"));
+				double perSelectNeg = double.Parse(props.GetProperty("perSelectNeg"));
 			}
 			catch (Exception e)
 			{

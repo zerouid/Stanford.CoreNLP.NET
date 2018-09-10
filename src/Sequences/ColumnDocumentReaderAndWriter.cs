@@ -51,7 +51,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		}
 
 		[System.Serializable]
-		private class ColumnDocParser : IFunction<string, IList<CoreLabel>>
+		private class ColumnDocParser : Func<string, IList<CoreLabel>>
 		{
 			private const long serialVersionUID = -6266332661459630572L;
 

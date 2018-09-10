@@ -89,7 +89,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 		private int its;
 
-		private readonly IFunction monitor;
+		private readonly Func monitor;
 
 		private bool quiet;
 
@@ -182,7 +182,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		private QNMinimizer.EScaling scaleOpt = QNMinimizer.EScaling.Diagonal;
 
 		public QNMinimizer()
-			: this((IFunction)null)
+			: this((Func)null)
 		{
 		}
 
@@ -196,7 +196,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		{
 		}
 
-		public QNMinimizer(IFunction monitor)
+		public QNMinimizer(Func monitor)
 		{
 			// the number of function evaluations
 			// the number of s,y pairs to retain for BFGS
@@ -219,12 +219,12 @@ namespace Edu.Stanford.Nlp.Optimization
 			this.monitor = monitor;
 		}
 
-		public QNMinimizer(IFunction monitor, int m)
+		public QNMinimizer(Func monitor, int m)
 			: this(monitor, m, false)
 		{
 		}
 
-		public QNMinimizer(IFunction monitor, int m, bool useRobustOptions)
+		public QNMinimizer(Func monitor, int m, bool useRobustOptions)
 		{
 			this.monitor = monitor;
 			mem = m;
@@ -410,7 +410,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 			private int maxSize = 100;
 
-			private IFunction mon = null;
+			private Func mon = null;
 
 			private bool quiet = false;
 
@@ -420,7 +420,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 			private double[] xBest;
 
-			internal Record(QNMinimizer _enclosing, IFunction monitor, double tolerance, PrintWriter output)
+			internal Record(QNMinimizer _enclosing, Func monitor, double tolerance, PrintWriter output)
 			{
 				this._enclosing = _enclosing;
 				// convergence options.
@@ -441,7 +441,7 @@ namespace Edu.Stanford.Nlp.Optimization
 				this.outputFile = output;
 			}
 
-			internal Record(QNMinimizer _enclosing, IFunction monitor, double tolerance, double eps)
+			internal Record(QNMinimizer _enclosing, Func monitor, double tolerance, double eps)
 			{
 				this._enclosing = _enclosing;
 				this.mon = monitor;
@@ -982,7 +982,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		/// update.
 		/// </remarks>
 		/// <exception cref="Edu.Stanford.Nlp.Optimization.QNMinimizer.SurpriseConvergence"/>
-		private void ComputeDir(double[] dir, double[] fg, double[] x, QNMinimizer.QNInfo qn, IFunction func, StringBuilder sb)
+		private void ComputeDir(double[] dir, double[] fg, double[] x, QNMinimizer.QNInfo qn, Func func, StringBuilder sb)
 		{
 			System.Array.Copy(fg, 0, dir, 0, fg.Length);
 			int mmm = qn.Size();
@@ -1404,7 +1404,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			this.lambdaOWL = lambda;
 		}
 
-		private static double[] ProjectOWL(double[] x, double[] orthant, IFunction func)
+		private static double[] ProjectOWL(double[] x, double[] orthant, Func func)
 		{
 			if (func is IHasRegularizerParamRange)
 			{
@@ -1430,7 +1430,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return x;
 		}
 
-		private static double L1NormOWL(double[] x, IFunction func)
+		private static double L1NormOWL(double[] x, Func func)
 		{
 			double sum = 0.0;
 			if (func is IHasRegularizerParamRange)
@@ -1451,7 +1451,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return sum;
 		}
 
-		private static void ConstrainSearchDir(double[] dir, double[] fg, double[] x, IFunction func)
+		private static void ConstrainSearchDir(double[] dir, double[] fg, double[] x, Func func)
 		{
 			if (func is IHasRegularizerParamRange)
 			{
@@ -1476,7 +1476,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			}
 		}
 
-		private double[] PseudoGradientOWL(double[] x, double[] grad, IFunction func)
+		private double[] PseudoGradientOWL(double[] x, double[] grad, Func func)
 		{
 			ICollection<int> paramRange = func is IHasRegularizerParamRange ? ((IHasRegularizerParamRange)func).GetRegularizerParamRange(x) : null;
 			double[] newGrad = new double[grad.Length];
@@ -1533,7 +1533,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		/// it only satisfies sufficient descent not the Wolfe conditions.
 		/// </remarks>
 		/// <exception cref="Edu.Stanford.Nlp.Optimization.QNMinimizer.MaxEvaluationsExceeded"/>
-		private double[] LineSearchBacktrackOWL(IFunction func, double[] dir, double[] x, double[] newX, double[] grad, double lastValue, StringBuilder sb)
+		private double[] LineSearchBacktrackOWL(Func func, double[] dir, double[] x, double[] newX, double[] grad, double lastValue, StringBuilder sb)
 		{
 			/* Choose the orthant for the new point. */
 			double[] orthant = new double[x.Length];
@@ -1609,7 +1609,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		* of QNMinimizer. It only satisfies sufficient descent not the Wolfe conditions.
 		*/
 		/// <exception cref="Edu.Stanford.Nlp.Optimization.QNMinimizer.MaxEvaluationsExceeded"/>
-		private double[] LineSearchBacktrack(IFunction func, double[] dir, double[] x, double[] newX, double[] grad, double lastValue, StringBuilder sb)
+		private double[] LineSearchBacktrack(Func func, double[] dir, double[] x, double[] newX, double[] grad, double lastValue, StringBuilder sb)
 		{
 			double normGradInDir = ArrayMath.InnerProduct(dir, grad);
 			sb.Append('(').Append(nf.Format(normGradInDir)).Append(')');

@@ -167,7 +167,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 							double[] wArr = new double[parts.Length];
 							for (int i = 0; i < parts.Length; i++)
 							{
-								wArr[i] = double.ParseDouble(parts[i]);
+								wArr[i] = double.Parse(parts[i]);
 							}
 							listOfWeights.Add(wArr);
 						}

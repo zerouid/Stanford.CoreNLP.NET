@@ -11,6 +11,6 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 	{
 		T Extract(ICollection<Tree> trees);
 
-		T Extract(IEnumerator<Tree> iterator, IFunction<Tree, Tree> f);
+		T Extract(IEnumerator<Tree> iterator, Func<Tree, Tree> f);
 	}
 }

@@ -31,7 +31,7 @@ namespace Edu.Stanford.Nlp.International.Arabic
 	/// </summary>
 	/// <author>Christopher Manning</author>
 	/// <author>Spence Green</author>
-	public class IBMArabicEscaper : IFunction<IList<IHasWord>, IList<IHasWord>>
+	public class IBMArabicEscaper : Func<IList<IHasWord>, IList<IHasWord>>
 	{
 		/// <summary>A logger for this class</summary>
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.International.Arabic.IBMArabicEscaper));

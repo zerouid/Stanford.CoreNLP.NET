@@ -50,17 +50,17 @@ namespace Edu.Stanford.Nlp.Time
 		{
 		}
 
-		public TimeExpression(Interval<int> charOffsets, Interval<int> tokenOffsets, IFunction<ICoreMap, SUTime.Temporal> temporalFunc, double priority, double weight)
+		public TimeExpression(Interval<int> charOffsets, Interval<int> tokenOffsets, Func<ICoreMap, SUTime.Temporal> temporalFunc, double priority, double weight)
 			: base(charOffsets, tokenOffsets, GetSingleAnnotationExtractor(temporalFunc), priority, weight)
 		{
 		}
 
-		protected internal static readonly IFunction<MatchedExpression, TimeExpression> TimeExpressionConverter = null;
+		protected internal static readonly Func<MatchedExpression, TimeExpression> TimeExpressionConverter = null;
 
 		//int tid;     // Time ID
 		// todo [2013]: never read. Can delete? (Set in TimeExpressionExtractorImpl)
 		//int anchorTimeId = -1;
-		private static MatchedExpression.SingleAnnotationExtractor GetSingleAnnotationExtractor(IFunction<ICoreMap, SUTime.Temporal> temporalFunc)
+		private static MatchedExpression.SingleAnnotationExtractor GetSingleAnnotationExtractor(Func<ICoreMap, SUTime.Temporal> temporalFunc)
 		{
 			MatchedExpression.SingleAnnotationExtractor extractFunc = new MatchedExpression.SingleAnnotationExtractor();
 			extractFunc.valueExtractor = null;

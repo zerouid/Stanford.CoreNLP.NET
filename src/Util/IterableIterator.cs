@@ -20,7 +20,7 @@ namespace Edu.Stanford.Nlp.Util
 
 		private IEnumerable<E> iterable;
 
-		private IStream<E> stream;
+		private IEnumerable<E> stream;
 
 		public IterableIterator(IEnumerator<E> it)
 		{
@@ -33,7 +33,7 @@ namespace Edu.Stanford.Nlp.Util
 			this.it = iterable.GetEnumerator();
 		}
 
-		public IterableIterator(IStream<E> stream)
+		public IterableIterator(IEnumerable<E> stream)
 		{
 			this.stream = stream;
 			this.it = stream.Iterator();

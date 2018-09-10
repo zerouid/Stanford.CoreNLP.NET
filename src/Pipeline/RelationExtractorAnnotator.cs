@@ -26,7 +26,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 
 		public RelationExtractorAnnotator(Properties props)
 		{
-			verbose = bool.ParseBoolean(props.GetProperty("sup.relation.verbose", "false"));
+			verbose = bool.Parse(props.GetProperty("sup.relation.verbose", "false"));
 			string relationModel = props.GetProperty("sup.relation.model", DefaultPaths.DefaultSupRelationExRelationModel);
 			try
 			{

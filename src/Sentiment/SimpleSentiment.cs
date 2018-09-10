@@ -197,7 +197,7 @@ namespace Edu.Stanford.Nlp.Sentiment
 		/// and should not be written to thereafter.
 		/// </param>
 		/// <returns>A sentiment classifier, ready to use.</returns>
-		public static SimpleSentiment Train(IStream<SimpleSentiment.SentimentDatum> data, Optional<OutputStream> modelLocation)
+		public static SimpleSentiment Train(IEnumerable<SimpleSentiment.SentimentDatum> data, Optional<OutputStream> modelLocation)
 		{
 			// Some useful variables configuring how we train
 			bool useL1 = true;
@@ -278,23 +278,23 @@ namespace Edu.Stanford.Nlp.Sentiment
 			return new SimpleSentiment(classifier);
 		}
 
-		private static IStream<SimpleSentiment.SentimentDatum> Imdb(string path, SentimentClass label)
+		private static IEnumerable<SimpleSentiment.SentimentDatum> Imdb(string path, SentimentClass label)
 		{
 			return StreamSupport.Stream(IOUtils.IterFilesRecursive(new File(path)).Spliterator(), true).Map(null);
 		}
 
-		private static IStream<SimpleSentiment.SentimentDatum> Stanford(string path)
+		private static IEnumerable<SimpleSentiment.SentimentDatum> Stanford(string path)
 		{
 			return StreamSupport.Stream(IOUtils.ReadLines(path).Spliterator(), true).Map(null);
 		}
 
-		private static IStream<SimpleSentiment.SentimentDatum> Twitter(string path)
+		private static IEnumerable<SimpleSentiment.SentimentDatum> Twitter(string path)
 		{
 			return StreamSupport.Stream(IOUtils.ReadLines(path).Spliterator(), true).Map(null);
 		}
 
 		/// <exception cref="System.IO.IOException"/>
-		private static IStream<SimpleSentiment.SentimentDatum> Unlabelled(string path)
+		private static IEnumerable<SimpleSentiment.SentimentDatum> Unlabelled(string path)
 		{
 			return StreamSupport.Stream(IOUtils.IterFilesRecursive(new File(path)).Spliterator(), true).FlatMap(null);
 		}
@@ -305,7 +305,7 @@ namespace Edu.Stanford.Nlp.Sentiment
 			RedwoodConfiguration.Standard().Apply();
 			Redwood.Util.StartTrack("main");
 			// Read the data
-			IStream<SimpleSentiment.SentimentDatum> data = IStream.Concat(IStream.Concat(IStream.Concat(Imdb("/users/gabor/tmp/aclImdb/train/pos", SentimentClass.Positive), Imdb("/users/gabor/tmp/aclImdb/train/neg", SentimentClass.Negative)), IStream.Concat
+			IEnumerable<SimpleSentiment.SentimentDatum> data = IStream.Concat(IStream.Concat(IStream.Concat(Imdb("/users/gabor/tmp/aclImdb/train/pos", SentimentClass.Positive), Imdb("/users/gabor/tmp/aclImdb/train/neg", SentimentClass.Negative)), IStream.Concat
 				(Imdb("/users/gabor/tmp/aclImdb/test/pos", SentimentClass.Positive), Imdb("/users/gabor/tmp/aclImdb/test/neg", SentimentClass.Negative))), IStream.Concat(IStream.Concat(Stanford("/users/gabor/tmp/train.tsv"), Stanford("/users/gabor/tmp/test.tsv"
 				)), IStream.Concat(Twitter("/users/gabor/tmp/twitter.csv"), Unlabelled("/users/gabor/tmp/wikipedia"))));
 			// Train the model

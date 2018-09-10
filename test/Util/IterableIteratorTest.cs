@@ -46,7 +46,7 @@ namespace Edu.Stanford.Nlp.Util
 			}
 			IterableIterator<int> iter = new IterableIterator<int>(x.GetEnumerator());
 			ISpliterator<int> spliterator = iter.Spliterator();
-			IStream<int> stream = StreamSupport.Stream(spliterator, false);
+			IEnumerable<int> stream = StreamSupport.Stream(spliterator, false);
 			int[] next = new int[] { 0 };
 			stream.ForEach(null);
 		}
@@ -61,7 +61,7 @@ namespace Edu.Stanford.Nlp.Util
 			}
 			IterableIterator<int> iter = new IterableIterator<int>(x.GetEnumerator());
 			ISpliterator<int> spliterator = iter.Spliterator();
-			IStream<int> stream = StreamSupport.Stream(spliterator, true);
+			IEnumerable<int> stream = StreamSupport.Stream(spliterator, true);
 			bool[] seen = new bool[1000];
 			stream.ForEach(null);
 			for (int i_1 = 0; i_1 < 1000; ++i_1)

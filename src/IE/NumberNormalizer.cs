@@ -304,7 +304,7 @@ namespace Edu.Stanford.Nlp.IE
 					}
 					else
 					{
-						return double.ParseDouble(numPart) * magnitude;
+						return double.Parse(numPart) * magnitude;
 					}
 				}
 				else
@@ -315,7 +315,7 @@ namespace Edu.Stanford.Nlp.IE
 					}
 					else
 					{
-						return double.ParseDouble(numPart);
+						return double.Parse(numPart);
 					}
 				}
 			}

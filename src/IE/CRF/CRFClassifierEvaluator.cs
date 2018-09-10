@@ -27,7 +27,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
-		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierEvaluator));
+		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierEvaluator<In>));
 
 		private readonly CRFClassifier<In> classifier;
 
@@ -77,7 +77,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			if (cmdStr != null)
 			{
 				cmdStr = cmdStr.Trim();
-				if (cmdStr.IsEmpty())
+				if (string.IsNullOrEmpty(cmdStr))
 				{
 					cmdStr = null;
 				}
@@ -98,7 +98,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		private double InterpretCmdOutput()
 		{
 			string output = GetOutput();
-			string[] parts = output.Split("\\s+");
+			string[] parts = output.Split();
 			int fScoreIndex = 0;
 			for (; fScoreIndex < parts.Length; fScoreIndex++)
 			{
@@ -110,7 +110,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			fScoreIndex += 1;
 			if (fScoreIndex < parts.Length)
 			{
-				return double.ParseDouble(parts[fScoreIndex]);
+				return double.Parse(parts[fScoreIndex]);
 			}
 			else
 			{
@@ -119,11 +119,11 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			}
 		}
 
-		public override void OutputToCmd(OutputStream outputStream)
+		public override void OutputToCmd(Stream outputStream)
 		{
 			try
 			{
-				PrintWriter pw = IOUtils.EncodedOutputStreamPrintWriter(outputStream, null, true);
+				StreamWriter pw = IOUtils.EncodedOutputStreamPrintWriter(outputStream, null, true);
 				classifier.ClassifyAndWriteAnswers(data, featurizedData, pw, classifier.MakeReaderAndWriter());
 			}
 			catch (IOException ex)

@@ -15,7 +15,7 @@ namespace Edu.Stanford.Nlp.Util
 		{
 			IDictionary<string, string> stringMap = new Dictionary<string, string>();
 			IDictionary<string, int> intMap = new Dictionary<string, int>();
-			IFunction<int, string> toString = new _IFunction_18();
+			Func<int, string> toString = new _IFunction_18();
 			Maps.AddAll(stringMap, intMap, toString);
 			NUnit.Framework.Assert.AreEqual(0, stringMap.Count);
 			intMap["foo"] = 6;
@@ -38,7 +38,7 @@ namespace Edu.Stanford.Nlp.Util
 			NUnit.Framework.Assert.AreEqual("9", stringMap["baz"]);
 		}
 
-		private sealed class _IFunction_18 : IFunction<int, string>
+		private sealed class _IFunction_18 : Func<int, string>
 		{
 			public _IFunction_18()
 			{

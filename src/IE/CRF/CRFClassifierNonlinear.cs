@@ -31,10 +31,7 @@ using Edu.Stanford.Nlp.Optimization;
 using Edu.Stanford.Nlp.Sequences;
 using Edu.Stanford.Nlp.Util;
 using Edu.Stanford.Nlp.Util.Logging;
-
-
-
-
+using Microsoft.Extensions.Configuration;
 
 namespace Edu.Stanford.Nlp.IE.Crf
 {
@@ -48,7 +45,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>
-		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierNonlinear));
+		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.IE.Crf.CRFClassifierNonlinear<In>));
 
 		/// <summary>Parameter weights of the classifier.</summary>
 		private double[][] linearWeights;
@@ -66,8 +63,8 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		{
 		}
 
-		public CRFClassifierNonlinear(Properties props)
-			: base(props)
+		public CRFClassifierNonlinear(IConfiguration props)
+			: base(new SeqClassifierFlags(props)
 		{
 		}
 
@@ -293,11 +290,11 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		}
 
 		/// <exception cref="System.Exception"/>
-		protected internal override void LoadTextClassifier(BufferedReader br)
+		protected internal override void LoadTextClassifier(StreamReader br)
 		{
 			base.LoadTextClassifier(br);
 			string line = br.ReadLine();
-			string[] toks = line.Split("\\t");
+			string[] toks = line.Split('\t');
 			if (!toks[0].Equals("nodeFeatureIndicesMap.size()="))
 			{
 				throw new Exception("format error in nodeFeatureIndicesMap");
@@ -308,7 +305,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 			while (count < nodeFeatureIndicesMapSize)
 			{
 				line = br.ReadLine();
-				toks = line.Split("\\t");
+				toks = line.Split('\t');
 				int idx = System.Convert.ToInt32(toks[0]);
 				if (count != idx)
 				{
@@ -318,7 +315,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 				count++;
 			}
 			line = br.ReadLine();
-			toks = line.Split("\\t");
+			toks = line.Split('\t');
 			if (!toks[0].Equals("edgeFeatureIndicesMap.size()="))
 			{
 				throw new Exception("format error");
@@ -363,7 +360,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 					}
 					for (int i2 = 0; i2 < weights2Length; i2++)
 					{
-						inputLayerWeights4Edge[count][i2] = double.ParseDouble(weightsValue[i2]);
+						inputLayerWeights4Edge[count][i2] = double.Parse(weightsValue[i2]);
 					}
 					count++;
 				}
@@ -389,7 +386,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 					}
 					for (int i2 = 0; i2 < weights2Length; i2++)
 					{
-						outputLayerWeights4Edge[count][i2] = double.ParseDouble(weightsValue[i2]);
+						outputLayerWeights4Edge[count][i2] = double.Parse(weightsValue[i2]);
 					}
 					count++;
 				}
@@ -418,7 +415,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 					}
 					for (int i2 = 0; i2 < weights2Length; i2++)
 					{
-						linearWeights[count][i2] = double.ParseDouble(weightsValue[i2]);
+						linearWeights[count][i2] = double.Parse(weightsValue[i2]);
 					}
 					count++;
 				}
@@ -445,7 +442,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 				}
 				for (int i2 = 0; i2 < weights2Length; i2++)
 				{
-					inputLayerWeights[count][i2] = double.ParseDouble(weightsValue[i2]);
+					inputLayerWeights[count][i2] = double.Parse(weightsValue[i2]);
 				}
 				count++;
 			}
@@ -471,7 +468,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 				}
 				for (int i2 = 0; i2 < weights2Length; i2++)
 				{
-					outputLayerWeights[count][i2] = double.ParseDouble(weightsValue[i2]);
+					outputLayerWeights[count][i2] = double.Parse(weightsValue[i2]);
 				}
 				count++;
 			}
@@ -505,7 +502,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 		/// <exception cref="System.InvalidCastException"/>
 		/// <exception cref="System.IO.IOException"/>
 		/// <exception cref="System.TypeLoadException"/>
-		public override void LoadClassifier(ObjectInputStream ois, Properties props)
+		public override void LoadClassifier(Stream ois, Properties props)
 		{
 			// can't have right types in deserialization
 			base.LoadClassifier(ois, props);

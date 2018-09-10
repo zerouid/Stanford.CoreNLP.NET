@@ -31,10 +31,10 @@ namespace Edu.Stanford.Nlp.Pipeline
 		public RegexNERAnnotator(string name, Properties properties)
 		{
 			string mapping = properties.GetProperty(name + ".mapping", DefaultPaths.DefaultRegexnerRules);
-			bool ignoreCase = bool.ParseBoolean(properties.GetProperty(name + ".ignorecase", "true"));
+			bool ignoreCase = bool.Parse(properties.GetProperty(name + ".ignorecase", "true"));
 			string validPosPattern = properties.GetProperty(name + ".validpospattern", RegexNERSequenceClassifier.DefaultValidPos);
 			bool overwriteMyLabels = true;
-			bool verbose = bool.ParseBoolean(properties.GetProperty(name + ".verbose", "false"));
+			bool verbose = bool.Parse(properties.GetProperty(name + ".verbose", "false"));
 			classifier = new RegexNERSequenceClassifier(mapping, ignoreCase, overwriteMyLabels, validPosPattern);
 			this.verbose = verbose;
 		}

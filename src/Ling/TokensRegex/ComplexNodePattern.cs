@@ -61,14 +61,14 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			}
 		}
 
-		public static Edu.Stanford.Nlp.Ling.Tokensregex.ComplexNodePattern ValueOf<M, K>(Env env, IDictionary<string, string> attributes, IBiFunction<M, K, object> getter, IFunction<Pair<Env, string>, K> getKey)
+		public static Edu.Stanford.Nlp.Ling.Tokensregex.ComplexNodePattern ValueOf<M, K>(Env env, IDictionary<string, string> attributes, IBiFunction<M, K, object> getter, Func<Pair<Env, string>, K> getKey)
 		{
 			Edu.Stanford.Nlp.Ling.Tokensregex.ComplexNodePattern<M, K> p = new Edu.Stanford.Nlp.Ling.Tokensregex.ComplexNodePattern<M, K>(getter, new List<Pair<K, NodePattern>>(attributes.Count));
 			p.Populate(env, attributes, getKey);
 			return p;
 		}
 
-		protected internal virtual void Populate(Env env, IDictionary<string, string> attributes, IFunction<Pair<Env, string>, K> getKey)
+		protected internal virtual void Populate(Env env, IDictionary<string, string> attributes, Func<Pair<Env, string>, K> getKey)
 		{
 			Edu.Stanford.Nlp.Ling.Tokensregex.ComplexNodePattern<M, K> p = this;
 			foreach (string attr in attributes.Keys)
@@ -145,42 +145,42 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 							{
 								if (value.StartsWith("<="))
 								{
-									double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 2));
+									double v = double.Parse(Sharpen.Runtime.Substring(value, 2));
 									p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Le));
 								}
 								else
 								{
 									if (value.StartsWith(">="))
 									{
-										double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 2));
+										double v = double.Parse(Sharpen.Runtime.Substring(value, 2));
 										p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Ge));
 									}
 									else
 									{
 										if (value.StartsWith("=="))
 										{
-											double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 2));
+											double v = double.Parse(Sharpen.Runtime.Substring(value, 2));
 											p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Eq));
 										}
 										else
 										{
 											if (value.StartsWith("!="))
 											{
-												double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 2));
+												double v = double.Parse(Sharpen.Runtime.Substring(value, 2));
 												p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Ne));
 											}
 											else
 											{
 												if (value.StartsWith(">"))
 												{
-													double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 1));
+													double v = double.Parse(Sharpen.Runtime.Substring(value, 1));
 													p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Gt));
 												}
 												else
 												{
 													if (value.StartsWith("<"))
 													{
-														double v = double.ParseDouble(Sharpen.Runtime.Substring(value, 1));
+														double v = double.Parse(Sharpen.Runtime.Substring(value, 1));
 														p.Add(c, new ComplexNodePattern.NumericAnnotationPattern(v, ComplexNodePattern.NumericAnnotationPattern.CmpType.Lt));
 													}
 													else
@@ -597,7 +597,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 				{
 					try
 					{
-						double v = double.ParseDouble(str);
+						double v = double.Parse(str);
 						return cmpType.Accept(v, value);
 					}
 					catch (NumberFormatException)

@@ -1103,7 +1103,7 @@ namespace Edu.Stanford.Nlp.Util
 			double[] ret = new double[@in.Length];
 			for (int i = 0; i < @in.Length; i++)
 			{
-				ret[i] = double.ParseDouble(@in[i]);
+				ret[i] = double.Parse(@in[i]);
 			}
 			return ret;
 		}

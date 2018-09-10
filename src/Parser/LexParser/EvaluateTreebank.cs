@@ -103,7 +103,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// we can distribute a version of the parser that doesn't include
 		/// the entire tagger.
 		/// </remarks>
-		protected internal readonly IFunction<IList<IHasWord>, IList<TaggedWord>> tagger;
+		protected internal readonly Func<IList<IHasWord>, IList<TaggedWord>> tagger;
 
 		public EvaluateTreebank(LexicalizedParser parser)
 			: this(parser.GetOp(), parser.lex, parser)
@@ -115,7 +115,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		{
 		}
 
-		public EvaluateTreebank(Options op, ILexicon lex, ParserGrammar pqFactory, IFunction<IList<IHasWord>, IList<TaggedWord>> tagger)
+		public EvaluateTreebank(Options op, ILexicon lex, ParserGrammar pqFactory, Func<IList<IHasWord>, IList<TaggedWord>> tagger)
 		{
 			// private final Lexicon lex;
 			// no annotation
@@ -130,9 +130,9 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			this.tagger = tagger;
 			collinizer = op.tlpParams.Collinizer();
 			boundaryRemover = new BoundaryRemover();
-			bool runningAverages = bool.ParseBoolean(op.testOptions.evals.GetProperty("runningAverages"));
-			summary = bool.ParseBoolean(op.testOptions.evals.GetProperty("summary"));
-			tsv = bool.ParseBoolean(op.testOptions.evals.GetProperty("tsv"));
+			bool runningAverages = bool.Parse(op.testOptions.evals.GetProperty("runningAverages"));
+			summary = bool.Parse(op.testOptions.evals.GetProperty("summary"));
+			tsv = bool.Parse(op.testOptions.evals.GetProperty("tsv"));
 			if (!op.trainOptions.leftToRight)
 			{
 				binarizerOnly = new TreeAnnotatorAndBinarizer(op.tlpParams, op.forceCNF, false, false, op);
@@ -141,7 +141,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			{
 				binarizerOnly = new TreeAnnotatorAndBinarizer(op.tlpParams.HeadFinder(), new LeftHeadFinder(), op.tlpParams, op.forceCNF, false, false, op);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgLB")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgLB")))
 			{
 				pcfgLB = new Evalb("pcfg LP/LR", runningAverages);
 			}
@@ -151,31 +151,31 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				string filter = op.testOptions.evals.GetProperty("pcfgChildSpecific");
 				pcfgChildSpecific = FilteredEval.ChildFilteredEval("pcfg children matching " + filter + " LP/LR", runningAverages, op.Langpack(), filter);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgLA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgLA")))
 			{
 				pcfgLA = new LeafAncestorEval("pcfg LeafAncestor");
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgCB")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgCB")))
 			{
 				pcfgCB = new Evalb.CBEval("pcfg CB", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgDA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgDA")))
 			{
 				pcfgDA = new UnlabeledAttachmentEval("pcfg DA", runningAverages, op.Langpack().HeadFinder());
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgTA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgTA")))
 			{
 				pcfgTA = new TaggingEval("pcfg Tag", runningAverages, lex);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("depDA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("depDA")))
 			{
 				depDA = new UnlabeledAttachmentEval("dep DA", runningAverages, null, op.Langpack().PunctuationWordRejectFilter());
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("depTA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("depTA")))
 			{
 				depTA = new TaggingEval("dep Tag", runningAverages, lex);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factLB")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factLB")))
 			{
 				factLB = new Evalb("factor LP/LR", runningAverages);
 			}
@@ -184,53 +184,53 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				string filter = op.testOptions.evals.GetProperty("factChildSpecific");
 				factChildSpecific = FilteredEval.ChildFilteredEval("fact children matching " + filter + " LP/LR", runningAverages, op.Langpack(), filter);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factLA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factLA")))
 			{
 				factLA = new LeafAncestorEval("factor LeafAncestor");
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factCB")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factCB")))
 			{
 				factCB = new Evalb.CBEval("fact CB", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factDA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factDA")))
 			{
 				factDA = new UnlabeledAttachmentEval("factor DA", runningAverages, null);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factTA")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factTA")))
 			{
 				factTA = new TaggingEval("factor Tag", runningAverages, lex);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgRUO")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgRUO")))
 			{
 				pcfgRUO = new AbstractEval.RuleErrorEval("pcfg Rule under/over");
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgCUO")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgCUO")))
 			{
 				pcfgCUO = new AbstractEval.CatErrorEval("pcfg Category under/over");
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgCatE")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgCatE")))
 			{
 				pcfgCatE = new EvalbByCat("pcfg Category Eval", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgLL")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgLL")))
 			{
 				pcfgLL = new AbstractEval.ScoreEval("pcfgLL", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("depLL")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("depLL")))
 			{
 				depLL = new AbstractEval.ScoreEval("depLL", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factLL")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factLL")))
 			{
 				factLL = new AbstractEval.ScoreEval("factLL", runningAverages);
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("topMatch")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("topMatch")))
 			{
 				evals.Add(new TopMatchEval("topMatch", runningAverages));
 			}
 			// this one is for the various k Good/Best options.  Just for individual results
 			kGoodLB = new Evalb("kGood LP/LR", false);
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgTopK")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgTopK")))
 			{
 				topKEvals.Add(new BestOfTopKEval(new Evalb("pcfg top k comparisons", false), new Evalb("pcfg top k LP/LR", runningAverages)));
 			}

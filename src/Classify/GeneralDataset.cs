@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Stats;
 using Edu.Stanford.Nlp.Util;
@@ -30,6 +33,7 @@ namespace Edu.Stanford.Nlp.Classify
 	public abstract class GeneralDataset<L, F> : IEnumerable<RVFDatum<L, F>>
 	{
 		private const long serialVersionUID = 19157757130054829L;
+		private readonly object lockObj = new object();
 
 		public IIndex<L> labelIndex;
 
@@ -116,11 +120,11 @@ namespace Edu.Stanford.Nlp.Classify
 		public virtual float[] GetFeatureCounts()
 		{
 			float[] counts = new float[featureIndex.Size()];
-			for (int i = 0; i < m; i++)
+			for (int i = 0; i < data.Length; i++)
 			{
-				for (int j = 0; j < n; j++)
+				for (int j = 0; j < data[i].Length; j++)
 				{
-					counts[data[i][j]] += 1.0;
+					counts[data[i][j]] += (float)1.0;
 				}
 			}
 			return counts;
@@ -265,7 +269,7 @@ namespace Edu.Stanford.Nlp.Classify
 		public virtual int NumFeatureTokens()
 		{
 			int x = 0;
-			for (int i = 0; i < m; i++)
+			for (int i = 0; i < data.Length; i++)
 			{
 				x += data[i].Length;
 			}
@@ -357,7 +361,7 @@ namespace Edu.Stanford.Nlp.Classify
 		protected internal virtual int[] TrimToSize(int[] i)
 		{
 			int[] newI = new int[size];
-			lock (typeof(Runtime))
+			lock (lockObj)
 			{
 				System.Array.Copy(i, 0, newI, 0, size);
 			}
@@ -367,7 +371,7 @@ namespace Edu.Stanford.Nlp.Classify
 		protected internal virtual int[][] TrimToSize(int[][] i)
 		{
 			int[][] newI = new int[size][];
-			lock (typeof(Runtime))
+			lock (lockObj)
 			{
 				System.Array.Copy(i, 0, newI, 0, size);
 			}
@@ -377,7 +381,7 @@ namespace Edu.Stanford.Nlp.Classify
 		protected internal virtual double[][] TrimToSize(double[][] i)
 		{
 			double[][] newI = new double[size][];
-			lock (typeof(Runtime))
+			lock (lockObj)
 			{
 				System.Array.Copy(i, 0, newI, 0, size);
 			}
@@ -397,11 +401,11 @@ namespace Edu.Stanford.Nlp.Classify
 		public virtual void Randomize(long randomSeed)
 		{
 			// todo: Probably should be renamed 'shuffle' to be consistent with Java Collections API
-			Random rand = new Random(randomSeed);
+			Random rand = new Random((int)randomSeed);
 			for (int j = size - 1; j > 0; j--)
 			{
 				// swap each item with some lower numbered item
-				int randIndex = rand.NextInt(j);
+				int randIndex = rand.Next(j);
 				int[] tmp = data[randIndex];
 				data[randIndex] = data[j];
 				data[j] = tmp;
@@ -427,11 +431,11 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				throw new ArgumentException("shuffleWithSideInformation: sideInformation not of same size as Dataset");
 			}
-			Random rand = new Random(randomSeed);
+			Random rand = new Random((int)randomSeed);
 			for (int j = size - 1; j > 0; j--)
 			{
 				// swap each item with some lower numbered item
-				int randIndex = rand.NextInt(j);
+				int randIndex = rand.Next(j);
 				int[] tmp = data[randIndex];
 				data[randIndex] = data[j];
 				data[j] = tmp;
@@ -439,23 +443,23 @@ namespace Edu.Stanford.Nlp.Classify
 				labels[randIndex] = labels[j];
 				labels[j] = tmpl;
 				E tmpE = sideInformation[randIndex];
-				sideInformation.Set(randIndex, sideInformation[j]);
-				sideInformation.Set(j, tmpE);
+				sideInformation[randIndex] = sideInformation[j];
+				sideInformation[j] = tmpE;
 			}
 		}
 
 		public virtual Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> SampleDataset(long randomSeed, double sampleFrac, bool sampleWithReplacement)
 		{
 			int sampleSize = (int)(this.Size() * sampleFrac);
-			Random rand = new Random(randomSeed);
+			Random rand = new Random((int)randomSeed);
 			Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> subset;
-			if (this is RVFDataset)
+			if (this is RVFDataset<L,F>)
 			{
 				subset = new RVFDataset<L, F>();
 			}
 			else
 			{
-				if (this is Dataset)
+				if (this is Dataset<L,F>)
 				{
 					subset = new Dataset<L, F>();
 				}
@@ -468,16 +472,16 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				for (int i = 0; i < sampleSize; i++)
 				{
-					int datumNum = rand.NextInt(this.Size());
+					int datumNum = rand.Next(this.Size());
 					subset.Add(this.GetDatum(datumNum));
 				}
 			}
 			else
 			{
-				ICollection<int> indicedSampled = Generics.NewHashSet();
+				ICollection<int> indicedSampled = new HashSet<int>();
 				while (subset.Size() < sampleSize)
 				{
-					int datumNum = rand.NextInt(this.Size());
+					int datumNum = rand.Next(this.Size());
 					if (!indicedSampled.Contains(datumNum))
 					{
 						subset.Add(this.GetDatum(datumNum));
@@ -506,7 +510,7 @@ namespace Edu.Stanford.Nlp.Classify
 		public virtual Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> MapDataset(Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> dataset)
 		{
 			Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> newDataset;
-			if (dataset is RVFDataset)
+			if (dataset is RVFDataset<L,F>)
 			{
 				newDataset = new RVFDataset<L, F>(this.featureIndex, this.labelIndex);
 			}
@@ -538,7 +542,7 @@ namespace Edu.Stanford.Nlp.Classify
 			{
 				newLabel = defaultLabel;
 			}
-			if (d is RVFDatum)
+			if (d is RVFDatum<L,F>)
 			{
 				return new RVFDatum<L2, F>(((RVFDatum<L, F>)d).AsFeaturesCounter(), newLabel);
 			}
@@ -553,7 +557,7 @@ namespace Edu.Stanford.Nlp.Classify
 		public virtual Edu.Stanford.Nlp.Classify.GeneralDataset<L2, F> MapDataset<L2>(Edu.Stanford.Nlp.Classify.GeneralDataset<L, F> dataset, IIndex<L2> newLabelIndex, IDictionary<L, L2> labelMapping, L2 defaultLabel)
 		{
 			Edu.Stanford.Nlp.Classify.GeneralDataset<L2, F> newDataset;
-			if (dataset is RVFDataset)
+			if (dataset is RVFDataset<L,F>)
 			{
 				newDataset = new RVFDataset<L2, F>(this.featureIndex, newLabelIndex);
 			}
@@ -587,7 +591,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// </remarks>
 		public virtual void PrintSVMLightFormat()
 		{
-			PrintSVMLightFormat(new PrintWriter(System.Console.Out));
+			PrintSVMLightFormat(System.Console.Out);
 		}
 
 		/// <summary>Maps our labels to labels that are compatible with svm_light</summary>
@@ -619,7 +623,7 @@ namespace Edu.Stanford.Nlp.Classify
 		/// prints using the label index (+1) (for svm_struct).  If it is 2 classes, then the labelIndex.get(0)
 		/// is mapped to +1 and labelIndex.get(1) is mapped to -1 (for svm_light).
 		/// </remarks>
-		public virtual void PrintSVMLightFormat(PrintWriter pw)
+		public virtual void PrintSVMLightFormat(TextWriter pw)
 		{
 			//assumes each data item has a few features on, and sorts the feature keys while collecting the values in a counter
 			// old comment:
@@ -638,8 +642,8 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					printC.SetCount(featureIndex.IndexOf(f), c.GetCount(f));
 				}
-				int[] features = Sharpen.Collections.ToArray(printC.KeySet(), new int[printC.KeySet().Count]);
-				Arrays.Sort(features);
+				int[] features = printC.KeySet().ToArray();
+				Array.Sort(features);
 				StringBuilder sb = new StringBuilder();
 				sb.Append(labelMap[labels[i]]).Append(' ');
 				// sb.append(labels[i]).append(' '); // commented out by mihai: labels[i] breaks svm_light conventions!
@@ -655,7 +659,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					sb.Append((f_1 + 1)).Append(':').Append(printC.GetCount(f_1)).Append(' ');
 				}
-				pw.Println(sb.ToString());
+				pw.WriteLine(sb.ToString());
 			}
 		}
 
@@ -725,6 +729,6 @@ namespace Edu.Stanford.Nlp.Classify
 		/// <see cref="object.ToString()"/>
 		/// representations of features.
 		/// </remarks>
-		public abstract void PrintSparseFeatureMatrix(PrintWriter pw);
+		public abstract void PrintSparseFeatureMatrix(TextWriter pw);
 	}
 }

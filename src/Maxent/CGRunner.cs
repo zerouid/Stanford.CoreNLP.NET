@@ -320,7 +320,7 @@ namespace Edu.Stanford.Nlp.Maxent
 		}
 
 		/// <summary>This one is used in the monitor</summary>
-		private sealed class MonitorFunction : IFunction
+		private sealed class MonitorFunction : Func
 		{
 			private readonly LambdaSolve model;
 

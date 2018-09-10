@@ -1536,7 +1536,7 @@ LOOP_break: ;
 				string[] bits1 = bit.Split("\\|");
 				int i1 = classIndex.IndexOf(bits1[0]);
 				int i2 = classIndex.IndexOf(bits1[1]);
-				double d = double.ParseDouble(bits1[2]);
+				double d = double.Parse(bits1[2]);
 				confusionMatrix[i2][i1] = d;
 			}
 			foreach (double[] row in confusionMatrix)

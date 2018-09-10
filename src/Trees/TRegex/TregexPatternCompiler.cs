@@ -41,11 +41,11 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 	/// <author>Galen Andrew</author>
 	public class TregexPatternCompiler
 	{
-		internal static readonly IFunction<string, string> DefaultBasicCatFunction = new PennTreebankLanguagePack().GetBasicCategoryFunction();
+		internal static readonly Func<string, string> DefaultBasicCatFunction = new PennTreebankLanguagePack().GetBasicCategoryFunction();
 
 		internal static readonly IHeadFinder DefaultHeadFinder = new CollinsHeadFinder();
 
-		private readonly IFunction<string, string> basicCatFunction;
+		private readonly Func<string, string> basicCatFunction;
 
 		private readonly IHeadFinder headFinder;
 
@@ -60,7 +60,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 		/// <summary>A compiler that uses this basicCatFunction and the default HeadFinder.</summary>
 		/// <param name="basicCatFunction">the function mapping Strings to Strings</param>
-		public TregexPatternCompiler(IFunction<string, string> basicCatFunction)
+		public TregexPatternCompiler(Func<string, string> basicCatFunction)
 			: this(DefaultHeadFinder, basicCatFunction)
 		{
 		}
@@ -75,7 +75,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		/// <summary>A compiler that uses this HeadFinder and this basicCategoryFunction</summary>
 		/// <param name="headFinder">the HeadFinder</param>
 		/// <param name="basicCatFunction">The function mapping Strings to Strings</param>
-		public TregexPatternCompiler(IHeadFinder headFinder, IFunction<string, string> basicCatFunction)
+		public TregexPatternCompiler(IHeadFinder headFinder, Func<string, string> basicCatFunction)
 		{
 			this.headFinder = headFinder;
 			this.basicCatFunction = basicCatFunction;

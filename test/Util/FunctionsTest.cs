@@ -12,9 +12,9 @@ namespace Edu.Stanford.Nlp.Util
 		[NUnit.Framework.Test]
 		public virtual void TestCompose()
 		{
-			IFunction<int, int> plusOne = null;
-			IFunction<int, int> doubler = null;
-			IFunction<int, int> composed = Functions.Compose(plusOne, doubler);
+			Func<int, int> plusOne = null;
+			Func<int, int> doubler = null;
+			Func<int, int> composed = Functions.Compose(plusOne, doubler);
 			NUnit.Framework.Assert.AreEqual(composed.Apply(1), 3);
 			NUnit.Framework.Assert.AreEqual(composed.Apply(2), 5);
 		}

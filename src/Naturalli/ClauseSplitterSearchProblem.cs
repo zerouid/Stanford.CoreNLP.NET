@@ -225,7 +225,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		/// ).
 		/// If that classifier is defined, this should be as well.
 		/// </summary>
-		private readonly Optional<IFunction<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>>> featurizer;
+		private readonly Optional<Func<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>>> featurizer;
 
 		/// <summary>A mapping from edges in the tree, to an index.</summary>
 		private readonly IIndex<SemanticGraphEdge> edgeToIndex = new HashIndex<SemanticGraphEdge>(null, null);
@@ -345,7 +345,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		}
 
 		/// <summary>Mostly just an alias, but make sure our featurizer is serializable!</summary>
-		public interface IFeaturizer : IFunction<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>>
+		public interface IFeaturizer : Func<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>>
 		{
 			bool IsSimpleSplit(ICounter<string> feats);
 		}
@@ -367,11 +367,11 @@ namespace Edu.Stanford.Nlp.Naturalli
 		/// <param name="isClauseClassifier">The classifier for whether a given dependency arc should be a new clause. If this is not given, all arcs are treated as clause separators.</param>
 		/// <param name="featurizer">
 		/// The featurizer for the classifier. If no featurizer is given, one should be given in
-		/// <see cref="Search(Java.Util.Function.IPredicate{T}, Edu.Stanford.Nlp.Classify.IClassifier{L, F}, System.Collections.Generic.IDictionary{K, V}, Java.Util.Function.IFunction{T, R}, int)"/>
+		/// <see cref="Search(Java.Util.Function.IPredicate{T}, Edu.Stanford.Nlp.Classify.IClassifier{L, F}, System.Collections.Generic.IDictionary{K, V}, Java.Util.Function.Func{T, R}, int)"/>
 		/// , or else the classifier will be useless.
 		/// </param>
 		/// <seealso cref="IClauseSplitter.Load(string)"/>
-		protected internal ClauseSplitterSearchProblem(SemanticGraph tree, bool assumedTruth, Optional<IClassifier<ClauseSplitter.ClauseClassifierLabel, string>> isClauseClassifier, Optional<IFunction<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction
+		protected internal ClauseSplitterSearchProblem(SemanticGraph tree, bool assumedTruth, Optional<IClassifier<ClauseSplitter.ClauseClassifierLabel, string>> isClauseClassifier, Optional<Func<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction
 			, ClauseSplitterSearchProblem.State>, ICounter<string>>> featurizer)
 		{
 			this.tree = new SemanticGraph(tree);
@@ -665,7 +665,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		/// <param name="classifier">The classifier for whether an arc should be on the path to a clause split, a clause split itself, or neither.</param>
 		/// <param name="featurizer">The featurizer to use during search, to be dot producted with the weights.</param>
 		public virtual void Search(IPredicate<Triple<double, IList<ICounter<string>>, ISupplier<SentenceFragment>>> candidateFragments, IClassifier<ClauseSplitter.ClauseClassifierLabel, string> classifier, IDictionary<string, IList<string>> hardCodedSplits
-			, IFunction<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>> featurizer, int maxTicks)
+			, Func<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>> featurizer, int maxTicks)
 		{
 			// The output specs
 			// The learning specs
@@ -891,7 +891,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 		/// <param name="featurizer">The featurizer to use. Make sure this matches the weights!</param>
 		/// <param name="actionSpace">The action space we are allowed to take. Each action defines a means of splitting a clause on a dependency boundary.</param>
 		protected internal virtual void Search(IndexedWord root, IPredicate<Triple<double, IList<ICounter<string>>, ISupplier<SentenceFragment>>> candidateFragments, IClassifier<ClauseSplitter.ClauseClassifierLabel, string> classifier, IDictionary<string
-			, IList<string>> hardCodedSplits, IFunction<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>> featurizer, ICollection<ClauseSplitterSearchProblem.IAction> actionSpace
+			, IList<string>> hardCodedSplits, Func<Triple<ClauseSplitterSearchProblem.State, ClauseSplitterSearchProblem.IAction, ClauseSplitterSearchProblem.State>, ICounter<string>> featurizer, ICollection<ClauseSplitterSearchProblem.IAction> actionSpace
 			, int maxTicks)
 		{
 			// The root to search from

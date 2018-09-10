@@ -236,7 +236,7 @@ namespace Edu.Stanford.Nlp.Trees
 
 		private static bool PropertyToBoolean(Properties prop, string key)
 		{
-			return bool.ParseBoolean(prop.GetProperty(key));
+			return bool.Parse(prop.GetProperty(key));
 		}
 
 		/// <summary>Prints the tree to the default PrintWriter.</summary>
@@ -482,7 +482,7 @@ namespace Edu.Stanford.Nlp.Trees
 			if (lexicalize)
 			{
 				outputTree = Edu.Stanford.Nlp.Trees.Trees.Lexicalize(outputTree, hf);
-				IFunction<Tree, Tree> a = TreeFunctions.GetLabeledToDescriptiveCoreLabelTreeFunction();
+				Func<Tree, Tree> a = TreeFunctions.GetLabeledToDescriptiveCoreLabelTreeFunction();
 				outputTree = a.Apply(outputTree);
 			}
 			if (formats.Contains("collocations"))
@@ -492,7 +492,7 @@ namespace Edu.Stanford.Nlp.Trees
 			if (!lexicalize)
 			{
 				// delexicalize the output tree
-				IFunction<Tree, Tree> a = TreeFunctions.GetLabeledTreeToStringLabeledTreeFunction();
+				Func<Tree, Tree> a = TreeFunctions.GetLabeledTreeToStringLabeledTreeFunction();
 				outputTree = a.Apply(outputTree);
 			}
 			Tree outputPSTree = outputTree;

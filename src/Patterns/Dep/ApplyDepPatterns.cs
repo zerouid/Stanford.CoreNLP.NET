@@ -204,7 +204,7 @@ namespace Edu.Stanford.Nlp.Patterns.Dep
 			IList<string> tokens = tokensC.Stream().Map(null).Collect(Collectors.ToList());
 			IList<string> outputPhrases = new List<string>();
 			IList<ExtractedPhrase> extractedPhrases = new List<ExtractedPhrase>();
-			IFunction<Pair<IndexedWord, SemanticGraph>, ICounter<string>> extractFeatures = new _IFunction_206();
+			Func<Pair<IndexedWord, SemanticGraph>, ICounter<string>> extractFeatures = new _IFunction_206();
 			//TODO: make features;
 			extract.GetSemGrexPatternNodes(graph, tokens, outputPhrases, outputIndices, pattern, findSubTrees, extractedPhrases, constVars.matchLowerCaseContext, matchingWordRestriction);
 			/*
@@ -241,7 +241,7 @@ namespace Edu.Stanford.Nlp.Patterns.Dep
 			return extractedPhrases;
 		}
 
-		private sealed class _IFunction_206 : IFunction<Pair<IndexedWord, SemanticGraph>, ICounter<string>>
+		private sealed class _IFunction_206 : Func<Pair<IndexedWord, SemanticGraph>, ICounter<string>>
 		{
 			public _IFunction_206()
 			{

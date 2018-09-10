@@ -254,7 +254,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 		/// given a single node from a larger sequence.
 		/// </summary>
 		/// <?/>
-		public interface INodePatternTrigger<T> : IFunction<T, ICollection<SequencePattern<T>>>
+		public interface INodePatternTrigger<T> : Func<T, ICollection<SequencePattern<T>>>
 		{
 			/* Interfaces for optimizing application of many SequencePatterns over a particular sequence */
 		}
@@ -269,7 +269,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 		/// and should return ALL patterns that may match.
 		/// </remarks>
 		/// <?/>
-		public interface ISequencePatternTrigger<T> : IFunction<IList<T>, ICollection<SequencePattern<T>>>
+		public interface ISequencePatternTrigger<T> : Func<IList<T>, ICollection<SequencePattern<T>>>
 		{
 		}
 

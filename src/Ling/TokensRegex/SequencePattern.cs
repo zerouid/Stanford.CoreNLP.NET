@@ -259,7 +259,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			return new SequenceMatcher<T>(this, tokens);
 		}
 
-		public virtual OUT FindNodePattern<Out>(IFunction<NodePattern<T>, OUT> filter)
+		public virtual OUT FindNodePattern<Out>(Func<NodePattern<T>, OUT> filter)
 		{
 			IQueue<SequencePattern.State> todo = new LinkedList<SequencePattern.State>();
 			ICollection<SequencePattern.State> seen = new HashSet<SequencePattern.State>();
@@ -292,7 +292,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			return null;
 		}
 
-		public virtual ICollection<OUT> FindNodePatterns<Out>(IFunction<NodePattern<T>, OUT> filter, bool allowOptional, bool allowBranching)
+		public virtual ICollection<OUT> FindNodePatterns<Out>(Func<NodePattern<T>, OUT> filter, bool allowOptional, bool allowBranching)
 		{
 			IList<OUT> outList = new List<OUT>();
 			IQueue<SequencePattern.State> todo = new LinkedList<SequencePattern.State>();

@@ -79,7 +79,7 @@ namespace Edu.Stanford.Nlp.IE
 	/// <author>Christopher Manning</author>
 	/// <author>Dan Cer</author>
 	/// <author>sonalg (made the class generic)</author>
-	public abstract class AbstractSequenceClassifier<In> : IFunction<string, string>
+	public abstract class AbstractSequenceClassifier<In> : Func<string, string>
 		where In : ICoreMap
 	{
 		/// <summary>A logger for this class</summary>

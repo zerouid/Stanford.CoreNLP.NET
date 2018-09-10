@@ -38,7 +38,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <version>1.0</version>
 	/// <since>1.0</since>
 	public class InefficientSGDMinimizer<T> : StochasticMinimizer<T>
-		where T : IFunction
+		where T : Func
 	{
 		public override void ShutUp()
 		{
@@ -89,7 +89,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return "SGD" + bSize + "_g" + g;
 		}
 
-		public virtual Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest, double gainLow, double gainHigh)
+		public virtual Pair<int, double> Tune(Func function, double[] initial, long msPerTest, double gainLow, double gainHigh)
 		{
 			this.quiet = true;
 			gain = TuneGain(function, initial, msPerTest, gainLow, gainHigh);
@@ -97,7 +97,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return new Pair<int, double>(bSize, gain);
 		}
 
-		public override Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest)
+		public override Pair<int, double> Tune(Func function, double[] initial, long msPerTest)
 		{
 			return this.Tune(function, initial, msPerTest, 1e-7, 1.0);
 		}

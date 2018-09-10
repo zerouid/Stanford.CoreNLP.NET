@@ -22,7 +22,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 	{
 		private IEnumerator<string> tokens;
 
-		private readonly IFunction<string, T> op;
+		private readonly Func<string, T> op;
 
 		private T nextToken;
 
@@ -33,7 +33,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return new Edu.Stanford.Nlp.Objectbank.DelimitRegExIterator<string>(@in, delimiter, new IdentityFunction<string>());
 		}
 
-		public DelimitRegExIterator(Reader r, string delimiter, IFunction<string, T> op)
+		public DelimitRegExIterator(Reader r, string delimiter, Func<string, T> op)
 		{
 			this.op = op;
 			BufferedReader @in = new BufferedReader(r);
@@ -120,7 +120,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 		/// Returns a factory that vends DelimitRegExIterators that reads the contents of the
 		/// given Reader, splits on the specified delimiter, applies op, then returns the result.
 		/// </summary>
-		public static IIteratorFromReaderFactory<T> GetFactory<T>(string delim, IFunction<string, T> op)
+		public static IIteratorFromReaderFactory<T> GetFactory<T>(string delim, Func<string, T> op)
 		{
 			return new DelimitRegExIterator.DelimitRegExIteratorFactory<T>(delim, op);
 		}
@@ -132,7 +132,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 
 			private readonly string delim;
 
-			private readonly IFunction<string, T> op;
+			private readonly Func<string, T> op;
 
 			/*, Serializable */
 			public static DelimitRegExIterator.DelimitRegExIteratorFactory<string> DefaultDelimitRegExIteratorFactory(string delim)
@@ -140,7 +140,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 				return new DelimitRegExIterator.DelimitRegExIteratorFactory<string>(delim, new IdentityFunction<string>());
 			}
 
-			public DelimitRegExIteratorFactory(string delim, IFunction<string, T> op)
+			public DelimitRegExIteratorFactory(string delim, Func<string, T> op)
 			{
 				this.delim = delim;
 				this.op = op;

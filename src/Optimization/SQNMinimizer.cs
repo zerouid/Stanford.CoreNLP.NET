@@ -51,7 +51,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <version>1.0</version>
 	/// <since>1.0</since>
 	public class SQNMinimizer<T> : StochasticMinimizer<T>
-		where T : IFunction
+		where T : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Optimization.SQNMinimizer));
@@ -116,7 +116,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			return d;
 		}
 
-		public override Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest)
+		public override Pair<int, double> Tune(Func function, double[] initial, long msPerTest)
 		{
 			log.Info("No tuning set yet");
 			return new Pair<int, double>(bSize, gain);

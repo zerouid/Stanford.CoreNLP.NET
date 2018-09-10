@@ -7,5 +7,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="MathNet.Numerics" Version="4.5.1" />
     <PackageReference Include="SharpZipLib" Version="1.0.0-rc2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="2.1.1" />
 </ItemGroup>
 </Project>

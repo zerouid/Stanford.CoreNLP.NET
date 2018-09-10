@@ -17,7 +17,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 	/// <author>Christopher Manning</author>
 	public class LineIterator<X> : AbstractIterator<X>
 	{
-		private readonly IFunction<string, X> op;
+		private readonly Func<string, X> op;
 
 		private readonly BufferedReader @in;
 
@@ -28,7 +28,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 		{
 		}
 
-		public LineIterator(Reader r, IFunction<string, X> op)
+		public LineIterator(Reader r, Func<string, X> op)
 		{
 			// = null;
 			// it seems like this can't be generified: seems a weird brokenness of Java to me! [cdm]
@@ -98,7 +98,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 		/// </summary>
 		/// <param name="op">A function to be applied to each line before it is returned</param>
 		/// <returns>An iterator over the lines of a file</returns>
-		public static IIteratorFromReaderFactory<X> GetFactory<X>(IFunction<string, X> op)
+		public static IIteratorFromReaderFactory<X> GetFactory<X>(Func<string, X> op)
 		{
 			return new LineIterator.LineIteratorFactory<X>(op);
 		}
@@ -108,14 +108,14 @@ namespace Edu.Stanford.Nlp.Objectbank
 		{
 			private const long serialVersionUID = 1L;
 
-			private readonly IFunction<string, X> function;
+			private readonly Func<string, X> function;
 
 			public LineIteratorFactory()
 				: this(new IdentityFunction())
 			{
 			}
 
-			public LineIteratorFactory(IFunction<string, X> op)
+			public LineIteratorFactory(Func<string, X> op)
 			{
 				// it seems like this can't be generified: seems a weird brokenness of Java to me! [cdm]
 				this.function = op;

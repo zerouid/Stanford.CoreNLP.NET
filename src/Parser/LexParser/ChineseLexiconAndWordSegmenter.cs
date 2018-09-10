@@ -56,7 +56,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// <inheritDoc/>
 		/// 
 		/// </summary>
-		public virtual ICollection<string> TagSet(IFunction<string, string> basicCategoryFunction)
+		public virtual ICollection<string> TagSet(Func<string, string> basicCategoryFunction)
 		{
 			return chineseLexicon.TagSet(basicCategoryFunction);
 		}
@@ -473,7 +473,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			//    DocumentPreprocessor documentPreprocessor = new DocumentPreprocessor();
 			bool tokenized = false;
 			// whether or not the input file has already been tokenized
-			IFunction<IList<IHasWord>, IList<IHasWord>> escaper = new ChineseEscaper();
+			Func<IList<IHasWord>, IList<IHasWord>> escaper = new ChineseEscaper();
 			// int tagDelimiter = -1;
 			// String sentenceDelimiter = "\n";
 			// boolean fromXML = false;

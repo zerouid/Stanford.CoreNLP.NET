@@ -228,7 +228,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 					{
 						try
 						{
-							counts.SetCount(tagCount[0], double.ParseDouble(tagCount[1]));
+							counts.SetCount(tagCount[0], double.Parse(tagCount[1]));
 						}
 						catch (NumberFormatException ex)
 						{

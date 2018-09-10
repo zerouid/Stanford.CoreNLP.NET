@@ -43,7 +43,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <version>1.0</version>
 	/// <since>1.0</since>
 	public class SMDMinimizer<T> : StochasticMinimizer<T>
-		where T : IFunction
+		where T : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Optimization.SMDMinimizer));
@@ -94,7 +94,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			this.outputIterationsToFile = outputToFile;
 		}
 
-		public override double[] Minimize(IFunction function, double functionTolerance, double[] initial)
+		public override double[] Minimize(Func function, double functionTolerance, double[] initial)
 		{
 			return Minimize(function, functionTolerance, initial, -1);
 		}
@@ -149,7 +149,7 @@ namespace Edu.Stanford.Nlp.Optimization
 			private readonly SMDMinimizer<T> _enclosing;
 		}
 
-		public override Pair<int, double> Tune(IFunction function, double[] initial, long msPerTest)
+		public override Pair<int, double> Tune(Func function, double[] initial, long msPerTest)
 		{
 			this.quiet = true;
 			this.lam = 0.9;

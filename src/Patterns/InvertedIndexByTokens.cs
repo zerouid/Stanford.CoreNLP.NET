@@ -27,14 +27,14 @@ namespace Edu.Stanford.Nlp.Patterns
 
 		internal IDictionary<string, ICollection<string>> index;
 
-		public InvertedIndexByTokens(Properties props, ICollection<string> stopWords, IFunction<CoreLabel, IDictionary<string, string>> transformSentenceToString)
+		public InvertedIndexByTokens(Properties props, ICollection<string> stopWords, Func<CoreLabel, IDictionary<string, string>> transformSentenceToString)
 			: base(stopWords, transformSentenceToString)
 		{
 			ArgumentParser.FillOptions(this, props);
 			index = new Dictionary<string, ICollection<string>>();
 		}
 
-		public InvertedIndexByTokens(Properties props, ICollection<string> stopWords, IFunction<CoreLabel, IDictionary<string, string>> transformSentenceToString, IDictionary<string, ICollection<string>> index)
+		public InvertedIndexByTokens(Properties props, ICollection<string> stopWords, Func<CoreLabel, IDictionary<string, string>> transformSentenceToString, IDictionary<string, ICollection<string>> index)
 			: base(stopWords, transformSentenceToString)
 		{
 			ArgumentParser.FillOptions(this, props);
@@ -145,7 +145,7 @@ namespace Edu.Stanford.Nlp.Patterns
 		}
 
 		//The last variable is not really used!
-		public static Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens CreateIndex(IDictionary<string, IList<CoreLabel>> sentences, Properties props, ICollection<string> stopWords, string dir, IFunction<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString
+		public static Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens CreateIndex(IDictionary<string, IList<CoreLabel>> sentences, Properties props, ICollection<string> stopWords, string dir, Func<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString
 			)
 		{
 			Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens inv = new Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens(props, stopWords, transformCoreLabeltoString);
@@ -177,7 +177,7 @@ namespace Edu.Stanford.Nlp.Patterns
 		}
 
 		//called by SentenceIndex.loadIndex
-		public static Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens LoadIndex(Properties props, ICollection<string> stopwords, string dir, IFunction<CoreLabel, IDictionary<string, string>> transformSentenceToString)
+		public static Edu.Stanford.Nlp.Patterns.InvertedIndexByTokens LoadIndex(Properties props, ICollection<string> stopwords, string dir, Func<CoreLabel, IDictionary<string, string>> transformSentenceToString)
 		{
 			try
 			{

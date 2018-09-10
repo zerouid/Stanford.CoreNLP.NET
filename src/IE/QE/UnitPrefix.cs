@@ -112,8 +112,8 @@ namespace Edu.Stanford.Nlp.IE.QE
 			while ((line = br.ReadLine()) != null)
 			{
 				string[] fields = commaPattern.Split(line);
-				double @base = double.ParseDouble(fields[iBase]);
-				double exp = double.ParseDouble(fields[iExp]);
+				double @base = double.Parse(fields[iBase]);
+				double exp = double.Parse(fields[iExp]);
 				double scale = Math.Pow(@base, exp);
 				Edu.Stanford.Nlp.IE.QE.UnitPrefix unitPrefix = new Edu.Stanford.Nlp.IE.QE.UnitPrefix(fields[iName], fields[iPrefix], scale, fields[iSystem]);
 				list.Add(unitPrefix);

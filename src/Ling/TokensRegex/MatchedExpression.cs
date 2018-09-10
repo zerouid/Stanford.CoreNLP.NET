@@ -55,7 +55,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 		/// Function that takes a CoreMap, applies an extraction function to it, to get a value.
 		/// Also contains information on how to construct a final annotation.
 		/// </remarks>
-		public class SingleAnnotationExtractor : IFunction<ICoreMap, IValue>
+		public class SingleAnnotationExtractor : Func<ICoreMap, IValue>
 		{
 			public string name;
 
@@ -73,11 +73,11 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 
 			public bool includeNested = false;
 
-			public IFunction<ICoreMap, IValue> valueExtractor;
+			public Func<ICoreMap, IValue> valueExtractor;
 
-			public IFunction<MatchedExpression, IValue> expressionToValue;
+			public Func<MatchedExpression, IValue> expressionToValue;
 
-			public IFunction<MatchedExpression, object> resultAnnotationExtractor;
+			public Func<MatchedExpression, object> resultAnnotationExtractor;
 
 			public CoreMapAggregator tokensAggregator;
 
@@ -513,11 +513,11 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			return best;
 		}
 
-		public static readonly IFunction<ICoreMap, Interval<int>> CoremapToTokenOffsetsIntervalFunc = null;
+		public static readonly Func<ICoreMap, Interval<int>> CoremapToTokenOffsetsIntervalFunc = null;
 
-		public static readonly IFunction<ICoreMap, Interval<int>> CoremapToCharOffsetsIntervalFunc = null;
+		public static readonly Func<ICoreMap, Interval<int>> CoremapToCharOffsetsIntervalFunc = null;
 
-		public static readonly IFunction<MatchedExpression, Interval<int>> ExprToTokenOffsetsIntervalFunc = null;
+		public static readonly Func<MatchedExpression, Interval<int>> ExprToTokenOffsetsIntervalFunc = null;
 
 		public static readonly IComparator<MatchedExpression> ExprPriorityComparator = null;
 

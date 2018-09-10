@@ -902,7 +902,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					throw new ArgumentException("Bad data format: " + l);
 				}
-				double val = double.ParseDouble(f[1]);
+				double val = double.Parse(f[1]);
 				features.IncrementCount(f[0], val);
 			}
 			return new RVFDatum<string, string>(features, line[0]);
@@ -930,7 +930,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					string[] featureItems = items[i].Split(":");
 					int feature = System.Convert.ToInt32(featureItems[0]);
-					double value = double.ParseDouble(featureItems[1]);
+					double value = double.Parse(featureItems[1]);
 					features.IncrementCount(this.featureIndex.Get(feature), value);
 				}
 				this.Add(new RVFDatum<L, F>(features, this.labelIndex.Get(label)));

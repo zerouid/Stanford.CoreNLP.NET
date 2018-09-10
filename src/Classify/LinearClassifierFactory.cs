@@ -1299,7 +1299,7 @@ namespace Edu.Stanford.Nlp.Classify
 					currLine++;
 					int feature = System.Convert.ToInt32(tuples[0]);
 					int label = System.Convert.ToInt32(tuples[1]);
-					double value = double.ParseDouble(tuples[2]);
+					double value = double.Parse(tuples[2]);
 					weights[feature][label] = value;
 					line = @in.ReadLine();
 				}
@@ -1309,7 +1309,7 @@ namespace Edu.Stanford.Nlp.Classify
 				int curr = 0;
 				while ((line = @in.ReadLine()) != null)
 				{
-					double tval = double.ParseDouble(line.Trim());
+					double tval = double.Parse(line.Trim());
 					thresholds[curr++] = tval;
 				}
 				@in.Close();

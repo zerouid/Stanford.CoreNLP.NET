@@ -232,7 +232,7 @@ namespace Edu.Stanford.Nlp.Parser.Charniak
 								if (score == null)
 								{
 									// read score
-									score = double.ParseDouble(wsDelimiter.Split(line, 2)[0]);
+									score = double.Parse(wsDelimiter.Split(line, 2)[0]);
 								}
 								else
 								{

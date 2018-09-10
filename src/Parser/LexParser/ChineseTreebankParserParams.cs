@@ -1385,7 +1385,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 																																					{
 																																						if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-lengthPenalty") && (i + 1 < args.Length))
 																																						{
-																																							lengthPenalty = double.ParseDouble(args[i + 1]);
+																																							lengthPenalty = double.Parse(args[i + 1]);
 																																							i += 2;
 																																						}
 																																						else

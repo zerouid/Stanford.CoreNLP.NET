@@ -117,7 +117,7 @@ namespace Edu.Stanford.Nlp.Simple
 		}
 
 		/// <summary>The actual implementation of a tokenized sentence constructor</summary>
-		protected internal Sentence(IFunction<string, Document> doc, IList<string> tokens, Properties props)
+		protected internal Sentence(Func<string, Document> doc, IList<string> tokens, Properties props)
 			: this(doc.Apply(StringUtils.Join(tokens.Stream().Map(null), " ")), props)
 		{
 			/* some random character */
@@ -1347,9 +1347,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// be populated.
 		/// </param>
 		[SafeVarargs]
-		public ICoreMap AsCoreMap(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public ICoreMap AsCoreMap(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> function in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> function in functions)
 			{
 				function.Apply(this);
 			}
@@ -1369,9 +1369,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// be populated.
 		/// </param>
 		[SafeVarargs]
-		public IList<CoreLabel> AsCoreLabels(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public IList<CoreLabel> AsCoreLabels(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> function in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> function in functions)
 			{
 				function.Apply(this);
 			}
@@ -1413,7 +1413,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// .
 		/// </param>
 		/// <?/>
-		protected internal virtual void UpdateTokens<E>(IList<CoreLabel> tokens, IConsumer<Pair<CoreNLPProtos.Token.Builder, E>> setter, IFunction<CoreLabel, E> getter)
+		protected internal virtual void UpdateTokens<E>(IList<CoreLabel> tokens, IConsumer<Pair<CoreNLPProtos.Token.Builder, E>> setter, Func<CoreLabel, E> getter)
 		{
 			lock (this.impl)
 			{
@@ -1459,7 +1459,7 @@ namespace Edu.Stanford.Nlp.Simple
 
 		/// <summary>Update the Open IE relation triples for this sentence.</summary>
 		/// <param name="triples">The stream of relation triples to add to the sentence.</param>
-		protected internal virtual void UpdateOpenIE(IStream<CoreNLPProtos.RelationTriple> triples)
+		protected internal virtual void UpdateOpenIE(IEnumerable<CoreNLPProtos.RelationTriple> triples)
 		{
 			lock (this.impl)
 			{
@@ -1469,7 +1469,7 @@ namespace Edu.Stanford.Nlp.Simple
 
 		/// <summary>Update the Open IE relation triples for this sentence.</summary>
 		/// <param name="triples">The stream of relation triples to add to the sentence.</param>
-		protected internal virtual void UpdateKBP(IStream<CoreNLPProtos.RelationTriple> triples)
+		protected internal virtual void UpdateKBP(IEnumerable<CoreNLPProtos.RelationTriple> triples)
 		{
 			lock (this.impl)
 			{
@@ -1566,14 +1566,14 @@ namespace Edu.Stanford.Nlp.Simple
 			return sb.ToString();
 		}
 
-		private static IList<E> LazyList<E>(IList<CoreNLPProtos.Token.Builder> tokens, IFunction<CoreNLPProtos.Token.Builder, E> fn)
+		private static IList<E> LazyList<E>(IList<CoreNLPProtos.Token.Builder> tokens, Func<CoreNLPProtos.Token.Builder, E> fn)
 		{
 			return new _AbstractList_1280(fn, tokens);
 		}
 
 		private sealed class _AbstractList_1280 : AbstractList<E>
 		{
-			public _AbstractList_1280(IFunction<CoreNLPProtos.Token.Builder, E> fn, IList<CoreNLPProtos.Token.Builder> tokens)
+			public _AbstractList_1280(Func<CoreNLPProtos.Token.Builder, E> fn, IList<CoreNLPProtos.Token.Builder> tokens)
 			{
 				this.fn = fn;
 				this.tokens = tokens;
@@ -1592,7 +1592,7 @@ namespace Edu.Stanford.Nlp.Simple
 				}
 			}
 
-			private readonly IFunction<CoreNLPProtos.Token.Builder, E> fn;
+			private readonly Func<CoreNLPProtos.Token.Builder, E> fn;
 
 			private readonly IList<CoreNLPProtos.Token.Builder> tokens;
 		}
@@ -1633,7 +1633,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="pattern">The TokensRegex pattern to match against.</param>
 		/// <param name="fn">The action to do on each match.</param>
 		/// <returns>the list of matches, after run through the function.</returns>
-		public virtual IList<T> Find<T>(TokenSequencePattern pattern, IFunction<TokenSequenceMatcher, T> fn)
+		public virtual IList<T> Find<T>(TokenSequencePattern pattern, Func<TokenSequenceMatcher, T> fn)
 		{
 			TokenSequenceMatcher matcher = pattern.Matcher(AsCoreLabels());
 			IList<T> lst = new List<T>();
@@ -1644,7 +1644,7 @@ namespace Edu.Stanford.Nlp.Simple
 			return lst;
 		}
 
-		public virtual IList<T> Find<T>(string pattern, IFunction<TokenSequenceMatcher, T> fn)
+		public virtual IList<T> Find<T>(string pattern, Func<TokenSequenceMatcher, T> fn)
 		{
 			return Find(TokenSequencePattern.Compile(pattern), fn);
 		}
@@ -1653,7 +1653,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="pattern">The Semgrex pattern to match against.</param>
 		/// <param name="fn">The action to do on each match.</param>
 		/// <returns>the list of matches, after run through the function.</returns>
-		public virtual IList<T> Semgrex<T>(SemgrexPattern pattern, IFunction<SemgrexMatcher, T> fn)
+		public virtual IList<T> Semgrex<T>(SemgrexPattern pattern, Func<SemgrexMatcher, T> fn)
 		{
 			SemgrexMatcher matcher = pattern.Matcher(DependencyGraph());
 			IList<T> lst = new List<T>();
@@ -1668,7 +1668,7 @@ namespace Edu.Stanford.Nlp.Simple
 		/// <param name="pattern">The Semgrex pattern to match against.</param>
 		/// <param name="fn">The action to do on each match.</param>
 		/// <returns>the list of matches, after run through the function.</returns>
-		public virtual IList<T> Semgrex<T>(string pattern, IFunction<SemgrexMatcher, T> fn)
+		public virtual IList<T> Semgrex<T>(string pattern, Func<SemgrexMatcher, T> fn)
 		{
 			return Semgrex(SemgrexPattern.Compile(pattern), fn);
 		}

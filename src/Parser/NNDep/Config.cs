@@ -195,7 +195,7 @@ namespace Edu.Stanford.Nlp.Parser.Nndep
 		/// <c>Function&lt;List&lt;HasWord&gt;, List&lt;HasWord&gt;&gt;</c>
 		/// ).
 		/// </remarks>
-		public IFunction<IList<IHasWord>, IList<IHasWord>> escaper = null;
+		public Func<IList<IHasWord>, IList<IHasWord>> escaper = null;
 
 		/// <summary>
 		/// Path to a tagger file compatible with

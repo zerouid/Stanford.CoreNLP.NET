@@ -47,7 +47,7 @@ namespace Edu.Stanford.Nlp.Sequences
 		internal int num = 0;
 
 		[System.Serializable]
-		private class MalletDocParser : IFunction<string, IList<CoreLabel>>
+		private class MalletDocParser : Func<string, IList<CoreLabel>>
 		{
 			private const long serialVersionUID = -6211332661459630572L;
 

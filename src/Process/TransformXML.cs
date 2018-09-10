@@ -19,7 +19,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// Reads XML from an input file or stream and writes XML to an output
 	/// file or stream, while transforming text appearing inside specified
 	/// XML tags by applying a specified
-	/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+	/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 	/// .  See TransformXMLApplications for examples.
 	/// <i>Implementation note:</i> This is done using SAX2.
 	/// </summary>
@@ -46,7 +46,7 @@ namespace Edu.Stanford.Nlp.Process
 
 			protected internal PrintWriter outWriter = new PrintWriter(System.Console.Out, true);
 
-			protected internal IFunction<string, T> function;
+			protected internal Func<string, T> function;
 
 			/// <summary>How far down we are in the nested tags.</summary>
 			/// <remarks>
@@ -232,7 +232,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from the specified file and write XML to stdout,
 		/// while transforming text appearing inside the specified XML
 		/// tags by applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .  Note that the <code>Function</code>
 		/// you supply must be prepared to accept <code>String</code>s as
 		/// input; if your <code>Function</code> doesn't handle
@@ -245,11 +245,11 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>File</code> to read from</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, File @in)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, File @in)
 		{
 			InputStream ins = null;
 			try
@@ -272,7 +272,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from the specified file and write XML to specified file,
 		/// while transforming text appearing inside the specified XML tags
 		/// by applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .
 		/// Note that the <code>Function</code> you supply must be
 		/// prepared to accept <code>String</code>s as input; if your
@@ -285,12 +285,12 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>File</code> to read from</param>
 		/// <param name="out">the <code>File</code> to write to</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, File @in, File @out)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, File @in, File @out)
 		{
 			InputStream ins = null;
 			OutputStream outs = null;
@@ -316,7 +316,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from input stream and write XML to stdout, while
 		/// transforming text appearing inside the specified XML tags by
 		/// applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .
 		/// Note that the <code>Function</code> you supply must be
 		/// prepared to accept <code>String</code>s as input; if your
@@ -329,11 +329,11 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>InputStream</code> to read from</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, InputStream @in)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, InputStream @in)
 		{
 			TransformXML(tags, fn, @in, System.Console.Out);
 		}
@@ -342,7 +342,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from input stream and write XML to output stream,
 		/// while transforming text appearing inside the specified XML tags
 		/// by applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .
 		/// Note that the <code>Function</code> you supply must be
 		/// prepared to accept <code>String</code>s as input; if your
@@ -355,12 +355,12 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>InputStream</code> to read from</param>
 		/// <param name="out">the <code>OutputStream</code> to write to</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, InputStream @in, OutputStream @out)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, InputStream @in, OutputStream @out)
 		{
 			TransformXML(tags, fn, @in, new OutputStreamWriter(@out), BuildSaxInterface());
 		}
@@ -369,7 +369,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from input stream and write XML to output stream,
 		/// while transforming text appearing inside the specified XML tags
 		/// by applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .
 		/// Note that the <code>Function</code> you supply must be
 		/// prepared to accept <code>String</code>s as input; if your
@@ -387,12 +387,12 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>InputStream</code> to read from</param>
 		/// <param name="w">the <code>Writer</code> to write to</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, InputStream @in, TextWriter w)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, InputStream @in, TextWriter w)
 		{
 			TransformXML(tags, fn, @in, w, BuildSaxInterface());
 		}
@@ -401,7 +401,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Calls the fully specified transformXML with an InputSource
 		/// constructed from <code>in</code>.
 		/// </summary>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, InputStream @in, TextWriter w, TransformXML.SAXInterface<T> handler)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, InputStream @in, TextWriter w, TransformXML.SAXInterface<T> handler)
 		{
 			TransformXML(tags, fn, new InputSource(@in), w, handler);
 		}
@@ -410,7 +410,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Calls the fully specified transformXML with an InputSource
 		/// constructed from <code>in</code>.
 		/// </summary>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, Reader @in, TextWriter w, TransformXML.SAXInterface<T> handler)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, Reader @in, TextWriter w, TransformXML.SAXInterface<T> handler)
 		{
 			TransformXML(tags, fn, new InputSource(@in), w, handler);
 		}
@@ -419,7 +419,7 @@ namespace Edu.Stanford.Nlp.Process
 		/// Read XML from input source and write XML to output writer,
 		/// while transforming text appearing inside the specified XML tags
 		/// by applying the specified
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// .
 		/// Note that the <code>Function</code> you supply must be
 		/// prepared to accept <code>String</code>s as input; if your
@@ -442,13 +442,13 @@ namespace Edu.Stanford.Nlp.Process
 		/// </param>
 		/// <param name="fn">
 		/// the
-		/// <see cref="Java.Util.Function.IFunction{T, R}"><code>Function</code></see>
+		/// <see cref="Java.Util.Function.Func{T, R}"><code>Function</code></see>
 		/// to apply
 		/// </param>
 		/// <param name="in">the <code>InputStream</code> to read from</param>
 		/// <param name="w">the <code>Writer</code> to write to</param>
 		/// <param name="saxInterface">the sax handler you would like to use (default is SaxInterface, defined in this class, but you may define your own handler)</param>
-		public virtual void TransformXML(string[] tags, IFunction<string, T> fn, InputSource @in, TextWriter w, TransformXML.SAXInterface<T> saxInterface)
+		public virtual void TransformXML(string[] tags, Func<string, T> fn, InputSource @in, TextWriter w, TransformXML.SAXInterface<T> saxInterface)
 		{
 			saxInterface.outWriter = new PrintWriter(w, true);
 			saxInterface.function = fn;

@@ -38,14 +38,14 @@ namespace Edu.Stanford.Nlp.Pipeline
 		}
 
 		public TrueCaseAnnotator(bool verbose)
-			: this(Runtime.GetProperty("truecase.model", DefaultPaths.DefaultTruecaseModel), Runtime.GetProperty("truecase.bias", DefaultModelBias), Runtime.GetProperty("truecase.mixedcasefile", DefaultPaths.DefaultTruecaseDisambiguationList), bool.ParseBoolean
+			: this(Runtime.GetProperty("truecase.model", DefaultPaths.DefaultTruecaseModel), Runtime.GetProperty("truecase.bias", DefaultModelBias), Runtime.GetProperty("truecase.mixedcasefile", DefaultPaths.DefaultTruecaseDisambiguationList), bool.Parse
 				(Runtime.GetProperty("truecase.overwriteText", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator.DefaultOverwriteText)), verbose)
 		{
 		}
 
 		public TrueCaseAnnotator(Properties properties)
 			: this(properties.GetProperty("truecase.model", DefaultPaths.DefaultTruecaseModel), properties.GetProperty("truecase.bias", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator.DefaultModelBias), properties.GetProperty("truecase.mixedcasefile", DefaultPaths
-				.DefaultTruecaseDisambiguationList), bool.ParseBoolean(properties.GetProperty("truecase.overwriteText", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator.DefaultOverwriteText)), bool.ParseBoolean(properties.GetProperty("truecase.verbose", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator
+				.DefaultTruecaseDisambiguationList), bool.Parse(properties.GetProperty("truecase.overwriteText", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator.DefaultOverwriteText)), bool.Parse(properties.GetProperty("truecase.verbose", Edu.Stanford.Nlp.Pipeline.TrueCaseAnnotator
 				.DefaultVerbose)))
 		{
 		}
@@ -71,7 +71,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 				{
 					StringTokenizer bias = new StringTokenizer(biases.NextToken(), ":");
 					string cname = bias.NextToken();
-					double w = double.ParseDouble(bias.NextToken());
+					double w = double.Parse(bias.NextToken());
 					trueCaser.SetBiasWeight(cname, w);
 					if (this.verbose)
 					{

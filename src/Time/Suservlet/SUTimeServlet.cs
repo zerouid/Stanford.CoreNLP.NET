@@ -39,7 +39,7 @@ namespace Edu.Stanford.Nlp.Time.Suservlet
 			{
 				return true;
 			}
-			return bool.ParseBoolean(value);
+			return bool.Parse(value);
 		}
 
 		/// <exception cref="Javax.Servlet.ServletException"/>

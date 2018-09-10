@@ -187,7 +187,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// <inheritDoc/>
 		/// 
 		/// </summary>
-		public virtual ICollection<string> TagSet(IFunction<string, string> basicCategoryFunction)
+		public virtual ICollection<string> TagSet(Func<string, string> basicCategoryFunction)
 		{
 			ICollection<string> tagSet = new HashSet<string>();
 			foreach (string tag in tagIndex.ObjectsList())
@@ -787,7 +787,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 					if (m.Matches())
 					{
 						int i = System.Convert.ToInt32(m.Group(1));
-						smooth[i] = double.ParseDouble(m.Group(2));
+						smooth[i] = double.Parse(m.Group(2));
 					}
 					else
 					{
@@ -796,7 +796,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 						// System.out.println("fields:\n" + fields[0] + "\n" + fields[1] +
 						// "\n" + fields[2] + "\n" + fields[3] + "\n" + fields[4]);
 						bool seen = fields[3].Equals(Seen);
-						AddTagging(seen, new IntTaggedWord(fields[2], fields[0], wordIndex, tagIndex), double.ParseDouble(fields[4]));
+						AddTagging(seen, new IntTaggedWord(fields[2], fields[0], wordIndex, tagIndex), double.Parse(fields[4]));
 					}
 				}
 				catch (Exception e)

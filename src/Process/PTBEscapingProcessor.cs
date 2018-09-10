@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Process
 	/// <author>Sarah Spikes (sdspikes@cs.stanford.edu) (Templatization)</author>
 	/// <?/>
 	/// <?/>
-	public class PTBEscapingProcessor<In, L, F> : AbstractListProcessor<IN, IHasWord, L, F>, IFunction<IList<In>, IList<IHasWord>>
+	public class PTBEscapingProcessor<In, L, F> : AbstractListProcessor<IN, IHasWord, L, F>, Func<IList<In>, IList<IHasWord>>
 		where In : IHasWord
 	{
 		private static readonly char[] EmptyCharArray = new char[0];

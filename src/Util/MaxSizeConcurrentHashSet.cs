@@ -209,12 +209,12 @@ namespace Edu.Stanford.Nlp.Util
 			return s.Spliterator();
 		}
 
-		public virtual IStream<E> Stream()
+		public virtual IEnumerable<E> Stream()
 		{
 			return s.Stream();
 		}
 
-		public virtual IStream<E> ParallelStream()
+		public virtual IEnumerable<E> ParallelStream()
 		{
 			return s.ParallelStream();
 		}

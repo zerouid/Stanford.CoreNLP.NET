@@ -182,13 +182,13 @@ namespace Edu.Stanford.Nlp.Pipeline
 		/// <param name="verbose">whether or not to output verbose information.</param>
 		public QuoteAnnotator(string name, Properties props, bool verbose)
 		{
-			UseSingle = bool.ParseBoolean(props.GetProperty(name + "." + "singleQuotes", "false"));
+			UseSingle = bool.Parse(props.GetProperty(name + "." + "singleQuotes", "false"));
 			MaxLength = System.Convert.ToInt32(props.GetProperty(name + "." + "maxLength", "-1"));
-			AsciiQuotes = bool.ParseBoolean(props.GetProperty(name + "." + "asciiQuotes", "false"));
-			AllowEmbeddedSame = bool.ParseBoolean(props.GetProperty(name + "." + "allowEmbeddedSame", "false"));
-			SmartQuotes = bool.ParseBoolean(props.GetProperty(name + "." + "smartQuotes", "false"));
-			ExtractUnclosed = bool.ParseBoolean(props.GetProperty(name + "." + "extractUnclosedQuotes", "false"));
-			AttributeQuotes = bool.ParseBoolean(props.GetProperty(name + "." + "attributeQuotes", "true"));
+			AsciiQuotes = bool.Parse(props.GetProperty(name + "." + "asciiQuotes", "false"));
+			AllowEmbeddedSame = bool.Parse(props.GetProperty(name + "." + "allowEmbeddedSame", "false"));
+			SmartQuotes = bool.Parse(props.GetProperty(name + "." + "smartQuotes", "false"));
+			ExtractUnclosed = bool.Parse(props.GetProperty(name + "." + "extractUnclosedQuotes", "false"));
+			AttributeQuotes = bool.Parse(props.GetProperty(name + "." + "attributeQuotes", "true"));
 			Verbose = verbose;
 			Timing timer = null;
 			if (Verbose)

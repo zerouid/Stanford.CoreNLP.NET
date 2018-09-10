@@ -59,7 +59,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 					// Check that the read entry is above the score threshold
 					if (threshold > 0.0)
 					{
-						double score = double.ParseDouble(fields[2]);
+						double score = double.Parse(fields[2]);
 						if (score < threshold)
 						{
 							continue;

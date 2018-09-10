@@ -52,7 +52,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 				}
 				// Create coref system
 				corefSystem = new HybridCorefSystem(corefProps);
-				OldFormat = bool.ParseBoolean(props.GetProperty("oldCorefFormat", "false"));
+				OldFormat = bool.Parse(props.GetProperty("oldCorefFormat", "false"));
 			}
 			catch (Exception e)
 			{

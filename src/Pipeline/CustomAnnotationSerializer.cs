@@ -118,7 +118,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 					string dep = bbits[0];
 					int source = System.Convert.ToInt32(bbits[1]);
 					int target = System.Convert.ToInt32(bbits[2]);
-					bool isExtra = (bbits.Length == 4) ? bool.ParseBoolean(bbits[3]) : false;
+					bool isExtra = (bbits.Length == 4) ? bool.Parse(bbits[3]) : false;
 					int sourceCopy = (bbits.Length > 4) ? System.Convert.ToInt32(bbits[4]) : 0;
 					int targetCopy = (bbits.Length > 5) ? System.Convert.ToInt32(bbits[5]) : 0;
 					graph.edges.Add(new AnnotationSerializer.IntermediateEdge(dep, source, sourceCopy, target, targetCopy, isExtra));

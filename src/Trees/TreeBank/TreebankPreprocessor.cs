@@ -211,7 +211,7 @@ namespace Edu.Stanford.Nlp.Trees.Treebank
 					System.Console.Out.Printf("Unable to instantiate TYPE for dataset %s. Check the javadocs%n", nameOfDataset);
 					continue;
 				}
-				bool shouldDistribute = dsParams.Contains(ConfigParser.paramDistrib) && bool.ParseBoolean(dsParams.GetProperty(ConfigParser.paramDistrib));
+				bool shouldDistribute = dsParams.Contains(ConfigParser.paramDistrib) && bool.Parse(dsParams.GetProperty(ConfigParser.paramDistrib));
 				dsParams.Remove(ConfigParser.paramDistrib);
 				bool lacksRequiredOptions = !(ds.SetOptions(dsParams));
 				if (lacksRequiredOptions)

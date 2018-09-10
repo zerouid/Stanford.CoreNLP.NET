@@ -36,7 +36,7 @@ namespace Edu.Stanford.Nlp.Sequences
 
 		internal int num = 0;
 
-		private class ColumnDocParser : IFunction<string, IList<CoreLabel>>
+		private class ColumnDocParser : Func<string, IList<CoreLabel>>
 		{
 			public virtual IList<CoreLabel> Apply(string doc)
 			{

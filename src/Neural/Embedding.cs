@@ -150,7 +150,7 @@ namespace Edu.Stanford.Nlp.Neural
 				double[][] vec = new double[dimOfWords][];
 				for (int i = 1; i <= dimOfWords; i++)
 				{
-					vec[i - 1][0] = double.ParseDouble(lineSplit[i]);
+					vec[i - 1][0] = double.Parse(lineSplit[i]);
 				}
 				SimpleMatrix vector = new SimpleMatrix(vec);
 				wordVectors[word] = vector;
@@ -227,7 +227,7 @@ namespace Edu.Stanford.Nlp.Neural
 				double[][] vec = new double[dimOfWords][];
 				for (int i = 0; i < dimOfWords; i++)
 				{
-					vec[i][0] = double.ParseDouble(lineSplit[i]);
+					vec[i][0] = double.Parse(lineSplit[i]);
 				}
 				SimpleMatrix vector = new SimpleMatrix(vec);
 				wordVectors[word] = vector;

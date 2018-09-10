@@ -36,7 +36,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 
 		/// <summary>Return the Set of tags used by this tagger (available after training the tagger).</summary>
 		/// <returns>The Set of tags used by this tagger</returns>
-		ICollection<string> TagSet(IFunction<string, string> basicCategoryFunction);
+		ICollection<string> TagSet(Func<string, string> basicCategoryFunction);
 
 		/// <summary>Get an iterator over all rules (pairs of (word, POS)) for this word.</summary>
 		/// <param name="word">The word, represented as an integer in Index</param>

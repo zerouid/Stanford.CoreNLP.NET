@@ -9,7 +9,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 {
 	/// <summary>Function that aggregates several core maps into one</summary>
 	/// <author>Angel Chang</author>
-	public class CoreMapAggregator : IFunction<IList<ICoreMap>, ICoreMap>
+	public class CoreMapAggregator : Func<IList<ICoreMap>, ICoreMap>
 	{
 		public static readonly Edu.Stanford.Nlp.Pipeline.CoreMapAggregator DefaultAggregator = GetAggregator(CoreMapAttributeAggregator.GetDefaultAggregators());
 
@@ -85,7 +85,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 			return CollectionUtils.MergeList(list, matched, this);
 		}
 
-		public virtual IList<ICoreMap> Merge<M, _T1>(IList<_T1> list, IList<M> matched, IFunction<M, Interval<int>> toIntervalFunc)
+		public virtual IList<ICoreMap> Merge<M, _T1>(IList<_T1> list, IList<M> matched, Func<M, Interval<int>> toIntervalFunc)
 			where _T1 : ICoreMap
 		{
 			return CollectionUtils.MergeList(list, matched, toIntervalFunc, this);

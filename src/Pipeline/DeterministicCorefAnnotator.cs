@@ -45,7 +45,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 			{
 				corefSystem = new SieveCoreferenceSystem(props);
 				mentionExtractor = new MentionExtractor(corefSystem.Dictionaries(), corefSystem.Semantics());
-				OldFormat = bool.ParseBoolean(props.GetProperty("oldCorefFormat", "false"));
+				OldFormat = bool.Parse(props.GetProperty("oldCorefFormat", "false"));
 				allowReparsing = PropertiesUtils.GetBool(props, Constants.AllowReparsingProp, Constants.AllowReparsing);
 				// unless custom mention detection is set, just use the default coref mention detector
 				performMentionDetection = !PropertiesUtils.GetBool(props, "dcoref.useCustomMentionDetection", false);

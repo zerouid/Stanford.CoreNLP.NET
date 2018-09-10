@@ -288,7 +288,7 @@ namespace Edu.Stanford.Nlp.Process
 		}
 
 		/// <summary>Create an Annotation object (with a single sentence) from the given specification.</summary>
-		private static Annotation ParseSentence(Optional<string> docid, Optional<int> sentenceIndex, string gloss, IFunction<IList<CoreLabel>, SemanticGraph> tree, IFunction<IList<CoreLabel>, SemanticGraph> maltTree, IList<string> words, IList<string
+		private static Annotation ParseSentence(Optional<string> docid, Optional<int> sentenceIndex, string gloss, Func<IList<CoreLabel>, SemanticGraph> tree, Func<IList<CoreLabel>, SemanticGraph> maltTree, IList<string> words, IList<string
 			> lemmas, IList<string> pos, IList<string> ner, Optional<string> sentenceid)
 		{
 			// Error checks

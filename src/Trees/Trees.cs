@@ -179,7 +179,7 @@ namespace Edu.Stanford.Nlp.Trees
 		/// </summary>
 		public static Tree Lexicalize(Tree t, IHeadFinder hf)
 		{
-			IFunction<Tree, Tree> a = TreeFunctions.GetLabeledTreeToCategoryWordTagTreeFunction();
+			Func<Tree, Tree> a = TreeFunctions.GetLabeledTreeToCategoryWordTagTreeFunction();
 			Tree t1 = a.Apply(t);
 			t1.PercolateHeads(hf);
 			return t1;

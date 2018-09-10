@@ -185,7 +185,7 @@ namespace Edu.Stanford.Nlp.IE
 		/// <param name="selector">The field to compute for each element in the span. A good default is <code></code>CoreLabel::word</code> or <code></code>CoreLabel::token</code></param>
 		/// <?/>
 		/// <returns>A list of elements between the two mentions.</returns>
-		private static IList<E> SpanBetweenMentions<E>(KBPRelationExtractor.KBPInput input, IFunction<CoreLabel, E> selector)
+		private static IList<E> SpanBetweenMentions<E>(KBPRelationExtractor.KBPInput input, Func<CoreLabel, E> selector)
 		{
 			IList<CoreLabel> sentence = input.sentence.AsCoreLabels(null, null);
 			Span subjSpan = input.subjectSpan;

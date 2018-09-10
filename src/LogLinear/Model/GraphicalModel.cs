@@ -147,7 +147,7 @@ namespace Edu.Stanford.Nlp.Loglinear.Model
 		/// features for that assignment.
 		/// </param>
 		/// <returns>a reference to the created factor. This can be safely ignored, as the factor is already saved in the model</returns>
-		public virtual GraphicalModel.Factor AddFactor(int[] neighborIndices, int[] neighborDimensions, IFunction<int[], ConcatVector> assignmentFeaturizer)
+		public virtual GraphicalModel.Factor AddFactor(int[] neighborIndices, int[] neighborDimensions, Func<int[], ConcatVector> assignmentFeaturizer)
 		{
 			ConcatVectorTable features = new ConcatVectorTable(neighborDimensions);
 			foreach (int[] assignment in features)

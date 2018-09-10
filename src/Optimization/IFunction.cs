@@ -6,7 +6,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <author><a href="mailto:klein@cs.stanford.edu">Dan Klein</a></author>
 	/// <version>1.0</version>
 	/// <since>1.0</since>
-	public interface IFunction
+	public interface Func
 	{
 		/// <summary>Returns the value of the function at a single point.</summary>
 		/// <param name="x">a <code>double[]</code> input</param>

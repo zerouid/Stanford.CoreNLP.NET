@@ -24,7 +24,7 @@ namespace Edu.Stanford.Nlp.Time
 		{
 		}
 
-		public class JavaDateFormatExtractor : IFunction<ICoreMap, IValue>
+		public class JavaDateFormatExtractor : Func<ICoreMap, IValue>
 		{
 			private static readonly Type textAnnotationField = typeof(CoreAnnotations.TextAnnotation);
 
@@ -52,7 +52,7 @@ namespace Edu.Stanford.Nlp.Time
 			}
 		}
 
-		public class JodaDateTimeFormatExtractor : IFunction<ICoreMap, IValue>
+		public class JodaDateTimeFormatExtractor : Func<ICoreMap, IValue>
 		{
 			private static readonly Type textAnnotationField = typeof(CoreAnnotations.TextAnnotation);
 
@@ -84,15 +84,15 @@ namespace Edu.Stanford.Nlp.Time
 			}
 		}
 
-		internal class ApplyActionWrapper<I, O> : IFunction<I, O>
+		internal class ApplyActionWrapper<I, O> : Func<I, O>
 		{
 			private readonly Env env;
 
-			private readonly IFunction<I, O> @base;
+			private readonly Func<I, O> @base;
 
 			private readonly IExpression action;
 
-			internal ApplyActionWrapper(Env env, IFunction<I, O> @base, IExpression action)
+			internal ApplyActionWrapper(Env env, Func<I, O> @base, IExpression action)
 			{
 				this.env = env;
 				this.@base = @base;
@@ -112,7 +112,7 @@ namespace Edu.Stanford.Nlp.Time
 
 		internal class TimePatternExtractRuleCreator : SequenceMatchRules.AnnotationExtractRuleCreator
 		{
-			private static void UpdateExtractRule(SequenceMatchRules.AnnotationExtractRule r, Env env, Pattern pattern, IFunction<string, IValue> extractor)
+			private static void UpdateExtractRule(SequenceMatchRules.AnnotationExtractRule r, Env env, Pattern pattern, Func<string, IValue> extractor)
 			{
 				MatchedExpression.SingleAnnotationExtractor annotationExtractor = SequenceMatchRules.CreateAnnotationExtractor(env, r);
 				annotationExtractor.valueExtractor = new SequenceMatchRules.CoreMapFunctionApplier<string, IValue>(env, r.annotationField, extractor);
@@ -122,7 +122,7 @@ namespace Edu.Stanford.Nlp.Time
 				r.pattern = pattern;
 			}
 
-			private static void UpdateExtractRule(SequenceMatchRules.AnnotationExtractRule r, Env env, IFunction<ICoreMap, IValue> extractor)
+			private static void UpdateExtractRule(SequenceMatchRules.AnnotationExtractRule r, Env env, Func<ICoreMap, IValue> extractor)
 			{
 				MatchedExpression.SingleAnnotationExtractor annotationExtractor = SequenceMatchRules.CreateAnnotationExtractor(env, r);
 				annotationExtractor.valueExtractor = extractor;
@@ -204,7 +204,7 @@ namespace Edu.Stanford.Nlp.Time
 		}
 
 		/// <summary>Converts time string pattern to text pattern.</summary>
-		public class CustomDateFormatExtractor : IFunction<string, IValue>
+		public class CustomDateFormatExtractor : Func<string, IValue>
 		{
 			private readonly TimeFormatter.FormatterBuilder builder;
 

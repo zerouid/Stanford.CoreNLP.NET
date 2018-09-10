@@ -53,7 +53,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 
 		private readonly BufferedReader inputReader;
 
-		private readonly IFunction<string, E> op;
+		private readonly Func<string, E> op;
 
 		private readonly bool keepInternalTags;
 
@@ -73,7 +73,7 @@ namespace Edu.Stanford.Nlp.Objectbank
 		{
 		}
 
-		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, IFunction<string, E> op, bool keepInternalTags)
+		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, Func<string, E> op, bool keepInternalTags)
 			: this(@in, tagNameRegexp, op, keepInternalTags, false)
 		{
 		}
@@ -88,12 +88,12 @@ namespace Edu.Stanford.Nlp.Objectbank
 		{
 		}
 
-		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, IFunction<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
+		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, Func<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
 			: this(@in, tagNameRegexp, op, keepInternalTags, keepDelimitingTags, false)
 		{
 		}
 
-		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, IFunction<string, E> op, bool keepInternalTags, bool keepDelimitingTags, bool countDepth)
+		public XMLBeginEndIterator(Reader @in, string tagNameRegexp, Func<string, E> op, bool keepInternalTags, bool keepDelimitingTags, bool countDepth)
 		{
 			// stores the read-ahead next token to return
 			// Can't seem to do IdentityFunction without warning!
@@ -269,12 +269,12 @@ namespace Edu.Stanford.Nlp.Objectbank
 			return new XMLBeginEndIterator.XMLBeginEndIteratorFactory<string>(tag, new IdentityFunction<string>(), keepInternalTags, keepDelimitingTags);
 		}
 
-		public static IIteratorFromReaderFactory<E> GetFactory<E>(string tag, IFunction<string, E> op)
+		public static IIteratorFromReaderFactory<E> GetFactory<E>(string tag, Func<string, E> op)
 		{
 			return new XMLBeginEndIterator.XMLBeginEndIteratorFactory<E>(tag, op, false, false);
 		}
 
-		public static IIteratorFromReaderFactory<E> GetFactory<E>(string tag, IFunction<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
+		public static IIteratorFromReaderFactory<E> GetFactory<E>(string tag, Func<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
 		{
 			return new XMLBeginEndIterator.XMLBeginEndIteratorFactory<E>(tag, op, keepInternalTags, keepDelimitingTags);
 		}
@@ -284,13 +284,13 @@ namespace Edu.Stanford.Nlp.Objectbank
 		{
 			private readonly string tag;
 
-			private readonly IFunction<string, E> op;
+			private readonly Func<string, E> op;
 
 			private readonly bool keepInternalTags;
 
 			private readonly bool keepDelimitingTags;
 
-			public XMLBeginEndIteratorFactory(string tag, IFunction<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
+			public XMLBeginEndIteratorFactory(string tag, Func<string, E> op, bool keepInternalTags, bool keepDelimitingTags)
 			{
 				this.tag = tag;
 				this.op = op;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ using Edu.Stanford.Nlp.IO;
 using Edu.Stanford.Nlp.Ling;
 using Edu.Stanford.Nlp.Math;
 using Edu.Stanford.Nlp.Util.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Edu.Stanford.Nlp.Util
 {
@@ -281,13 +283,12 @@ namespace Edu.Stanford.Nlp.Util
 			return sb.ToString();
 		}
 
-		public static string Join<E, _T1>(IList<_T1> l, string glue, Func<E, string> toStringFunc, int start, int end)
-			where _T1 : E
+		public static string Join<E>(IList<E> l, string glue, Func<E, string> toStringFunc, int start, int end)
 		{
 			StringBuilder sb = new StringBuilder();
 			bool first = true;
-			start = Math.Max(start, 0);
-			end = Math.Min(end, l.Count);
+			start = System.Math.Max(start, 0);
+			end = System.Math.Min(end, l.Count);
 			for (int i = start; i < end; i++)
 			{
 				if (!first)
@@ -298,23 +299,23 @@ namespace Edu.Stanford.Nlp.Util
 				{
 					first = false;
 				}
-				sb.Append(toStringFunc.Apply(l[i]));
+				sb.Append(toStringFunc(l[i]));
 			}
 			return sb.ToString();
 		}
 
-		public static string JoinWords<_T0>(IList<_T0> l, string glue, int start, int end)
-			where _T0 : IHasWord
+		public static string JoinWords<W>(IList<W> l, string glue, int start, int end)
+			where W : IHasWord
 		{
-			return Join(l, glue, null, start, end);
+			return Join<W>(l, glue, null, start, end);
 		}
 
-		private static readonly IFunction<object, string> DefaultTostring = null;
+		private static readonly Func<object, string> DefaultTostring = null;
 
-		public static string JoinFields<_T0>(IList<_T0> l, Type field, string defaultFieldValue, string glue, int start, int end, IFunction<object, string> toStringFunc)
-			where _T0 : ICoreMap
+		public static string JoinFields<M>(IList<M> l, Type field, string defaultFieldValue, string glue, int start, int end, Func<object, string> toStringFunc)
+			where M : ICoreMap
 		{
-			return Join(l, glue, (IFunction<ICoreMap, string>)null, start, end);
+			return Join(l, glue, (Func<M, string>)null, start, end);
 		}
 
 		public static string JoinFields<_T0>(IList<_T0> l, Type field, string defaultFieldValue, string glue, int start, int end)
@@ -323,7 +324,7 @@ namespace Edu.Stanford.Nlp.Util
 			return JoinFields(l, field, defaultFieldValue, glue, start, end, DefaultTostring);
 		}
 
-		public static string JoinFields<_T0>(IList<_T0> l, Type field, IFunction<object, string> toStringFunc)
+		public static string JoinFields<_T0>(IList<_T0> l, Type field, Func<object, string> toStringFunc)
 			where _T0 : ICoreMap
 		{
 			return JoinFields(l, field, "-", " ", 0, l.Count, toStringFunc);
@@ -335,13 +336,13 @@ namespace Edu.Stanford.Nlp.Util
 			return JoinFields(l, field, "-", " ", 0, l.Count);
 		}
 
-		public static string JoinMultipleFields<_T0>(IList<_T0> l, Type[] fields, string defaultFieldValue, string fieldGlue, string glue, int start, int end, IFunction<object, string> toStringFunc)
-			where _T0 : ICoreMap
+		public static string JoinMultipleFields<T>(IList<T> l, Type[] fields, string defaultFieldValue, string fieldGlue, string glue, int start, int end, Func<object, string> toStringFunc)
+			where T : ICoreMap
 		{
-			return Join(l, glue, (IFunction<ICoreMap, string>)null, start, end);
+			return Join(l, glue, (Func<T, string>)null, start, end);
 		}
 
-		public static string JoinMultipleFields<_T0>(IList<_T0> l, Type[] fields, IFunction<object, string> toStringFunc)
+		public static string JoinMultipleFields<_T0>(IList<_T0> l, Type[] fields, Func<object, string> toStringFunc)
 			where _T0 : ICoreMap
 		{
 			return JoinMultipleFields(l, fields, "-", "/", " ", 0, l.Count, toStringFunc);
@@ -373,7 +374,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>a string of the tokens with the appropriate amount of spacing</returns>
 		public static string JoinWithOriginalWhiteSpace(IList<CoreLabel> tokens)
 		{
-			if (tokens.IsEmpty())
+			if (!tokens.Any())
 			{
 				return string.Empty;
 			}
@@ -424,38 +425,6 @@ namespace Edu.Stanford.Nlp.Util
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Joins each elem in the
-		/// <see cref="Java.Util.Stream.IStream{T}"/>
-		/// with the given glue.
-		/// For example, given a list of
-		/// <c>Integers</c>
-		/// , you can create
-		/// a comma-separated list by calling
-		/// <c>join(numbers, ", ")</c>
-		/// .
-		/// </summary>
-		/// <seealso cref="Join{X}(System.Collections.Generic.IEnumerable{T}, string)"/>
-		public static string Join<X>(IStream<X> l, string glue)
-		{
-			StringBuilder sb = new StringBuilder();
-			bool first = true;
-			IEnumerator<X> iter = l.Iterator();
-			while (iter.MoveNext())
-			{
-				if (!first)
-				{
-					sb.Append(glue);
-				}
-				else
-				{
-					first = false;
-				}
-				sb.Append(iter.Current);
-			}
-			return sb.ToString();
-		}
-
 		/// <summary>Joins each elem in the array with the given glue.</summary>
 		/// <remarks>
 		/// Joins each elem in the array with the given glue. For example, given a
@@ -465,7 +434,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		public static string Join(object[] elements, string glue)
 		{
-			return (Join(Arrays.AsList(elements), glue));
+			return (Join(elements, glue));
 		}
 
 		/// <summary>Joins an array of elements in a given span.</summary>
@@ -502,7 +471,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		public static string Join(string[] items, string glue)
 		{
-			return Join(Arrays.AsList(items), glue);
+			return Join(items, glue);
 		}
 
 		/// <summary>Joins elements with a space.</summary>
@@ -538,7 +507,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>List of Strings resulting from splitting on the regex</returns>
 		public static IList<string> Split(string str, string regex)
 		{
-			return (Arrays.AsList(str.Split(regex)));
+			return Regex.Split(str,regex);
 		}
 
 		/// <summary>Split a string on a given single character.</summary>
@@ -585,16 +554,15 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>List of lists of strings.</returns>
 		public static IList<IList<string>> SplitFieldsFast(string str, string delimiter)
 		{
-			IList<IList<string>> fields = Generics.NewArrayList();
-			StringTokenizer tokenizer = new StringTokenizer(str.Trim());
-			IList<string> currentField = Generics.NewArrayList();
-			while (tokenizer.HasMoreTokens())
+			IList<IList<string>> fields = new List<IList<string>>();
+			string[] tokens = Regex.Split(str.Trim(), @"[\t\n\r\f]");
+			IList<string> currentField = new List<string>();
+			foreach (string token in tokens)
 			{
-				string token = tokenizer.NextToken();
 				if (token.Equals(delimiter))
 				{
 					fields.Add(currentField);
-					currentField = Generics.NewArrayList();
+					currentField = new List<string>();
 				}
 				else
 				{
@@ -632,7 +600,7 @@ namespace Edu.Stanford.Nlp.Util
 			}
 			if (outI < @out.Length)
 			{
-				@out[outI] = Sharpen.Runtime.Substring(input, lastSplit);
+				@out[outI] = input.Substring(lastSplit);
 			}
 		}
 
@@ -660,13 +628,13 @@ namespace Edu.Stanford.Nlp.Util
 			Regex vPat = new Regex(valueRegex);
 			Regex sPat = new Regex(separatorRegex);
 			IList<string> ret = new List<string>();
-			while (!str.IsEmpty())
+			while (!string.IsNullOrEmpty(str))
 			{
 				Match vm = vPat.Match(str);
-				if (vm.LookingAt())
+				if (vm.Success)
 				{
-					ret.Add(vm.Group());
-					str = Sharpen.Runtime.Substring(str, vm.End());
+					ret.Add(vm.Value);
+					str = str.Substring(vm.Index + vm.Length);
 				}
 				else
 				{
@@ -674,12 +642,12 @@ namespace Edu.Stanford.Nlp.Util
 					// log.info("vmatched " + got + "; now str is " + str);
 					throw new ArgumentException("valueSplit: " + valueRegex + " doesn't match " + str);
 				}
-				if (!str.IsEmpty())
+				if (!string.IsNullOrEmpty(str))
 				{
 					Match sm = sPat.Match(str);
-					if (sm.LookingAt())
+					if (sm.Success)
 					{
-						str = Sharpen.Runtime.Substring(str, sm.End());
+						str = str.Substring(sm.Index + sm.Length);
 					}
 					else
 					{
@@ -762,7 +730,7 @@ namespace Edu.Stanford.Nlp.Util
 			{
 				if (leng > num)
 				{
-					return Sharpen.Runtime.Substring(str, 0, num);
+					return str.Substring(0, num);
 				}
 				else
 				{
@@ -795,7 +763,7 @@ namespace Edu.Stanford.Nlp.Util
 			{
 				if (leng > num)
 				{
-					return Sharpen.Runtime.Substring(str, str.Length - num);
+					return str.Substring(str.Length - num);
 				}
 				else
 				{
@@ -821,7 +789,7 @@ namespace Edu.Stanford.Nlp.Util
 				str = "null";
 			}
 			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < num; i++)
+			for (int i = 0, num = totalChars - str.Length; i < num; i++)
 			{
 				sb.Append(ch);
 			}
@@ -845,7 +813,7 @@ namespace Edu.Stanford.Nlp.Util
 
 		public static string PadLeft(int i, int totalChars)
 		{
-			return PadLeft(int.Parse(i), totalChars);
+			return PadLeft(i, totalChars);
 		}
 
 		public static string PadLeft(double d, int totalChars)
@@ -860,7 +828,7 @@ namespace Edu.Stanford.Nlp.Util
 			{
 				return (s);
 			}
-			return Sharpen.Runtime.Substring(s, 0, maxWidth);
+			return s.Substring(0, maxWidth);
 		}
 
 		public static string Trim(object obj, int maxWidth)
@@ -872,7 +840,7 @@ namespace Edu.Stanford.Nlp.Util
 		{
 			if (s.Length > width)
 			{
-				s = Sharpen.Runtime.Substring(s, 0, width - 3) + "...";
+				s = s.Substring(0, width - 3) + "...";
 			}
 			return s;
 		}
@@ -982,7 +950,7 @@ namespace Edu.Stanford.Nlp.Util
 			}
 			for (int j_1 = numDigits - 1; j_1 >= 0; j_1--)
 			{
-				result[j_1] = char.ForDigit(n % 10, 10);
+				result[j_1] = (char)('0' + (n % 10));
 				n = n / 10;
 			}
 			return new string(result);
@@ -1019,7 +987,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </returns>
 		public static IDictionary<string, string[]> ArgsToMap(string[] args)
 		{
-			return ArgsToMap(args, Java.Util.Collections.EmptyMap());
+			return ArgsToMap(args, new Dictionary<string,int>());
 		}
 
 		/// <summary>Parses command line arguments into a Map.</summary>
@@ -1076,7 +1044,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </returns>
 		public static IDictionary<string, string[]> ArgsToMap(string[] args, IDictionary<string, int> flagsToNumArgs)
 		{
-			IDictionary<string, string[]> result = Generics.NewHashMap();
+			IDictionary<string, string[]> result = new Dictionary<string, string[]>();
 			IList<string> remainingArgs = new List<string>();
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -1084,29 +1052,22 @@ namespace Edu.Stanford.Nlp.Util
 				if (key[0] == '-')
 				{
 					// found a flag
-					int numFlagArgs = flagsToNumArgs[key];
-					int max = numFlagArgs == null ? 1 : numFlagArgs;
-					int min = numFlagArgs == null ? 0 : numFlagArgs;
+					int? numFlagArgs = flagsToNumArgs.ContainsKey(key) ? flagsToNumArgs[key] : (int?)null;
+					int max = numFlagArgs.GetValueOrDefault(1);
+					int min = numFlagArgs.GetValueOrDefault(0);
 					IList<string> flagArgs = new List<string>();
-					for (int j = 0; j < max && i + 1 < args.Length && (j < min || args[i + 1].IsEmpty() || args[i + 1][0] != '-'); i++, j++)
+					for (int j = 0; j < max && i + 1 < args.Length && (j < min || string.IsNullOrEmpty(args[i + 1]) || args[i + 1][0] != '-'); i++, j++)
 					{
 						flagArgs.Add(args[i + 1]);
 					}
-					if (result.Contains(key))
+					if (result.ContainsKey(key))
 					{
 						// append the second specification into the args.
-						string[] newFlagArg = new string[result[key].Length + flagsToNumArgs[key]];
-						int oldNumArgs = result[key].Length;
-						System.Array.Copy(result[key], 0, newFlagArg, 0, oldNumArgs);
-						for (int j_1 = 0; j_1 < flagArgs.Count; j_1++)
-						{
-							newFlagArg[j_1 + oldNumArgs] = flagArgs[j_1];
-						}
-						result[key] = newFlagArg;
+						result[key] = result[key].Concat(flagArgs).ToArray();
 					}
 					else
 					{
-						result[key] = Sharpen.Collections.ToArray(flagArgs, new string[flagArgs.Count]);
+						result.Add(key, flagArgs.ToArray());
 					}
 				}
 				else
@@ -1114,7 +1075,7 @@ namespace Edu.Stanford.Nlp.Util
 					remainingArgs.Add(args[i]);
 				}
 			}
-			result[null] = Sharpen.Collections.ToArray(remainingArgs, new string[remainingArgs.Count]);
+			result[null] = remainingArgs.ToArray();
 			return result;
 		}
 
@@ -1127,9 +1088,9 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		/// <param name="args">Command line arguments</param>
 		/// <returns>A Properties object representing the arguments.</returns>
-		public static Properties ArgsToProperties(params string[] args)
+		public static IConfiguration ArgsToProperties(params string[] args)
 		{
-			return ArgsToProperties(args, Java.Util.Collections.EmptyMap());
+			return ArgsToProperties(args, new Dictionary<string, int>());
 		}
 
 		/// <summary>
@@ -1157,42 +1118,44 @@ namespace Edu.Stanford.Nlp.Util
 		/// <param name="args">Command line arguments</param>
 		/// <param name="flagsToNumArgs">Map of how many arguments flags should have. The keys are without the minus signs.</param>
 		/// <returns>A Properties object representing the arguments.</returns>
-		public static Properties ArgsToProperties(string[] args, IDictionary<string, int> flagsToNumArgs)
+		public static IConfiguration ArgsToProperties(string[] args, IDictionary<string, int> flagsToNumArgs)
 		{
-			Properties result = new Properties();
+			var builder = new ConfigurationBuilder();
 			IList<string> remainingArgs = new List<string>();
+			IDictionary<string,string> result = new Dictionary<string,string>();
 			for (int i = 0; i < args.Length; i++)
 			{
 				string key = args[i];
-				if (!key.IsEmpty() && key[0] == '-')
+				if (!string.IsNullOrEmpty(key) && key[0] == '-')
 				{
 					// found a flag
 					if (key.Length > 1 && key[1] == '-')
 					{
-						key = Sharpen.Runtime.Substring(key, 2);
+						key = key.Substring(2);
 					}
 					else
 					{
 						// strip off 2 hyphens
-						key = Sharpen.Runtime.Substring(key, 1);
+						key = key.Substring(1);
 					}
 					// strip off the hyphen
-					int maxFlagArgs = flagsToNumArgs[key];
-					int max = maxFlagArgs == null ? 1 : maxFlagArgs;
-					int min = maxFlagArgs == null ? 0 : maxFlagArgs;
-					if (maxFlagArgs != null && maxFlagArgs == 0 && i < args.Length - 1 && (Sharpen.Runtime.EqualsIgnoreCase("true", args[i + 1]) || Sharpen.Runtime.EqualsIgnoreCase("false", args[i + 1])))
+					int? maxFlagArgs = flagsToNumArgs.ContainsKey(key) ? flagsToNumArgs[key] : (int?)null;
+					int max = maxFlagArgs.GetValueOrDefault(1);
+					int min = maxFlagArgs.GetValueOrDefault(0);
+					if (maxFlagArgs != null && maxFlagArgs == 0 && i < args.Length - 1 && 
+						(string.Equals("true", args[i + 1], StringComparison.OrdinalIgnoreCase) || string.Equals("false", args[i + 1],StringComparison.OrdinalIgnoreCase)))
 					{
 						max = 1;
 					}
 					// case: we're reading a boolean flag. TODO(gabor) there's gotta be a better way...
 					IList<string> flagArgs = new List<string>();
 					// cdm oct 2007: add length check to allow for empty string argument!
-					for (int j = 0; j < max && i + 1 < args.Length && (j < min || args[i + 1].IsEmpty() || args[i + 1][0] != '-'); i++, j++)
+					for (int j = 0; j < max && i + 1 < args.Length && (j < min || string.IsNullOrEmpty(args[i + 1]) || args[i + 1][0] != '-'); i++, j++)
 					{
 						flagArgs.Add(args[i + 1]);
 					}
 					string value;
-					if (flagArgs.IsEmpty())
+					if (!flagArgs.Any())
 					{
 						value = "true";
 					}
@@ -1200,14 +1163,13 @@ namespace Edu.Stanford.Nlp.Util
 					{
 						value = Join(flagArgs, " ");
 					}
-					if (Sharpen.Runtime.EqualsIgnoreCase(key, Prop) || Sharpen.Runtime.EqualsIgnoreCase(key, Props) || Sharpen.Runtime.EqualsIgnoreCase(key, Properties) || Sharpen.Runtime.EqualsIgnoreCase(key, Arguments) || Sharpen.Runtime.EqualsIgnoreCase(key, 
-						Args))
+					if (string.Equals(key, Prop, StringComparison.OrdinalIgnoreCase) || string.Equals(key, Props, StringComparison.OrdinalIgnoreCase) || string.Equals(key, Properties, StringComparison.OrdinalIgnoreCase) || string.Equals(key, Arguments, StringComparison.OrdinalIgnoreCase) || string.Equals(key, Args, StringComparison.OrdinalIgnoreCase))
 					{
-						result.SetProperty(Properties, value);
+						result.Add(Properties, value);
 					}
 					else
 					{
-						result.SetProperty(key, value);
+						result.Add(key, value);
 					}
 				}
 				else
@@ -1215,47 +1177,49 @@ namespace Edu.Stanford.Nlp.Util
 					remainingArgs.Add(args[i]);
 				}
 			}
-			if (!remainingArgs.IsEmpty())
+			if (remainingArgs.Any())
 			{
-				result.SetProperty(string.Empty, Join(remainingArgs, " "));
+				result.Add(string.Empty, Join(remainingArgs, " "));
 			}
 			/* Processing in reverse order, add properties that aren't present only. Thus, later ones override earlier ones. */
-			while (result.Contains(Properties))
+			while (result.ContainsKey(Properties))
 			{
-				string file = result.GetProperty(Properties);
+				string file = result[Properties];
+				builder.AddIniFile(file);
 				result.Remove(Properties);
-				Properties toAdd = new Properties();
-				BufferedReader reader = null;
-				try
-				{
-					reader = IOUtils.ReaderFromString(file);
-					toAdd.Load(reader);
-					// trim all values
-					foreach (string propKey in toAdd.StringPropertyNames())
-					{
-						string newVal = toAdd.GetProperty(propKey);
-						toAdd.SetProperty(propKey, newVal.Trim());
-					}
-				}
-				catch (IOException e)
-				{
-					string msg = "argsToProperties could not read properties file: " + file;
-					throw new RuntimeIOException(msg, e);
-				}
-				finally
-				{
-					IOUtils.CloseIgnoringExceptions(reader);
-				}
-				foreach (string key in toAdd.StringPropertyNames())
-				{
-					string val = toAdd.GetProperty(key);
-					if (!result.Contains(key))
-					{
-						result.SetProperty(key, val);
-					}
-				}
+				// Properties toAdd = new Properties();
+				// BufferedReader reader = null;
+				// try
+				// {
+				// 	reader = IOUtils.ReaderFromString(file);
+				// 	toAdd.Load(reader);
+				// 	// trim all values
+				// 	foreach (string propKey in toAdd.StringPropertyNames())
+				// 	{
+				// 		string newVal = toAdd.GetProperty(propKey);
+				// 		toAdd.SetProperty(propKey, newVal.Trim());
+				// 	}
+				// }
+				// catch (IOException e)
+				// {
+				// 	string msg = "argsToProperties could not read properties file: " + file;
+				// 	throw new RuntimeIOException(msg, e);
+				// }
+				// finally
+				// {
+				// 	IOUtils.CloseIgnoringExceptions(reader);
+				// }
+				// foreach (string key in toAdd.StringPropertyNames())
+				// {
+				// 	string val = toAdd.GetProperty(key);
+				// 	if (!result.Contains(key))
+				// 	{
+				// 		result.SetProperty(key, val);
+				// 	}
+				// }
 			}
-			return result;
+			return 	builder.AddInMemoryCollection(result).Build();
+;
 		}
 
 		/// <summary>This method reads in properties listed in a file in the format prop=value, one property per line.</summary>
@@ -1270,20 +1234,13 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		/// <param name="filename">A properties file to read</param>
 		/// <returns>The corresponding Properties object</returns>
-		public static Properties PropFileToProperties(string filename)
+		public static IConfiguration PropFileToProperties(string filename)
 		{
 			try
 			{
-				InputStream @is = new BufferedInputStream(new FileInputStream(filename));
-				Properties result = new Properties();
-				result.Load(@is);
-				// trim all values
-				foreach (string propKey in result.StringPropertyNames())
-				{
-					string newVal = result.GetProperty(propKey);
-					result.SetProperty(propKey, newVal.Trim());
-				}
-				@is.Close();
+				var builder = new ConfigurationBuilder();
+				builder.AddIniFile(filename);
+				IConfiguration result = builder.Build();
 				return result;
 			}
 			catch (IOException e)
@@ -1304,9 +1261,11 @@ namespace Edu.Stanford.Nlp.Util
 		/// for properties without an explicitly given value is set to "true". This can be used for a 2nd level
 		/// of properties, for example, when you have a commandline argument like "-outputOptions style=xml,tags".
 		/// </remarks>
-		public static Properties StringToProperties(string str)
+		public static IConfiguration StringToProperties(string str)
 		{
-			Properties result = new Properties();
+			var builder = new ConfigurationBuilder();
+			builder.AddInMemoryCollection();
+			var result = builder.Build();
 			return StringToProperties(str, result);
 		}
 
@@ -1323,9 +1282,9 @@ namespace Edu.Stanford.Nlp.Util
 		/// to a Properties object.  Each property is "property=value".  The value
 		/// for properties without an explicitly given value is set to "true".
 		/// </remarks>
-		public static Properties StringToProperties(string str, Properties props)
+		public static IConfiguration StringToProperties(string str, IConfiguration props)
 		{
-			string[] propsStr = str.Trim().Split(",\\s*");
+			string[] propsStr = Regex.Split(str.Trim(),",\\s*");
 			foreach (string term in propsStr)
 			{
 				int divLoc = term.IndexOf('=');
@@ -1333,15 +1292,15 @@ namespace Edu.Stanford.Nlp.Util
 				string value;
 				if (divLoc >= 0)
 				{
-					key = Sharpen.Runtime.Substring(term, 0, divLoc).Trim();
-					value = Sharpen.Runtime.Substring(term, divLoc + 1).Trim();
+					key = term.Substring(0, divLoc).Trim();
+					value = term.Substring(divLoc + 1).Trim();
 				}
 				else
 				{
 					key = term.Trim();
 					value = "true";
 				}
-				props.SetProperty(key, value);
+				props[key] = value;
 			}
 			return props;
 		}
@@ -1354,11 +1313,11 @@ namespace Edu.Stanford.Nlp.Util
 		/// If any of the given list of properties are not found, returns the
 		/// name of that property.  Otherwise, returns null.
 		/// </remarks>
-		public static string CheckRequiredProperties(Properties props, params string[] requiredProps)
+		public static string CheckRequiredProperties(IConfiguration props, params string[] requiredProps)
 		{
 			foreach (string required in requiredProps)
 			{
-				if (props.GetProperty(required) == null)
+				if (props[required] == null)
 				{
 					return required;
 				}
@@ -1374,41 +1333,39 @@ namespace Edu.Stanford.Nlp.Util
 		/// <c>append=false</c>
 		/// .
 		/// </remarks>
-		public static void PrintToFile(File file, string message, bool append, bool printLn, string encoding)
+		public static void PrintToFile(FileInfo file, string message, bool append, bool printLn, string encoding)
 		{
-			PrintWriter pw = null;
+			StreamWriter fw = null;
 			try
 			{
-				TextWriter fw;
 				if (encoding != null)
 				{
-					fw = new OutputStreamWriter(new FileOutputStream(file, append), encoding);
+					fw = new StreamWriter(file.Open(append ? FileMode.Append : FileMode.Open), Encoding.GetEncoding(encoding));
 				}
 				else
 				{
-					fw = new FileWriter(file, append);
+					fw = new StreamWriter(file.Open(append ? FileMode.Append : FileMode.Open));
 				}
-				pw = new PrintWriter(fw);
 				if (printLn)
 				{
-					pw.Println(message);
+					fw.WriteLine(message);
 				}
 				else
 				{
-					pw.Print(message);
+					fw.Write(message);
 				}
 			}
 			catch (Exception e)
 			{
-				log.Warn("Exception: in printToFile " + file.GetAbsolutePath());
+				log.Warn("Exception: in printToFile " + file.FullName);
 				log.Warn(e);
 			}
 			finally
 			{
-				if (pw != null)
+				if (fw != null)
 				{
-					pw.Flush();
-					pw.Close();
+					fw.Flush();
+					fw.Close();
 				}
 			}
 		}
@@ -1421,26 +1378,25 @@ namespace Edu.Stanford.Nlp.Util
 		/// <c>append=false</c>
 		/// .
 		/// </remarks>
-		public static void PrintToFileLn(File file, string message, bool append)
+		public static void PrintToFileLn(FileInfo file, string message, bool append)
 		{
-			PrintWriter pw = null;
+			TextWriter fw = null;
 			try
 			{
-				TextWriter fw = new FileWriter(file, append);
-				pw = new PrintWriter(fw);
-				pw.Println(message);
+				fw = new StreamWriter(file.Open(append ? FileMode.Append : FileMode.Open));
+				fw.WriteLine(message);
 			}
 			catch (Exception e)
 			{
-				log.Warn("Exception: in printToFileLn " + file.GetAbsolutePath() + ' ' + message);
+				log.Warn("Exception: in printToFileLn " + file.FullName + ' ' + message);
 				log.Warn(e);
 			}
 			finally
 			{
-				if (pw != null)
+				if (fw != null)
 				{
-					pw.Flush();
-					pw.Close();
+					fw.Flush();
+					fw.Close();
 				}
 			}
 		}
@@ -1453,18 +1409,17 @@ namespace Edu.Stanford.Nlp.Util
 		/// <c>append=false</c>
 		/// .
 		/// </remarks>
-		public static void PrintToFile(File file, string message, bool append)
+		public static void PrintToFile(FileInfo file, string message, bool append)
 		{
-			PrintWriter pw = null;
+			StreamWriter pw = null;
 			try
 			{
-				TextWriter fw = new FileWriter(file, append);
-				pw = new PrintWriter(fw);
-				pw.Print(message);
+				pw = new StreamWriter(file.Open(append ? FileMode.Append : FileMode.Open));
+				pw.Write(message);
 			}
 			catch (Exception e)
 			{
-				throw new RuntimeIOException("Exception in printToFile " + file.GetAbsolutePath(), e);
+				throw new RuntimeIOException("Exception in printToFile " + file.FullName, e);
 			}
 			finally
 			{
@@ -1477,7 +1432,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// Prints to a file.  If the file does not exist, rewrites the file;
 		/// does not append.
 		/// </remarks>
-		public static void PrintToFile(File file, string message)
+		public static void PrintToFile(FileInfo file, string message)
 		{
 			PrintToFile(file, message, false);
 		}
@@ -1492,7 +1447,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		public static void PrintToFile(string filename, string message, bool append)
 		{
-			PrintToFile(new File(filename), message, append);
+			PrintToFile(new FileInfo(filename), message, append);
 		}
 
 		/// <summary>Prints to a file.</summary>
@@ -1505,7 +1460,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		public static void PrintToFileLn(string filename, string message, bool append)
 		{
-			PrintToFileLn(new File(filename), message, append);
+			PrintToFileLn(new FileInfo(filename), message, append);
 		}
 
 		/// <summary>Prints to a file.</summary>
@@ -1515,7 +1470,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// </remarks>
 		public static void PrintToFile(string filename, string message)
 		{
-			PrintToFile(new File(filename), message, false);
+			PrintToFile(new FileInfo(filename), message, false);
 		}
 
 		/// <summary>A simpler form of command line argument parsing.</summary>
@@ -1532,7 +1487,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>A Map from keys to possible values (String or null)</returns>
 		public static IDictionary<string, string> ParseCommandLineArguments(string[] args)
 		{
-			return (IDictionary)ParseCommandLineArguments(args, false);
+			return (IDictionary<string,string>)ParseCommandLineArguments(args, false);
 		}
 
 		/// <summary>A simpler form of command line argument parsing.</summary>
@@ -1567,7 +1522,7 @@ namespace Edu.Stanford.Nlp.Util
 								object numericValue = value;
 								try
 								{
-									numericValue = double.ParseDouble(value);
+									numericValue = double.Parse(value);
 								}
 								catch (NumberFormatException)
 								{
@@ -1732,7 +1687,7 @@ namespace Edu.Stanford.Nlp.Util
 			{
 				result.Add(b.ToString());
 			}
-			return Sharpen.Collections.ToArray(result, new string[result.Count]);
+			return result.ToArray();
 		}
 
 		/// <summary>Computes the longest common substring of s and t.</summary>
@@ -3029,7 +2984,7 @@ namespace Edu.Stanford.Nlp.Util
 					{
 						writer = new StringWriter(input.Length);
 					}
-					writer.Append(Sharpen.Runtime.Substring(input, st, i - 1));
+					writer.Append(input.Substring(st, i - 1));
 					writer.Append(value);
 				}
 				// skip escape
@@ -3518,7 +3473,9 @@ namespace Edu.Stanford.Nlp.Util
 		/// <returns>The input String, but with all variables replaced.</returns>
 		public static string ExpandEnvironmentVariables(string raw)
 		{
-			return ExpandEnvironmentVariables(raw, Runtime.Getenv());
+			var env = new Dictionary<string,string>();
+			foreach(DictionaryEntry var in Environment.GetEnvironmentVariables()) env.Add((string)var.Key, (string)var.Value);
+			return ExpandEnvironmentVariables(raw, env);
 		}
 
 		/// <summary>Logs the command line arguments to Redwood on the given channels.</summary>

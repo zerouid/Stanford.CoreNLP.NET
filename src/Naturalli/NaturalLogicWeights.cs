@@ -50,7 +50,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				{
 					string[] fields = line.Split("\t");
 					Pair<string, string> key = Pair.MakePair(string.Intern(fields[0]), string.Intern(fields[1]));
-					verbPPAffinity[key] = double.ParseDouble(fields[2]);
+					verbPPAffinity[key] = double.Parse(fields[2]);
 				}
 			}
 			// Subj PP attachments
@@ -60,7 +60,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				{
 					string[] fields = line.Split("\t");
 					Triple<string, string, string> key = Triple.MakeTriple(string.Intern(fields[0]), string.Intern(fields[1]), string.Intern(fields[2]));
-					verbSubjPPAffinity[key] = double.ParseDouble(fields[3]);
+					verbSubjPPAffinity[key] = double.Parse(fields[3]);
 				}
 			}
 			// Subj Obj PP attachments
@@ -70,7 +70,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				{
 					string[] fields = line.Split("\t");
 					Quadruple<string, string, string, string> key = Quadruple.MakeQuadruple(string.Intern(fields[0]), string.Intern(fields[1]), string.Intern(fields[2]), string.Intern(fields[3]));
-					verbSubjObjPPAffinity[key] = double.ParseDouble(fields[4]);
+					verbSubjObjPPAffinity[key] = double.Parse(fields[4]);
 				}
 			}
 			// Subj PP PP attachments
@@ -80,7 +80,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				{
 					string[] fields = line.Split("\t");
 					Quadruple<string, string, string, string> key = Quadruple.MakeQuadruple(string.Intern(fields[0]), string.Intern(fields[1]), string.Intern(fields[2]), string.Intern(fields[3]));
-					verbSubjPPPPAffinity[key] = double.ParseDouble(fields[4]);
+					verbSubjPPPPAffinity[key] = double.Parse(fields[4]);
 				}
 			}
 			// Subj PP PP attachments
@@ -90,7 +90,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				{
 					string[] fields = line.Split("\t");
 					Quadruple<string, string, string, string> key = Quadruple.MakeQuadruple(string.Intern(fields[0]), string.Intern(fields[1]), string.Intern(fields[2]), string.Intern(fields[3]));
-					verbSubjPPObjAffinity[key] = double.ParseDouble(fields[4]);
+					verbSubjPPObjAffinity[key] = double.Parse(fields[4]);
 				}
 			}
 			// Subj PP PP attachments
@@ -99,7 +99,7 @@ namespace Edu.Stanford.Nlp.Naturalli
 				while ((line = objReader.ReadLine()) != null)
 				{
 					string[] fields = line.Split("\t");
-					verbObjAffinity[fields[0]] = double.ParseDouble(fields[1]);
+					verbObjAffinity[fields[0]] = double.Parse(fields[1]);
 				}
 			}
 		}

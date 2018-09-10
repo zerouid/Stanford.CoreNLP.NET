@@ -1450,7 +1450,7 @@ namespace Edu.Stanford.Nlp.Math
 				result[i] = new double[columns.Length];
 				for (int j = 0; j < result[i].Length; j++)
 				{
-					result[i][j] = double.ParseDouble(columns[j]);
+					result[i][j] = double.Parse(columns[j]);
 				}
 			}
 			return result;

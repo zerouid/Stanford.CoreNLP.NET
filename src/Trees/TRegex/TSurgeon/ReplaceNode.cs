@@ -20,7 +20,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex.Tsurgeon
 		{
 		}
 
-		private static readonly IFunction<AuxiliaryTree, HoldTreeNode> convertAuxiliaryToHold = null;
+		private static readonly Func<AuxiliaryTree, HoldTreeNode> convertAuxiliaryToHold = null;
 
 		public override TsurgeonMatcher Matcher(IDictionary<string, Tree> newNodeNames, CoindexationGenerator coindexer)
 		{

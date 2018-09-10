@@ -24,7 +24,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 	/// with a suffix <tt>-coordinating</tt>.
 	/// The "search" in this process is conducted via Tregex, and the
 	/// actual annotation is done through execution of an arbitrary
-	/// <see cref="Java.Util.Function.IFunction{T, R}"/>
+	/// <see cref="Java.Util.Function.Func{T, R}"/>
 	/// provided by the user.
 	/// This class carries as inner several classes several useful common
 	/// annotation functions.
@@ -58,7 +58,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// subtree should be given.
 		/// </remarks>
 		/// <seealso cref="annotations"/>
-		private readonly IDictionary<string, Pair<TregexPattern, IFunction<TregexMatcher, string>>> annotationPatterns = Generics.NewHashMap();
+		private readonly IDictionary<string, Pair<TregexPattern, Func<TregexMatcher, string>>> annotationPatterns = Generics.NewHashMap();
 
 		/// <summary>
 		/// This data structure dictates how an arbitrary tree should be
@@ -76,7 +76,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// </remarks>
 		/// <seealso cref="annotationPatterns"/>
 		/// <seealso cref="SimpleStringFunction"/>
-		protected internal readonly IDictionary<string, Pair<string, IFunction<TregexMatcher, string>>> annotations = Generics.NewHashMap();
+		protected internal readonly IDictionary<string, Pair<string, Func<TregexMatcher, string>>> annotations = Generics.NewHashMap();
 
 		/// <summary>Features which should be enabled by default.</summary>
 		protected internal abstract string[] BaselineAnnotationFeatures();
@@ -107,7 +107,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		{
 			TregexPatternCompiler compiler = new TregexPatternCompiler(hf);
 			annotationPatterns.Clear();
-			foreach (KeyValuePair<string, Pair<string, IFunction<TregexMatcher, string>>> annotation in annotations)
+			foreach (KeyValuePair<string, Pair<string, Func<TregexMatcher, string>>> annotation in annotations)
 			{
 				TregexPattern compiled;
 				try
@@ -120,7 +120,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 					log.Info("Parse exception on annotation pattern #" + nth + " initialization: " + e);
 					continue;
 				}
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> behavior = new Pair<TregexPattern, IFunction<TregexMatcher, string>>(compiled, annotation.Value.Second());
+				Pair<TregexPattern, Func<TregexMatcher, string>> behavior = new Pair<TregexPattern, Func<TregexMatcher, string>>(compiled, annotation.Value.Second());
 				annotationPatterns[annotation.Key] = behavior;
 			}
 		}
@@ -205,7 +205,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			StringBuilder annotationStr = new StringBuilder();
 			foreach (string featureName in features)
 			{
-				Pair<TregexPattern, IFunction<TregexMatcher, string>> behavior = annotationPatterns[featureName];
+				Pair<TregexPattern, Func<TregexMatcher, string>> behavior = annotationPatterns[featureName];
 				TregexMatcher m = behavior.First().Matcher(root);
 				if (m.MatchesAt(t))
 				{

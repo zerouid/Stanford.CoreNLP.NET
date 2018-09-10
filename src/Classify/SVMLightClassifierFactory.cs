@@ -153,7 +153,7 @@ namespace Edu.Stanford.Nlp.Classify
 				string thresholdLine = @in.ReadLine();
 				modelLineCount++;
 				string[] pieces = thresholdLine.Split("\\s+");
-				double threshold = double.ParseDouble(pieces[0]);
+				double threshold = double.Parse(pieces[0]);
 				// Read Support Vectors
 				while (@in.Ready())
 				{
@@ -161,7 +161,7 @@ namespace Edu.Stanford.Nlp.Classify
 					modelLineCount++;
 					pieces = svLine.Split("\\s+");
 					// First Element is the alpha_i * y_i
-					double alpha = double.ParseDouble(pieces[0]);
+					double alpha = double.Parse(pieces[0]);
 					ClassicCounter<int> supportVector = new ClassicCounter<int>();
 					for (int i_1 = 1; i_1 < pieces.Length; ++i_1)
 					{
@@ -176,7 +176,7 @@ namespace Edu.Stanford.Nlp.Classify
 						// mihai: we may see "qid" as indexNum[0]. just skip this piece. this is the block id useful only for reranking, which we don't do here.
 						if (!featureIndex.Equals("qid"))
 						{
-							double count = double.ParseDouble(indexNum[1]);
+							double count = double.Parse(indexNum[1]);
 							supportVector.IncrementCount(int.Parse(featureIndex), count);
 						}
 					}

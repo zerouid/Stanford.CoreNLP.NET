@@ -108,7 +108,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 		public virtual Optional<ICoreMap> FindBestCoreferentEntityMention(ICoreMap em, Annotation ann)
 		{
 			// helper lambda
-			IFunction<Optional<ICoreMap>, int> lengthOfOptionalEntityMention = null;
+			Func<Optional<ICoreMap>, int> lengthOfOptionalEntityMention = null;
 			// initialize return value as empty Optional
 			Optional<ICoreMap> bestCoreferentEntityMention = Optional.Empty();
 			// look for matching coref mention

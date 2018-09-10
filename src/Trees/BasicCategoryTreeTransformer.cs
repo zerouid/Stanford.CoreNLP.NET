@@ -10,7 +10,7 @@ namespace Edu.Stanford.Nlp.Trees
 	/// <see cref="ITreebankLanguagePack"/>
 	/// </summary>
 	/// <author>John Bauer</author>
-	public class BasicCategoryTreeTransformer : RecursiveTreeTransformer, IFunction<Tree, Tree>
+	public class BasicCategoryTreeTransformer : RecursiveTreeTransformer, Func<Tree, Tree>
 	{
 		internal readonly ITreebankLanguagePack tlp;
 

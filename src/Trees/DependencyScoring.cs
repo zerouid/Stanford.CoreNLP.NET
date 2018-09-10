@@ -456,10 +456,10 @@ namespace Edu.Stanford.Nlp.Trees
 		public static void Main(string[] args)
 		{
 			Properties props = StringUtils.ArgsToProperties(args);
-			bool verbose = bool.ParseBoolean(props.GetProperty("v", "False"));
-			bool conllx = bool.ParseBoolean(props.GetProperty("conllx", "False"));
-			bool jsonOutput = bool.ParseBoolean(props.GetProperty("jsonOutput", "False"));
-			bool ignorePunc = bool.ParseBoolean(props.GetProperty("nopunc", "False"));
+			bool verbose = bool.Parse(props.GetProperty("v", "False"));
+			bool conllx = bool.Parse(props.GetProperty("conllx", "False"));
+			bool jsonOutput = bool.Parse(props.GetProperty("jsonOutput", "False"));
+			bool ignorePunc = bool.Parse(props.GetProperty("nopunc", "False"));
 			string goldFilename = props.GetProperty("g");
 			string systemFilename = props.GetProperty("s");
 			if (goldFilename == null || systemFilename == null)

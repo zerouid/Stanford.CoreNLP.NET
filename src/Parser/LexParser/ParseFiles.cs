@@ -73,7 +73,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// Parse the files with names given in the String array args elements from
 		/// index argIndex on.  Convenience method which builds and invokes a ParseFiles object.
 		/// </remarks>
-		public static void ParseFiles<_T0>(string[] args, int argIndex, bool tokenized, ITokenizerFactory<_T0> tokenizerFactory, string elementDelimiter, string sentenceDelimiter, IFunction<IList<IHasWord>, IList<IHasWord>> escaper, string tagDelimiter
+		public static void ParseFiles<_T0>(string[] args, int argIndex, bool tokenized, ITokenizerFactory<_T0> tokenizerFactory, string elementDelimiter, string sentenceDelimiter, Func<IList<IHasWord>, IList<IHasWord>> escaper, string tagDelimiter
 			, Options op, TreePrint treePrint, LexicalizedParser pqFactory)
 			where _T0 : IHasWord
 		{
@@ -95,9 +95,9 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 				pwErr.Println("File encoding is: " + op.tlpParams.GetInputEncoding());
 			}
 			// evaluation setup
-			this.runningAverages = bool.ParseBoolean(op.testOptions.evals.GetProperty("runningAverages"));
-			this.summary = bool.ParseBoolean(op.testOptions.evals.GetProperty("summary"));
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("pcfgLL")))
+			this.runningAverages = bool.Parse(op.testOptions.evals.GetProperty("runningAverages"));
+			this.summary = bool.Parse(op.testOptions.evals.GetProperty("summary"));
+			if (bool.Parse(op.testOptions.evals.GetProperty("pcfgLL")))
 			{
 				this.pcfgLL = new AbstractEval.ScoreEval("pcfgLL", runningAverages);
 			}
@@ -105,7 +105,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			{
 				this.pcfgLL = null;
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("depLL")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("depLL")))
 			{
 				this.depLL = new AbstractEval.ScoreEval("depLL", runningAverages);
 			}
@@ -113,7 +113,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			{
 				this.depLL = null;
 			}
-			if (bool.ParseBoolean(op.testOptions.evals.GetProperty("factLL")))
+			if (bool.Parse(op.testOptions.evals.GetProperty("factLL")))
 			{
 				this.factLL = new AbstractEval.ScoreEval("factLL", runningAverages);
 			}
@@ -123,7 +123,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			}
 		}
 
-		public virtual void ParseFiles<_T0>(string[] args, int argIndex, bool tokenized, ITokenizerFactory<_T0> tokenizerFactory, string elementDelimiter, string sentenceDelimiter, IFunction<IList<IHasWord>, IList<IHasWord>> escaper, string tagDelimiter
+		public virtual void ParseFiles<_T0>(string[] args, int argIndex, bool tokenized, ITokenizerFactory<_T0> tokenizerFactory, string elementDelimiter, string sentenceDelimiter, Func<IList<IHasWord>, IList<IHasWord>> escaper, string tagDelimiter
 			)
 			where _T0 : IHasWord
 		{

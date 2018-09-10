@@ -73,7 +73,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		/// <returns>The singleton static relation of the specified type</returns>
 		/// <exception cref="ParseException">If bad relation s</exception>
 		/// <exception cref="Edu.Stanford.Nlp.Trees.Tregex.ParseException"/>
-		internal static Edu.Stanford.Nlp.Trees.Tregex.Relation GetRelation(string s, IFunction<string, string> basicCatFunction, IHeadFinder headFinder)
+		internal static Edu.Stanford.Nlp.Trees.Tregex.Relation GetRelation(string s, Func<string, string> basicCatFunction, IHeadFinder headFinder)
 		{
 			if (SimpleRelationsMap.Contains(s))
 			{
@@ -157,7 +157,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		/// </returns>
 		/// <exception cref="ParseException">If bad relation s</exception>
 		/// <exception cref="Edu.Stanford.Nlp.Trees.Tregex.ParseException"/>
-		internal static Edu.Stanford.Nlp.Trees.Tregex.Relation GetRelation(string s, string arg, IFunction<string, string> basicCatFunction, IHeadFinder headFinder)
+		internal static Edu.Stanford.Nlp.Trees.Tregex.Relation GetRelation(string s, string arg, Func<string, string> basicCatFunction, IHeadFinder headFinder)
 		{
 			if (arg == null)
 			{
@@ -215,7 +215,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 		/// and its children
 		/// </summary>
 		/// <exception cref="Edu.Stanford.Nlp.Trees.Tregex.ParseException"/>
-		internal static TregexPattern ConstructMultiRelation(string s, IList<DescriptionPattern> children, IFunction<string, string> basicCatFunction, IHeadFinder headFinder)
+		internal static TregexPattern ConstructMultiRelation(string s, IList<DescriptionPattern> children, Func<string, string> basicCatFunction, IHeadFinder headFinder)
 		{
 			if (s.Equals("<..."))
 			{
@@ -2316,13 +2316,13 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 			private readonly bool basicCat;
 
-			private IFunction<string, string> basicCatFunction;
+			private Func<string, string> basicCatFunction;
 
 			/// <param name="arg">
 			/// This may have a ! and then maybe a @ and then either an
 			/// identifier or regex
 			/// </param>
-			internal UnbrokenCategoryDominates(string arg, IFunction<string, string> basicCatFunction)
+			internal UnbrokenCategoryDominates(string arg, Func<string, string> basicCatFunction)
 				: base("<+(" + arg + ')')
 			{
 				if (arg.StartsWith("!"))
@@ -2498,7 +2498,7 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 			private readonly Relation.UnbrokenCategoryDominates unbrokenCategoryDominates;
 
-			internal UnbrokenCategoryIsDominatedBy(string arg, IFunction<string, string> basicCatFunction)
+			internal UnbrokenCategoryIsDominatedBy(string arg, Func<string, string> basicCatFunction)
 				: base(">+(" + arg + ')')
 			{
 				// end class UnbrokenCategoryDominates
@@ -2599,10 +2599,10 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 			private readonly bool basicCat;
 
-			private IFunction<string, string> basicCatFunction;
+			private Func<string, string> basicCatFunction;
 
 			/// <param name="arg">The pattern to match, perhaps preceded by ! and/or @</param>
-			internal UnbrokenCategoryPrecedes(string arg, IFunction<string, string> basicCatFunction)
+			internal UnbrokenCategoryPrecedes(string arg, Func<string, string> basicCatFunction)
 				: base(".+(" + arg + ')')
 			{
 				if (arg.StartsWith("!"))
@@ -2785,10 +2785,10 @@ namespace Edu.Stanford.Nlp.Trees.Tregex
 
 			private readonly bool basicCat;
 
-			private IFunction<string, string> basicCatFunction;
+			private Func<string, string> basicCatFunction;
 
 			/// <param name="arg">The pattern to match, perhaps preceded by ! and/or @</param>
-			internal UnbrokenCategoryFollows(string arg, IFunction<string, string> basicCatFunction)
+			internal UnbrokenCategoryFollows(string arg, Func<string, string> basicCatFunction)
 				: base(",+(" + arg + ')')
 			{
 				if (arg.StartsWith("!"))

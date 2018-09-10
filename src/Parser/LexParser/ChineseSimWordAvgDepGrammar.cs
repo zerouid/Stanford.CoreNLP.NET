@@ -60,7 +60,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 						continue;
 					}
 					Pair<int, string> iTW = new Pair<int, string>(wordIndex.AddToIndex(m.Group(1)), m.Group(2));
-					double score = double.ParseDouble(m.Group(5));
+					double score = double.Parse(m.Group(5));
 					IList<Triple<int, string, double>> tripleList = hashMap[iTW];
 					if (tripleList == null)
 					{

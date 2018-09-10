@@ -62,7 +62,7 @@ namespace Edu.Stanford.Nlp.Parser.Common
 				bool hasWeight = false;
 				if (numSubArgs > 1 && DoublePattern.Matcher(args[argIndex + numSubArgs - 2]).Matches())
 				{
-					weight = double.ParseDouble(args[argIndex + numSubArgs - 2]);
+					weight = double.Parse(args[argIndex + numSubArgs - 2]);
 					hasWeight = true;
 					numSubArgs--;
 				}

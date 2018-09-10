@@ -135,7 +135,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 		/// then the final CoreMap will have ner=CITY, normalized=San Francisco.
 		/// Otherwise, the result is treated as one object (all keys will be assigned that value).
 		/// </remarks>
-		internal IFunction<MatchedExpression, object> defaultResultsAnnotationExtractor;
+		internal Func<MatchedExpression, object> defaultResultsAnnotationExtractor;
 
 		/// <summary>Interface for performing custom binding of values to the environment</summary>
 		public interface IBinder
@@ -258,12 +258,12 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			this.defaultNestedResultsAnnotationKey = defaultNestedResultsAnnotationKey;
 		}
 
-		public virtual IFunction<MatchedExpression, object> GetDefaultResultsAnnotationExtractor()
+		public virtual Func<MatchedExpression, object> GetDefaultResultsAnnotationExtractor()
 		{
 			return defaultResultsAnnotationExtractor;
 		}
 
-		public virtual void SetDefaultResultsAnnotationExtractor(IFunction<MatchedExpression, object> defaultResultsAnnotationExtractor)
+		public virtual void SetDefaultResultsAnnotationExtractor(Func<MatchedExpression, object> defaultResultsAnnotationExtractor)
 		{
 			this.defaultResultsAnnotationExtractor = defaultResultsAnnotationExtractor;
 		}

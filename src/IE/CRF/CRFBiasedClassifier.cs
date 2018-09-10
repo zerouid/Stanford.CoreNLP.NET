@@ -199,7 +199,7 @@ namespace Edu.Stanford.Nlp.IE.Crf
 				{
 					StringTokenizer bias = new StringTokenizer(biases.NextToken(), ":");
 					string cname = bias.NextToken();
-					double w = double.ParseDouble(bias.NextToken());
+					double w = double.Parse(bias.NextToken());
 					crf.SetBiasWeight(cname, w);
 					log.Info("Setting bias for class " + cname + " to " + w);
 				}

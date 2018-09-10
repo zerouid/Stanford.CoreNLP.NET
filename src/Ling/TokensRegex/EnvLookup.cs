@@ -118,11 +118,11 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 			return null;
 		}
 
-		public static IFunction<MatchedExpression, object> GetDefaultResultAnnotationExtractor(Env env)
+		public static Func<MatchedExpression, object> GetDefaultResultAnnotationExtractor(Env env)
 		{
 			if (env != null)
 			{
-				IFunction<MatchedExpression, object> obj = env.GetDefaultResultsAnnotationExtractor();
+				Func<MatchedExpression, object> obj = env.GetDefaultResultsAnnotationExtractor();
 				if (obj != null)
 				{
 					return obj;

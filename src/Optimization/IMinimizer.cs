@@ -22,7 +22,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// <version>1.0</version>
 	/// <since>1.0</since>
 	public interface IMinimizer<T>
-		where T : IFunction
+		where T : Func
 	{
 		/// <summary>
 		/// Attempts to find an unconstrained minimum of the objective

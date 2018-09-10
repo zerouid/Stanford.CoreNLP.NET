@@ -19,7 +19,7 @@ namespace Edu.Stanford.Nlp.Util
 	/// <author>dramage</author>
 	/// <author>
 	/// dlwh
-	/// <see cref="FlatMap{T, U}(System.Collections.Generic.IEnumerable{T}, Java.Util.Function.IFunction{T, R})"/>
+	/// <see cref="FlatMap{T, U}(System.Collections.Generic.IEnumerable{T}, Java.Util.Function.Func{T, R})"/>
 	/// </author>
 	/// <author>Huy Nguyen (htnguyen@cs.stanford.edu)</author>
 	public class Iterables
@@ -35,7 +35,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// of the given function when applied to each element of the
 		/// iterable.
 		/// </remarks>
-		public static IEnumerable<V> Transform<K, V, _T2>(IEnumerable<K> iterable, IFunction<_T2> function)
+		public static IEnumerable<V> Transform<K, V, _T2>(IEnumerable<K> iterable, Func<_T2> function)
 		{
 			return null;
 		}
@@ -307,7 +307,7 @@ namespace Edu.Stanford.Nlp.Util
 		/// Chains together an Iterable of Iterables after transforming each one.
 		/// Equivalent to Iterables.transform(Iterables.chain(iterables),trans);
 		/// </remarks>
-		public static IEnumerable<U> FlatMap<T, U, _T2, _T3>(IEnumerable<_T2> iterables, IFunction<_T3> trans)
+		public static IEnumerable<U> FlatMap<T, U, _T2, _T3>(IEnumerable<_T2> iterables, Func<_T3> trans)
 			where _T2 : IEnumerable<T>
 		{
 			return Transform(Chain(iterables), trans);
@@ -693,7 +693,7 @@ namespace Edu.Stanford.Nlp.Util
 			IEnumerable<Pair<V1, V2>> partial = Merge(iter1, iter2, comparatorA);
 			Iterables.IIncrementComparator<Pair<V1, V2>, V3> inc = new _IIncrementComparator_485(comparatorB);
 			// flattens the pairs into triple
-			IFunction<Pair<Pair<V1, V2>, V3>, Triple<V1, V2, V3>> flatten = null;
+			Func<Pair<Pair<V1, V2>, V3>, Triple<V1, V2, V3>> flatten = null;
 			return Transform(Merge(partial, iter3, inc), flatten);
 		}
 

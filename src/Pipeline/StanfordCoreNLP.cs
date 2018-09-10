@@ -1231,9 +1231,9 @@ namespace Edu.Stanford.Nlp.Pipeline
 				}
 			}
 			string extension = properties.GetProperty("outputExtension", defaultExtension);
-			bool replaceExtension = bool.ParseBoolean(properties.GetProperty("replaceExtension", "false"));
-			bool continueOnAnnotateError = bool.ParseBoolean(properties.GetProperty("continueOnAnnotateError", "false"));
-			bool noClobber = bool.ParseBoolean(properties.GetProperty("noClobber", "false"));
+			bool replaceExtension = bool.Parse(properties.GetProperty("replaceExtension", "false"));
+			bool continueOnAnnotateError = bool.Parse(properties.GetProperty("continueOnAnnotateError", "false"));
+			bool noClobber = bool.Parse(properties.GetProperty("noClobber", "false"));
 			// final boolean randomize = Boolean.parseBoolean(properties.getProperty("randomize", "false"));
 			MutableInteger totalProcessed = new MutableInteger(0);
 			MutableInteger totalSkipped = new MutableInteger(0);

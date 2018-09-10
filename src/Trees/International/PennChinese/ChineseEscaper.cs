@@ -19,7 +19,7 @@ namespace Edu.Stanford.Nlp.Trees.International.Pennchinese
 	/// Roger lists them in LanguagePack.
 	/// </remarks>
 	/// <author>Christopher Manning</author>
-	public class ChineseEscaper : IFunction<IList<IHasWord>, IList<IHasWord>>
+	public class ChineseEscaper : Func<IList<IHasWord>, IList<IHasWord>>
 	{
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(ChineseEscaper));

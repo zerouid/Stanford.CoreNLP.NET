@@ -32,7 +32,7 @@ namespace Edu.Stanford.Nlp.Ling.Tokensregex
 		public CoreMapNodePatternTrigger(ICollection<SequencePattern<ICoreMap>> patterns)
 		{
 			this.patterns = patterns;
-			IFunction<NodePattern<ICoreMap>, CoreMapNodePatternTrigger.StringTriggerCandidate> stringTriggerFilter = null;
+			Func<NodePattern<ICoreMap>, CoreMapNodePatternTrigger.StringTriggerCandidate> stringTriggerFilter = null;
 			foreach (SequencePattern<ICoreMap> pattern in patterns)
 			{
 				// Look for first string...

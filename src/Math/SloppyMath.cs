@@ -908,7 +908,7 @@ namespace Edu.Stanford.Nlp.Math
 			for (int i = -308; i < 308; ++i)
 			{
 				string toParse = "1.0e" + i;
-				exps[(i + 308)] = double.ParseDouble("1.0e" + i);
+				exps[(i + 308)] = double.Parse("1.0e" + i);
 			}
 		}
 
@@ -1039,7 +1039,7 @@ namespace Edu.Stanford.Nlp.Math
 						{
 							int k = System.Convert.ToInt32(args[1]);
 							int n = System.Convert.ToInt32(args[2]);
-							double p = double.ParseDouble(args[3]);
+							double p = double.Parse(args[3]);
 							double ans = Edu.Stanford.Nlp.Math.SloppyMath.ExactBinomial(k, n, p);
 							System.Console.Out.WriteLine("Binomial p(X >= " + k + "; " + n + ", " + p + ") = " + ans);
 						}

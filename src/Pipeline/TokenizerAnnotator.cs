@@ -167,7 +167,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 			{
 				// ssplit
 				// Only possibly put in *NL* if not all one (the Boolean method treats null as false)
-				if (!bool.ParseBoolean(properties.GetProperty("ssplit.isOneSentence")))
+				if (!bool.Parse(properties.GetProperty("ssplit.isOneSentence")))
 				{
 					// Set to { NEVER, ALWAYS, TWO_CONSECUTIVE } based on  ssplit.newlineIsSentenceBreak
 					string nlsbString = properties.GetProperty(StanfordCoreNLP.NewlineIsSentenceBreakProperty, StanfordCoreNLP.DefaultNewlineIsSentenceBreak);

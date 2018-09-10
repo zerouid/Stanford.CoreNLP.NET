@@ -16,7 +16,7 @@ namespace Edu.Stanford.Nlp.Trees.International.Arabic
 	/// using the <code>-escaper</code> command-line parameter.
 	/// </remarks>
 	/// <author>Spence Green</author>
-	public class ATBEscaper : IFunction<IList<IHasWord>, IList<IHasWord>>
+	public class ATBEscaper : Func<IList<IHasWord>, IList<IHasWord>>
 	{
 		public virtual IList<IHasWord> Apply(IList<IHasWord> @in)
 		{

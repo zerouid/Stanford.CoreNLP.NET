@@ -19,9 +19,9 @@ namespace Edu.Stanford.Nlp.Patterns
 
 		internal int numAllSentences = 0;
 
-		internal IFunction<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString;
+		internal Func<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString;
 
-		public SentenceIndex(ICollection<string> stopWords, IFunction<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString)
+		public SentenceIndex(ICollection<string> stopWords, Func<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString)
 		{
 			this.stopWords = stopWords;
 			this.transformCoreLabeltoString = transformCoreLabeltoString;
@@ -74,13 +74,13 @@ namespace Edu.Stanford.Nlp.Patterns
 		//    return relwordsThisPat;
 		//  }
 		//TODO: what if someone calls with SentenceIndex.class?
-		public static Edu.Stanford.Nlp.Patterns.SentenceIndex CreateIndex(Type indexClass, IDictionary<string, IList<CoreLabel>> sents, Properties props, ICollection<string> stopWords, string indexDirectory, IFunction<CoreLabel, IDictionary<string, 
+		public static Edu.Stanford.Nlp.Patterns.SentenceIndex CreateIndex(Type indexClass, IDictionary<string, IList<CoreLabel>> sents, Properties props, ICollection<string> stopWords, string indexDirectory, Func<CoreLabel, IDictionary<string, 
 			string>> transformCoreLabeltoString)
 		{
 			try
 			{
 				ArgumentParser.FillOptions(typeof(Edu.Stanford.Nlp.Patterns.SentenceIndex), props);
-				MethodInfo m = indexClass.GetMethod("createIndex", typeof(IDictionary), typeof(Properties), typeof(ISet), typeof(string), typeof(IFunction));
+				MethodInfo m = indexClass.GetMethod("createIndex", typeof(IDictionary), typeof(Properties), typeof(ISet), typeof(string), typeof(Func));
 				Edu.Stanford.Nlp.Patterns.SentenceIndex index = (Edu.Stanford.Nlp.Patterns.SentenceIndex)m.Invoke(null, new object[] { sents, props, stopWords, indexDirectory, transformCoreLabeltoString });
 				return index;
 			}
@@ -106,12 +106,12 @@ namespace Edu.Stanford.Nlp.Patterns
 
 		public abstract void SaveIndex(string dir);
 
-		public static Edu.Stanford.Nlp.Patterns.SentenceIndex LoadIndex(Type indexClass, Properties props, ICollection<string> stopWords, string indexDirectory, IFunction<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString)
+		public static Edu.Stanford.Nlp.Patterns.SentenceIndex LoadIndex(Type indexClass, Properties props, ICollection<string> stopWords, string indexDirectory, Func<CoreLabel, IDictionary<string, string>> transformCoreLabeltoString)
 		{
 			try
 			{
 				ArgumentParser.FillOptions(typeof(Edu.Stanford.Nlp.Patterns.SentenceIndex), props);
-				MethodInfo m = indexClass.GetMethod("loadIndex", typeof(Properties), typeof(ISet), typeof(string), typeof(IFunction));
+				MethodInfo m = indexClass.GetMethod("loadIndex", typeof(Properties), typeof(ISet), typeof(string), typeof(Func));
 				Edu.Stanford.Nlp.Patterns.SentenceIndex index = (Edu.Stanford.Nlp.Patterns.SentenceIndex)m.Invoke(null, new object[] { props, stopWords, indexDirectory, transformCoreLabeltoString });
 				return index;
 			}

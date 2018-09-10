@@ -37,7 +37,7 @@ namespace Edu.Stanford.Nlp.Classify
 	{
 		private const long serialVersionUID = -3883164942879961091L;
 
-		internal static readonly Redwood.RedwoodChannels logger = Redwood.Channels(typeof(Edu.Stanford.Nlp.Classify.Dataset));
+		internal static readonly Redwood.RedwoodChannels logger = Redwood.Channels(typeof(Edu.Stanford.Nlp.Classify.Dataset<L,F>));
 
 		public Dataset()
 			: this(10)
@@ -226,7 +226,7 @@ namespace Edu.Stanford.Nlp.Classify
 				{
 					logger.Info("Dataset error: line " + line1);
 				}
-				int val = (int)double.ParseDouble(f[1]);
+				int val = (int)double.Parse(f[1]);
 				for (int j = 0; j < val; j++)
 				{
 					features.Add(f[0]);

@@ -48,7 +48,7 @@ namespace Edu.Stanford.Nlp.Patterns
 
 		internal ProtobufAnnotationSerializer p = new ProtobufAnnotationSerializer();
 
-		public LuceneSentenceIndex(Properties props, ICollection<string> stopWords, string indexDirStr, IFunction<CoreLabel, IDictionary<string, string>> transformer)
+		public LuceneSentenceIndex(Properties props, ICollection<string> stopWords, string indexDirStr, Func<CoreLabel, IDictionary<string, string>> transformer)
 			: base(stopWords, transformer)
 		{
 			iwc = new IndexWriterConfig(Version.Lucene42, analyzer);
@@ -386,7 +386,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 		}
 
-		public static Edu.Stanford.Nlp.Patterns.LuceneSentenceIndex CreateIndex(IDictionary<string, IList<CoreLabel>> sentences, Properties props, ICollection<string> stopWords, string indexDiskDir, IFunction<CoreLabel, IDictionary<string, string>> 
+		public static Edu.Stanford.Nlp.Patterns.LuceneSentenceIndex CreateIndex(IDictionary<string, IList<CoreLabel>> sentences, Properties props, ICollection<string> stopWords, string indexDiskDir, Func<CoreLabel, IDictionary<string, string>> 
 			transformer)
 		{
 			try
@@ -411,7 +411,7 @@ namespace Edu.Stanford.Nlp.Patterns
 			}
 		}
 
-		public static Edu.Stanford.Nlp.Patterns.LuceneSentenceIndex LoadIndex(Properties props, ICollection<string> stopwords, string dir, IFunction<CoreLabel, IDictionary<string, string>> transformSentenceToString)
+		public static Edu.Stanford.Nlp.Patterns.LuceneSentenceIndex LoadIndex(Properties props, ICollection<string> stopwords, string dir, Func<CoreLabel, IDictionary<string, string>> transformSentenceToString)
 		{
 			try
 			{

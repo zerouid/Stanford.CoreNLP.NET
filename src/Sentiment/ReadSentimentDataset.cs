@@ -23,9 +23,9 @@ namespace Edu.Stanford.Nlp.Sentiment
 		/// <summary>A logger for this class</summary>
 		private static Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Sentiment.ReadSentimentDataset));
 
-		internal static readonly IFunction<Tree, string> TransformTreeToWord = null;
+		internal static readonly Func<Tree, string> TransformTreeToWord = null;
 
-		internal static readonly IFunction<string, string> TransformParens = null;
+		internal static readonly Func<string, string> TransformParens = null;
 
 		internal static readonly TregexPattern[] tregexPatterns = new TregexPattern[] { TregexPattern.Compile("__=single <1 (__ < /^-LRB-$/) <2 (__ <... { (__ < /^[a-zA-Z]$/=letter) ; (__ < /^-RRB-$/) }) > (__ <2 =single <1 (__=useless <<- (__=word !< __)))"
 			), TregexPattern.Compile("__=single <1 (__ < /^-LRB-$/) <2 (__ <... { (__ < /^[aA]$/=letter) ; (__ < /^-RRB-$/) }) > (__ <1 =single <2 (__=useless <<, /^n$/=word))"), TregexPattern.Compile("__=single <1 (__ < /^-LRB-$/) <2 (__=A <... { (__ < /^[aA]$/=letter) ; (__=paren < /^-RRB-$/) })"

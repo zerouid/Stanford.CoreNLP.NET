@@ -124,7 +124,7 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 		/// <inheritDoc/>
 		/// 
 		/// </summary>
-		public virtual ICollection<string> TagSet(IFunction<string, string> basicCategoryFunction)
+		public virtual ICollection<string> TagSet(Func<string, string> basicCategoryFunction)
 		{
 			ICollection<string> tagSet = new HashSet<string>();
 			foreach (string tag in tagIndex.ObjectsList())

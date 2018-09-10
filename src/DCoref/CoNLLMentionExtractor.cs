@@ -53,7 +53,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 		{
 			// Initialize reader for reading from CONLL2011 corpus
 			corpusPath = props.GetProperty(Constants.Conll2011Prop);
-			replicateCoNLL = bool.ParseBoolean(props.GetProperty(Constants.ReplicateconllProp, "false"));
+			replicateCoNLL = bool.Parse(props.GetProperty(Constants.ReplicateconllProp, "false"));
 			CoNLL2011DocumentReader.Options options = new CoNLL2011DocumentReader.Options();
 			options.annotateTokenCoref = false;
 			options.annotateTokenSpeaker = Constants.UseGoldSpeakerTags || replicateCoNLL;

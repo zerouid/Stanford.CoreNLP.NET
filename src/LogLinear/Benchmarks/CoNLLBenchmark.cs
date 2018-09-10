@@ -271,7 +271,7 @@ namespace Edu.Stanford.Nlp.Loglinear.Benchmarks
 					double[] embedding = new double[300];
 					for (int i = 1; i < parts.Length - 1; i++)
 					{
-						embedding[i - 1] = double.ParseDouble(parts[i]);
+						embedding[i - 1] = double.Parse(parts[i]);
 					}
 					embeddings[token] = embedding;
 				}

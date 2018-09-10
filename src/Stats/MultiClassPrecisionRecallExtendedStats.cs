@@ -29,7 +29,7 @@ namespace Edu.Stanford.Nlp.Stats
 
 		protected internal int noLabel = 0;
 
-		protected internal IFunction<string, L> stringConverter;
+		protected internal Func<string, L> stringConverter;
 
 		public MultiClassPrecisionRecallExtendedStats(IClassifier<L, F> classifier, GeneralDataset<L, F> data, L negLabel)
 			: base(classifier, data, negLabel)
@@ -371,7 +371,7 @@ namespace Edu.Stanford.Nlp.Stats
 			return sb.ToString();
 		}
 
-		public class StringStringConverter : IFunction<string, string>
+		public class StringStringConverter : Func<string, string>
 		{
 			public virtual string Apply(string str)
 			{

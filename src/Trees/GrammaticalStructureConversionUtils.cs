@@ -375,7 +375,7 @@ namespace Edu.Stanford.Nlp.Trees
 			}
 		}
 
-		private static IFunction<IList<IHasWord>, Tree> LoadParser(string parserFile, string parserOptions, bool makeCopulaHead)
+		private static Func<IList<IHasWord>, Tree> LoadParser(string parserFile, string parserOptions, bool makeCopulaHead)
 		{
 			if (parserFile == null || parserFile.IsEmpty())
 			{
@@ -401,7 +401,7 @@ namespace Edu.Stanford.Nlp.Trees
 			// GrammaticalStructure, which would then import the
 			// LexicalizedParser.  The tagger can read trees, which means it
 			// would depend on tregex and therefore depend on the parser.
-			IFunction<IList<IHasWord>, Tree> lp;
+			Func<IList<IHasWord>, Tree> lp;
 			try
 			{
 				Type[] classes = new Type[] { typeof(string), typeof(string[]) };
@@ -411,7 +411,7 @@ namespace Edu.Stanford.Nlp.Trees
 				{
 					opts = parserOptions.Split(" +");
 				}
-				lp = (IFunction<IList<IHasWord>, Tree>)method.Invoke(null, parserFile, opts);
+				lp = (Func<IList<IHasWord>, Tree>)method.Invoke(null, parserFile, opts);
 			}
 			catch (Exception cnfe)
 			{
@@ -812,7 +812,7 @@ namespace Edu.Stanford.Nlp.Trees
 								string parserFile = props.GetProperty("parserFile");
 								string parserOpts = props.GetProperty("parserOpts");
 								bool tokenized = props.GetProperty("tokenized") != null;
-								IFunction<IList<IHasWord>, Tree> lp = LoadParser(parserFile, parserOpts, makeCopulaHead);
+								Func<IList<IHasWord>, Tree> lp = LoadParser(parserFile, parserOpts, makeCopulaHead);
 								trees = new GrammaticalStructureConversionUtils.LazyLoadTreesByParsing(sentFileName, encoding, tokenized, lp);
 								// Instead of getting this directly from the LP, use reflection
 								// so that a package which uses GrammaticalStructure doesn't
@@ -1091,9 +1091,9 @@ namespace Edu.Stanford.Nlp.Trees
 
 			internal readonly string encoding;
 
-			internal readonly IFunction<IList<IHasWord>, Tree> lp;
+			internal readonly Func<IList<IHasWord>, Tree> lp;
 
-			public LazyLoadTreesByParsing(string filename, string encoding, bool tokenized, IFunction<IList<IHasWord>, Tree> lp)
+			public LazyLoadTreesByParsing(string filename, string encoding, bool tokenized, Func<IList<IHasWord>, Tree> lp)
 			{
 				// end for
 				// end convertTrees

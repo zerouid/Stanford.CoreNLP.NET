@@ -59,7 +59,7 @@ namespace Edu.Stanford.Nlp.Util
 		{
 			IList<int> values = Arrays.AsList(1, 2, 3, 4);
 			IList<int> squares = Arrays.AsList(1, 4, 9, 16);
-			IFunction<int, int> squarer = null;
+			Func<int, int> squarer = null;
 			foreach (Pair<int, int> pair in Iterables.Zip(Iterables.Transform(values, squarer), squares))
 			{
 				NUnit.Framework.Assert.AreEqual(pair.first, pair.second);

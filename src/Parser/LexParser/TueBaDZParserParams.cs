@@ -122,49 +122,49 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 			{
 				if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-markKonjParent"))
 				{
-					markKonjParent = bool.ParseBoolean(args[i + 1]);
+					markKonjParent = bool.Parse(args[i + 1]);
 					i += 2;
 				}
 				else
 				{
 					if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-markContainsV"))
 					{
-						markContainsV = bool.ParseBoolean(args[i + 1]);
+						markContainsV = bool.Parse(args[i + 1]);
 						i += 2;
 					}
 					else
 					{
 						if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-markZu"))
 						{
-							markZu = bool.ParseBoolean(args[i + 1]);
+							markZu = bool.Parse(args[i + 1]);
 							i += 2;
 						}
 						else
 						{
 							if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-markColons"))
 							{
-								markColons = bool.ParseBoolean(args[i + 1]);
+								markColons = bool.Parse(args[i + 1]);
 								i += 2;
 							}
 							else
 							{
 								if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-leftPhrasal"))
 								{
-									leftPhrasal = bool.ParseBoolean(args[i + 1]);
+									leftPhrasal = bool.Parse(args[i + 1]);
 									i += 2;
 								}
 								else
 								{
 									if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-markHDParent"))
 									{
-										markHDParent = bool.ParseBoolean(args[i + 1]);
+										markHDParent = bool.Parse(args[i + 1]);
 										i += 2;
 									}
 									else
 									{
 										if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-leaveGF"))
 										{
-											leaveGF = bool.ParseBoolean(args[i + 1]);
+											leaveGF = bool.Parse(args[i + 1]);
 											((TueBaDZLanguagePack)TreebankLanguagePack()).SetLeaveGF(leaveGF);
 											i += 2;
 										}
@@ -172,14 +172,14 @@ namespace Edu.Stanford.Nlp.Parser.Lexparser
 										{
 											if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-evalGF"))
 											{
-												this.SetEvalGF(bool.ParseBoolean(args[i + 1]));
+												this.SetEvalGF(bool.Parse(args[i + 1]));
 												i += 2;
 											}
 											else
 											{
 												if (Sharpen.Runtime.EqualsIgnoreCase(args[i], "-limitedGF"))
 												{
-													((TueBaDZLanguagePack)TreebankLanguagePack()).SetLimitedGF(bool.ParseBoolean(args[i + 1]));
+													((TueBaDZLanguagePack)TreebankLanguagePack()).SetLimitedGF(bool.Parse(args[i + 1]));
 													i += 2;
 												}
 												else

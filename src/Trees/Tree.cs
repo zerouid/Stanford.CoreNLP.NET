@@ -792,7 +792,7 @@ namespace Edu.Stanford.Nlp.Trees
 		/// <c>StringBuilder</c>
 		/// passed in with extra stuff in it
 		/// </returns>
-		public virtual StringBuilder ToStringBuilder(StringBuilder sb, IFunction<ILabel, string> labelFormatter)
+		public virtual StringBuilder ToStringBuilder(StringBuilder sb, Func<ILabel, string> labelFormatter)
 		{
 			if (IsLeaf())
 			{
@@ -1028,7 +1028,7 @@ namespace Edu.Stanford.Nlp.Trees
 			}
 		}
 
-		private static void DisplayChildren(Edu.Stanford.Nlp.Trees.Tree[] trChildren, int indent, bool parentLabelNull, IFunction<ILabel, string> labelFormatter, PrintWriter pw)
+		private static void DisplayChildren(Edu.Stanford.Nlp.Trees.Tree[] trChildren, int indent, bool parentLabelNull, Func<ILabel, string> labelFormatter, PrintWriter pw)
 		{
 			bool firstSibling = true;
 			bool leftSibIsPreTerm = true;
@@ -1061,7 +1061,7 @@ namespace Edu.Stanford.Nlp.Trees
 		}
 
 		/// <summary>Display a node, implementing Penn Treebank style layout</summary>
-		private void Display(int indent, bool parentLabelNull, bool firstSibling, bool leftSiblingPreTerminal, bool topLevel, IFunction<ILabel, string> labelFormatter, PrintWriter pw)
+		private void Display(int indent, bool parentLabelNull, bool firstSibling, bool leftSiblingPreTerminal, bool topLevel, Func<ILabel, string> labelFormatter, PrintWriter pw)
 		{
 			// the condition for staying on the same line in Penn Treebank
 			bool suppressIndent = (parentLabelNull || (firstSibling && IsPreTerminal()) || (leftSiblingPreTerminal && IsPreTerminal() && (Label() == null || !Label().Value().StartsWith("CC"))));
@@ -1119,7 +1119,7 @@ namespace Edu.Stanford.Nlp.Trees
 			PennPrint(pw, null);
 		}
 
-		public virtual void PennPrint(PrintWriter pw, IFunction<ILabel, string> labelFormatter)
+		public virtual void PennPrint(PrintWriter pw, Func<ILabel, string> labelFormatter)
 		{
 			Display(0, false, false, false, true, labelFormatter, pw);
 			pw.Println();
@@ -1147,7 +1147,7 @@ namespace Edu.Stanford.Nlp.Trees
 			PennPrint(new PrintWriter(new OutputStreamWriter(ps), true));
 		}
 
-		public virtual void PennPrint(TextWriter ps, IFunction<ILabel, string> labelFormatter)
+		public virtual void PennPrint(TextWriter ps, Func<ILabel, string> labelFormatter)
 		{
 			PennPrint(new PrintWriter(new OutputStreamWriter(ps), true), labelFormatter);
 		}

@@ -42,7 +42,7 @@ namespace Edu.Stanford.Nlp.Optimization
 
 		private static readonly NumberFormat nf = new DecimalFormat("0.000E0");
 
-		private readonly IFunction monitor;
+		private readonly Func monitor;
 
 		[System.NonSerialized]
 		private CallbackFunction iterationCallbackFunction;
@@ -723,7 +723,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		/// <c>Function</c>
 		/// value
 		/// </param>
-		public CGMinimizer(IFunction monitor)
+		public CGMinimizer(Func monitor)
 			: this(false, monitor)
 		{
 		}
@@ -743,7 +743,7 @@ namespace Edu.Stanford.Nlp.Optimization
 		/// <c>Function</c>
 		/// value
 		/// </param>
-		private CGMinimizer(bool silent, IFunction monitor)
+		private CGMinimizer(bool silent, Func monitor)
 		{
 			this.silent = silent;
 			this.monitor = monitor;

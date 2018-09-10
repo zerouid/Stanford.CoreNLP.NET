@@ -13,7 +13,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// </remarks>
 	/// <author><a href="mailto:klein@cs.stanford.edu">Dan Klein</a></author>
 	/// <version>1.0</version>
-	/// <seealso cref="IFunction"/>
+	/// <seealso cref="Func"/>
 	/// <since>1.0</since>
 	public interface IDiffFloatFunction : IFloatFunction
 	{

@@ -92,7 +92,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 				log.Error(e.Message);
 			}
 			chunkIdentifier = new LabeledChunkIdentifier();
-			doAcronyms = bool.ParseBoolean(props.GetProperty(name + ".acronyms", props.GetProperty("acronyms", "false")));
+			doAcronyms = bool.Parse(props.GetProperty(name + ".acronyms", props.GetProperty("acronyms", "false")));
 			// set up language info, this is needed for handling creating pronominal mentions
 			entityMentionsLanguage = LanguageInfo.GetLanguageFromString(props.GetProperty(name + ".language", "en"));
 		}

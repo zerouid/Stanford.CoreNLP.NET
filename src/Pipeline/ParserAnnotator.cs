@@ -42,7 +42,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 
 		private readonly ParserGrammar parser;
 
-		private readonly IFunction<Tree, Tree> treeMap;
+		private readonly Func<Tree, Tree> treeMap;
 
 		/// <summary>Do not parse sentences larger than this sentence length</summary>
 		private readonly int maxSentenceLength;
@@ -86,7 +86,7 @@ namespace Edu.Stanford.Nlp.Pipeline
 		{
 		}
 
-		public ParserAnnotator(ParserGrammar parser, bool verbose, int maxSent, IFunction<Tree, Tree> treeMap)
+		public ParserAnnotator(ParserGrammar parser, bool verbose, int maxSent, Func<Tree, Tree> treeMap)
 		{
 			this.Verbose = verbose;
 			this.BuildGraphs = parser.GetTLPParams().SupportsBasicDependencies();

@@ -8,9 +8,9 @@ namespace Edu.Stanford.Nlp.Trees
 	/// <author>John Bauer</author>
 	public class TreeLeafLabelTransformer : ITreeTransformer
 	{
-		internal IFunction<string, string> transform;
+		internal Func<string, string> transform;
 
-		public TreeLeafLabelTransformer(IFunction<string, string> transform)
+		public TreeLeafLabelTransformer(Func<string, string> transform)
 		{
 			this.transform = transform;
 		}

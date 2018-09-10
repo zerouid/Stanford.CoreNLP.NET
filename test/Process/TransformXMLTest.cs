@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Process
 
 		private string expectedAnswer2 = "<doc> <el arg=\"funny&amp;&apos;&gt;&quot;stuff\"> yo! C&amp;C!yo! C&amp;C! </el> </doc>";
 
-		private IFunction<string, string> duplicate = null;
+		private Func<string, string> duplicate = null;
 
 		[NUnit.Framework.Test]
 		public virtual void TestTransformXML1()

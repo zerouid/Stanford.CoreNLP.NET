@@ -294,12 +294,12 @@ namespace Edu.Stanford.Nlp.Trees
 
 		/// <summary>
 		/// Returns a
-		/// <see cref="Java.Util.Function.IFunction{T, R}">IFunction{T, R}</see>
+		/// <see cref="Java.Util.Function.Func{T, R}">Func{T, R}</see>
 		/// object that maps Strings to Strings according
 		/// to this TreebankLanguagePack's basicCategory method.
 		/// </summary>
 		/// <returns>the String-&gt;String Function object</returns>
-		IFunction<string, string> GetBasicCategoryFunction();
+		Func<string, string> GetBasicCategoryFunction();
 
 		/// <summary>Returns the syntactic category and 'function' of a String.</summary>
 		/// <remarks>
@@ -317,12 +317,12 @@ namespace Edu.Stanford.Nlp.Trees
 
 		/// <summary>
 		/// Returns a
-		/// <see cref="Java.Util.Function.IFunction{T, R}">IFunction{T, R}</see>
+		/// <see cref="Java.Util.Function.Func{T, R}">Func{T, R}</see>
 		/// object that maps Strings to Strings according
 		/// to this TreebankLanguagePack's categoryAndFunction method.
 		/// </summary>
 		/// <returns>the String-&gt;String Function object</returns>
-		IFunction<string, string> GetCategoryAndFunctionFunction();
+		Func<string, string> GetCategoryAndFunctionFunction();
 
 		/// <summary>Accepts a String that is a start symbol of the treebank.</summary>
 		/// <param name="str">The str to test</param>

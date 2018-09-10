@@ -1161,7 +1161,7 @@ namespace Edu.Stanford.Nlp.Dcoref
 		public static void Main(string[] args)
 		{
 			Properties props = StringUtils.ArgsToProperties(args);
-			bool debug = bool.ParseBoolean(props.GetProperty("debug", "false"));
+			bool debug = bool.Parse(props.GetProperty("debug", "false"));
 			string filepath = props.GetProperty("i");
 			string outfile = props.GetProperty("o");
 			if (filepath == null || outfile == null)

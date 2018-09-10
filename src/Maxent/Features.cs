@@ -131,7 +131,7 @@ namespace Edu.Stanford.Nlp.Maxent
 							{
 								indSp = line.Length;
 							}
-							double val = double.ParseDouble(Sharpen.Runtime.Substring(line, 0, indSp));
+							double val = double.Parse(Sharpen.Runtime.Substring(line, 0, indSp));
 							if (indSp < line.Length)
 							{
 								line = Sharpen.Runtime.Substring(line, indSp + 1);

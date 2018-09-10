@@ -18,7 +18,7 @@ namespace Edu.Stanford.Nlp.Tagger.Common
 	/// don't include that code.
 	/// </remarks>
 	/// <author>John Bauer</author>
-	public abstract class Tagger : IFunction<IList<IHasWord>, IList<TaggedWord>>
+	public abstract class Tagger : Func<IList<IHasWord>, IList<TaggedWord>>
 	{
 		public const string EosTag = ".$$.";
 

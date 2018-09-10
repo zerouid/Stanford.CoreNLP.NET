@@ -531,7 +531,7 @@ namespace Edu.Stanford.Nlp.Simple
 				bool lazy = true;
 				if (lazystr != null)
 				{
-					lazy = bool.ParseBoolean(lazystr);
+					lazy = bool.Parse(lazystr);
 				}
 				if (key != null && secret != null)
 				{
@@ -714,9 +714,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// </param>
 		/// <returns>The JSON String for this document.</returns>
 		[SafeVarargs]
-		public string Json(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public string Json(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
 			{
 				f.Apply(this.Sentence(0));
 			}
@@ -742,9 +742,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// </param>
 		/// <returns>The JSON String for this document, without unnecessary whitespace.</returns>
 		[SafeVarargs]
-		public string JsonMinified(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public string JsonMinified(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
 			{
 				f.Apply(this.Sentence(0));
 			}
@@ -786,9 +786,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// </param>
 		/// <returns>The XML String for this document.</returns>
 		[SafeVarargs]
-		public string Xml(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public string Xml(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
 			{
 				f.Apply(this.Sentence(0));
 			}
@@ -814,9 +814,9 @@ namespace Edu.Stanford.Nlp.Simple
 		/// </param>
 		/// <returns>The XML String for this document, without unecessary whitespace.</returns>
 		[SafeVarargs]
-		public string XmlMinified(params IFunction<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
+		public string XmlMinified(params Func<Edu.Stanford.Nlp.Simple.Sentence, object>[] functions)
 		{
-			foreach (IFunction<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
+			foreach (Func<Edu.Stanford.Nlp.Simple.Sentence, object> f in functions)
 			{
 				f.Apply(this.Sentence(0));
 			}

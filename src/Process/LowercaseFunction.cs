@@ -4,7 +4,7 @@
 namespace Edu.Stanford.Nlp.Process
 {
 	[System.Serializable]
-	public class LowercaseFunction : IFunction<string, string>
+	public class LowercaseFunction : Func<string, string>
 	{
 		public virtual string Apply(string input)
 		{

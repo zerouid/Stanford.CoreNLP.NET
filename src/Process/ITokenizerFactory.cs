@@ -1,3 +1,4 @@
+using System.IO;
 using Edu.Stanford.Nlp.Objectbank;
 
 
@@ -25,13 +26,13 @@ namespace Edu.Stanford.Nlp.Process
 		/// <summary>Get a tokenizer for this reader.</summary>
 		/// <param name="r">A Reader (which is assumed to already by buffered, if appropriate)</param>
 		/// <returns>A Tokenizer</returns>
-		ITokenizer<T> GetTokenizer(Reader r);
+		ITokenizer<T> GetTokenizer(TextReader r);
 
 		/// <summary>Get a tokenizer for this reader.</summary>
 		/// <param name="r">A Reader (which is assumed to already by buffered, if appropriate)</param>
 		/// <param name="extraOptions">Options for how this tokenizer should behave</param>
 		/// <returns>A Tokenizer</returns>
-		ITokenizer<T> GetTokenizer(Reader r, string extraOptions);
+		ITokenizer<T> GetTokenizer(TextReader r, string extraOptions);
 
 		/// <summary>Sets default options for how tokenizers built from this factory should behave.</summary>
 		/// <param name="options">Options for how this tokenizer should behave</param>

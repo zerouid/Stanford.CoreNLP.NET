@@ -23,7 +23,7 @@ namespace Edu.Stanford.Nlp.Optimization
 	/// </remarks>
 	/// <author>Angel Chang</author>
 	public class SGDMinimizer<T> : IMinimizer<T>, IHasEvaluators
-		where T : IFunction
+		where T : Func
 	{
 		/// <summary>A logger for this class</summary>
 		private static readonly Redwood.RedwoodChannels log = Redwood.Channels(typeof(Edu.Stanford.Nlp.Optimization.SGDMinimizer));
@@ -283,12 +283,12 @@ namespace Edu.Stanford.Nlp.Optimization
 			}
 		}
 
-		public virtual double[] Minimize(IFunction function, double functionTolerance, double[] initial)
+		public virtual double[] Minimize(Func function, double functionTolerance, double[] initial)
 		{
 			return Minimize(function, functionTolerance, initial, -1);
 		}
 
-		public virtual double[] Minimize(IFunction f, double functionTolerance, double[] initial, int maxIterations)
+		public virtual double[] Minimize(Func f, double functionTolerance, double[] initial, int maxIterations)
 		{
 			if (!(f is AbstractStochasticCachingDiffUpdateFunction))
 			{

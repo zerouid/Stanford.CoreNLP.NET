@@ -155,7 +155,7 @@ namespace Edu.Stanford.Nlp.Util
 		}
 
 		/// <summary>Helper class that acts as a output stream to a process</summary>
-		public class ProcessOutputStream : OutputStream
+		public class ProcessOutputStream : Stream
 		{
 			private Process process;
 
